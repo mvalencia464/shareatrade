@@ -9,6 +9,7 @@
  */
 
 import type * as contractors from "../contractors.js";
+import type * as listingRequests from "../listingRequests.js";
 
 import type {
   ApiFromModules,
@@ -18,6 +19,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   contractors: typeof contractors;
+  listingRequests: typeof listingRequests;
 }>;
 
 /**

@@ -8,6 +8,7 @@ import { CoverImage } from "./CoverImage";
 import { FavoriteButton } from "./FavoriteButton";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
+import { ShareButton } from "./ShareButton";
 import { StarRating } from "./StarRating";
 
 type Neighbor = {
@@ -266,6 +267,16 @@ function DetailInner({ slug }: { slug: string }) {
                 Call {formatPhone(contractor.phone)}
               </a>
             ) : null}
+            <ShareButton
+              contractor={{
+                slug: contractor.slug,
+                name: contractor.name,
+                category: contractor.category,
+                city: contractor.city,
+                phone: contractor.phone,
+                website: contractor.website,
+              }}
+            />
             <FavoriteButton
               slug={contractor.slug}
               saved={isFavorite(contractor.slug)}

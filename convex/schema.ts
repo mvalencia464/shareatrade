@@ -41,4 +41,22 @@ export default defineSchema({
     .index("by_category_and_city", ["category", "city"])
     .index("by_google_cid", ["googleCid"])
     .index("by_rating", ["rating"]),
+
+  listingRequests: defineTable({
+    kind: v.union(v.literal("add"), v.literal("update")),
+    businessName: v.string(),
+    category: v.optional(v.string()),
+    city: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    email: v.optional(v.string()),
+    website: v.optional(v.string()),
+    gbpUrl: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    status: v.union(
+      v.literal("new"),
+      v.literal("reviewed"),
+      v.literal("closed"),
+    ),
+    submittedAt: v.number(),
+  }).index("by_status", ["status"]),
 });

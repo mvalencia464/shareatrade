@@ -1,0 +1,54 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { ListingRequestForm } from "../components/ListingRequestForm";
+
+const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>Get listed | Spokane Contractors</title>
+    <meta
+      name="description"
+      content="Request to be added to the Spokane Contractors directory. Google Business Profile is the source of truth—we refresh listings as needed."
+    />
+  </Fragment>
+
+  <article class="get-listed">
+    <p class="hero-eyebrow">For contractors</p>
+    <h1>Get listed</h1>
+    <p class="lede">
+      This directory is free for homeowners and free for contractors—no account
+      required. Listings come from public Google Business Profile data, not from
+      a separate profile you manage here.
+    </p>
+
+    <section class="get-listed-points">
+      <h2>How listing updates work</h2>
+      <ol>
+        <li>
+          Keep your
+          <a href="https://business.google.com/" target="_blank" rel="noreferrer"
+            >Google Business Profile</a
+          >
+          accurate (name, phone, address, website, category, photos).
+        </li>
+        <li>Submit a short request below so we know to look for you.</li>
+        <li>
+          We refresh the directory from GBP as needed—we do not edit
+          listing details by hand as a second source of truth.
+        </li>
+      </ol>
+    </section>
+
+    {
+      convexUrl ? (
+        <ListingRequestForm client:load convexUrl={convexUrl} />
+      ) : (
+        <p class="env-warning">
+          Set PUBLIC_CONVEX_URL in .env.local after running npx convex dev.
+        </p>
+      )
+    }
+  </article>
+</BaseLayout>
