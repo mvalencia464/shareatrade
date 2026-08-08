@@ -1,4 +1,5 @@
 import { useQuery } from "convex/react";
+import { EnvelopeSimple, Phone } from "@phosphor-icons/react";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
@@ -48,44 +49,6 @@ function IconSort() {
         strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconPhone() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M8.2 4.8c.4-.4 1-.5 1.5-.3l2 0.7c.6.2 1 .8.9 1.4l-.3 1.8c-.1.5.1 1 .5 1.3l1.4 1.4c.3.3.8.5 1.3.5l1.8-.3c.6-.1 1.2.3 1.4.9l.7 2c.2.5.1 1.1-.3 1.5l-1.1 1.1c-.5.5-1.2.7-1.9.6-3.3-.6-6.4-2.8-8.8-5.2S3.9 9.9 3.3 6.6c-.1-.7.1-1.4.6-1.9l1.1-1.1z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconMail() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect
-        x="3.5"
-        y="5.5"
-        width="17"
-        height="13"
-        rx="2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M4.5 7.5 12 13l7.5-5.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
       />
     </svg>
   );
@@ -397,51 +360,52 @@ function DirectoryInner() {
                 </div>
 
                 <div className="contractor-aside">
-                  <div className="contractor-contact">
-                    {c.phone ? (
-                      tel ? (
-                        <a className="contact-line contact-phone" href={tel}>
-                          <span className="contact-icon" aria-hidden>
-                            <IconPhone />
-                          </span>
-                          <span>{formatPhone(c.phone)}</span>
-                        </a>
-                      ) : (
-                        <p className="contact-line">
-                          <span className="contact-icon" aria-hidden>
-                            <IconPhone />
-                          </span>
-                          <span>{formatPhone(c.phone)}</span>
-                        </p>
-                      )
-                    ) : null}
-                    {c.email ? (
-                      <a
-                        className="contact-line contact-email"
-                        href={`mailto:${c.email}`}
-                        title={c.email}
-                      >
-                        <span className="contact-icon" aria-hidden>
-                          <IconMail />
-                        </span>
-                        <span>{c.email}</span>
-                      </a>
-                    ) : null}
-                  </div>
-
-                  <QuickLinks
-                    website={c.website}
-                    gbpUrl={c.gbpUrl}
-                    socials={c.socials}
-                  />
-
-                  <div className="contractor-actions">
+                  <div className="contractor-cta-row">
                     <a
-                      className="button button-primary button-view-profile"
+                      className="button button-secondary button-card-cta"
                       href={`/contractors/${c.slug}`}
                     >
                       View profile
                     </a>
+                    {tel ? (
+                      <a
+                        className="button button-primary button-card-cta"
+                        href={tel}
+                        title={`Call ${formatPhone(c.phone)}`}
+                      >
+                        <Phone size={16} weight="duotone" aria-hidden />
+                        <span>{formatPhone(c.phone)}</span>
+                      </a>
+                    ) : c.phone ? (
+                      <span
+                        className="button button-primary button-card-cta is-disabled"
+                        title={formatPhone(c.phone)}
+                      >
+                        <Phone size={16} weight="duotone" aria-hidden />
+                        <span>{formatPhone(c.phone)}</span>
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {c.email ? (
+                    <a
+                      className="contact-line contact-email"
+                      href={`mailto:${c.email}`}
+                      title={c.email}
+                    >
+                      <span className="contact-icon" aria-hidden>
+                        <EnvelopeSimple size={16} weight="duotone" />
+                      </span>
+                      <span>{c.email}</span>
+                    </a>
+                  ) : null}
+
+                  <div className="contractor-toolbar">
+                    <QuickLinks
+                      website={c.website}
+                      gbpUrl={c.gbpUrl}
+                      socials={c.socials}
+                    />
                     <ShareButton
                       contractor={{
                         slug: c.slug,

@@ -429,8 +429,8 @@ select {
 
 .contractor-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
-  gap: 1.1rem 1.35rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.1rem 1.1rem;
   align-items: center;
   padding: 1rem 1.1rem;
   background: var(--surface-solid);
@@ -517,14 +517,53 @@ select {
 
 .contractor-aside {
   display: grid;
-  gap: 0.65rem;
-  justify-items: stretch;
+  gap: 0.5rem;
+  justify-items: end;
+  width: max-content;
+  max-width: 22rem;
   min-width: 0;
+  align-content: start;
 }
 
-.contractor-contact {
-  display: grid;
+.contractor-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  width: auto;
+  max-width: 100%;
+}
+
+.button.button-card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.35rem;
+  height: 34px;
+  padding: 0 0.7rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 650;
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.button.button-card-cta.is-disabled {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
+.button.button-card-cta svg {
+  flex: none;
+}
+
+.button.button-card-cta span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .contact-line {
@@ -532,10 +571,11 @@ select {
   align-items: center;
   gap: 0.45rem;
   min-width: 0;
+  max-width: 100%;
   margin: 0;
   color: var(--ink);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 550;
 }
 
@@ -564,19 +604,25 @@ a.contact-line:hover {
   text-overflow: ellipsis;
 }
 
-.contractor-actions {
+.contractor-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: flex-end;
+  gap: 0.35rem;
 }
 
-.contractor-actions .share-button {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  border-color: var(--line);
-  background: var(--surface-solid);
+.contractor-toolbar .share-button,
+.contractor-toolbar .favorite-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+}
+
+.contractor-toolbar .share-button svg,
+.contractor-toolbar .favorite-button svg {
+  width: 15px;
+  height: 15px;
 }
 
 .favorite-button {
@@ -790,13 +836,6 @@ a.contact-line:hover {
   border-color: var(--line);
   padding: 0.45rem 0.85rem;
   font-size: 0.84rem;
-}
-
-.button.button-view-profile {
-  border-radius: 12px;
-  padding: 0.72rem 1.15rem;
-  flex: 1 1 auto;
-  min-width: 8.5rem;
 }
 
 .empty,
@@ -1198,6 +1237,26 @@ a.contact-line:hover {
 
   .contractor-aside {
     justify-items: stretch;
+    width: 100%;
+    max-width: none;
+  }
+
+  .contractor-cta-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: stretch;
+  }
+
+  .contractor-cta-row:has(> :only-child) {
+    grid-template-columns: 1fr;
+  }
+
+  .button.button-card-cta {
+    width: 100%;
+  }
+
+  .contractor-toolbar {
+    justify-content: flex-start;
   }
 
   .quick-links {
@@ -1209,9 +1268,5 @@ a.contact-line:hover {
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-  }
-
-  .button-view-profile {
-    min-width: 0;
   }
 }
