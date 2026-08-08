@@ -67,11 +67,11 @@ select {
 .site-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   gap: 0.85rem 1.5rem;
-  margin-bottom: 1.75rem;
-  padding: 0.35rem 0 1.1rem;
+  margin-bottom: 1.15rem;
+  padding: 0.2rem 0 0.95rem;
   border-bottom: 1px solid var(--line);
 }
 
@@ -81,18 +81,48 @@ select {
 }
 
 .brand {
-  font-family: var(--font-display);
-  font-size: clamp(1.7rem, 3.8vw, 2.25rem);
-  font-weight: 800;
-  letter-spacing: -0.045em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
   text-decoration: none;
   color: var(--pine-deep);
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.65rem;
+  background: var(--pine-deep);
+  color: #f4f6f8;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3.2vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
 }
 
 .brand-tag {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.92rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .site-nav {
@@ -156,6 +186,10 @@ select {
   animation: rise 0.65s ease both;
 }
 
+.hero-compact {
+  margin-bottom: 0.85rem;
+}
+
 .hero-eyebrow {
   margin: 0 0 0.45rem;
   color: var(--pine);
@@ -174,6 +208,13 @@ select {
   letter-spacing: -0.05em;
   max-width: 15ch;
   color: var(--ink);
+}
+
+.hero-compact h1 {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(1.45rem, 3.4vw, 1.85rem);
+  letter-spacing: -0.04em;
 }
 
 .hero p {
@@ -199,35 +240,35 @@ select {
   text-decoration: underline;
 }
 
-.view-tabs {
+.view-switch {
   display: inline-flex;
-  gap: 0.35rem;
-  padding: 0.25rem;
-  background: var(--surface);
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.15rem;
   border: 1px solid var(--line);
   border-radius: 999px;
-  box-shadow: var(--shadow);
+  background: var(--surface-solid);
 }
 
-.view-tab {
+.view-switch-btn {
   border: 0;
   background: transparent;
   color: var(--ink-soft);
   font-weight: 650;
-  font-size: 0.88rem;
-  padding: 0.5rem 0.95rem;
+  font-size: 0.82rem;
+  padding: 0.32rem 0.65rem;
   border-radius: 999px;
   cursor: pointer;
+  line-height: 1.2;
 }
 
-.view-tab.is-active {
-  background: var(--pine);
-  color: #f5f8fb;
-}
-
-.view-tab:hover:not(.is-active) {
-  color: var(--pine-deep);
+.view-switch-btn.is-active {
   background: var(--pine-soft);
+  color: var(--pine-deep);
+}
+
+.view-switch-btn:hover:not(.is-active) {
+  color: var(--pine-deep);
 }
 
 .directory {

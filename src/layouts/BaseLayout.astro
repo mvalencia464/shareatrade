@@ -21,8 +21,13 @@ import "../styles/global.css";
     <div class="site-shell">
       <header class="site-header">
         <div class="brand-block">
-          <a class="brand" href="/">Spokane Contractors</a>
-          <p class="brand-tag">Free to use · No sign-in</p>
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true">SC</span>
+            <span class="brand-text">
+              <span class="brand-name">Spokane Contractors</span>
+              <span class="brand-tag">Inland Northwest</span>
+            </span>
+          </a>
         </div>
         <nav class="site-nav" aria-label="Primary">
           <a href="/">Directory</a>
@@ -37,9 +42,9 @@ import "../styles/global.css";
       <footer class="site-footer">
         <p>
           Free Spokane-area contractor directory—no sign-in required. Verify
-          licensing and insurance before hiring.
+          licensing and insurance before hiring.{" "}
           <a href="/how-it-works">How it works</a>
-          ·
+          {" · "}
           <a href="/get-listed">Get listed</a>
         </p>
       </footer>

@@ -171,41 +171,9 @@ function DirectoryInner() {
 
   return (
     <div className="directory">
-      <section className="hero">
-        <p className="hero-eyebrow">Spokane &amp; Inland Northwest</p>
-        <h1>Find a contractor for your next project</h1>
-        <p>
-          Free to browse—no account, no sign-in. Filter by trade, city, and
-          rating, save listings on this device, then open a profile to call or
-          email.
-        </p>
-        <p className="hero-note">
-          <a href="/how-it-works">How it works</a>
-          {" · "}
-          Hearts save to this browser only
-        </p>
+      <section className="hero hero-compact">
+        <h1>{view === "saved" ? "Saved contractors" : "Find a contractor"}</h1>
       </section>
-
-      <div className="view-tabs" role="tablist" aria-label="Directory views">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={view === "all"}
-          className={`view-tab${view === "all" ? " is-active" : ""}`}
-          onClick={() => setListView("all")}
-        >
-          All listings
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={view === "saved"}
-          className={`view-tab${view === "saved" ? " is-active" : ""}`}
-          onClick={() => setListView("saved")}
-        >
-          Saved{ready && favoriteCount > 0 ? ` (${favoriteCount})` : ""}
-        </button>
-      </div>
 
       <div className="filters">
         <label>
@@ -272,6 +240,26 @@ function DirectoryInner() {
           )}
         </span>
         <div className="results-actions">
+          <div className="view-switch" role="tablist" aria-label="Directory views">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === "all"}
+              className={`view-switch-btn${view === "all" ? " is-active" : ""}`}
+              onClick={() => setListView("all")}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === "saved"}
+              className={`view-switch-btn${view === "saved" ? " is-active" : ""}`}
+              onClick={() => setListView("saved")}
+            >
+              Saved{ready && favoriteCount > 0 ? ` (${favoriteCount})` : ""}
+            </button>
+          </div>
           <label className="sort-control">
             <span className="sort-icon" aria-hidden>
               <IconSort />
