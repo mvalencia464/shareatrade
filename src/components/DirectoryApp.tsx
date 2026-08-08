@@ -4,6 +4,7 @@ import { api } from "../../convex/_generated/api";
 import { ConvexProvider } from "./ConvexProvider";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
+import { ShareButton } from "./ShareButton";
 import { StarRating } from "./StarRating";
 import { formatPhone } from "../lib/phone";
 
@@ -25,6 +26,55 @@ type ContractorCard = {
   socials: SocialLink[];
 };
 
+type SortKey = "rating" | "reviews" | "name-asc" | "name-desc";
+
+function IconSort() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M4 7h10M4 12h7M4 17h4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+      />
+      <path
+        d="M16 6v12M16 18l-2.4-2.4M16 18l2.4-2.4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function sortContractors(list: ContractorCard[], sort: SortKey): ContractorCard[] {
+  const items = [...list];
+  switch (sort) {
+    case "reviews":
+      return items.sort((a, b) => {
+        const diff = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
+        if (diff !== 0) return diff;
+        return a.name.localeCompare(b.name);
+      });
+    case "name-asc":
+      return items.sort((a, b) => a.name.localeCompare(b.name));
+    case "name-desc":
+      return items.sort((a, b) => b.name.localeCompare(a.name));
+    case "rating":
+    default:
+      return items.sort((a, b) => {
+        const diff = (b.rating ?? 0) - (a.rating ?? 0);
+        if (diff !== 0) return diff;
+        const reviews = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
+        if (reviews !== 0) return reviews;
+        return a.name.localeCompare(b.name);
+      });
+  }
+}
+
 function DirectoryInner() {
   const contractors = useQuery(api.contractors.list);
 
@@ -32,6 +82,7 @@ function DirectoryInner() {
   const [category, setCategory] = useState("");
   const [city, setCity] = useState("");
   const [minRating, setMinRating] = useState("");
+  const [sort, setSort] = useState<SortKey>("rating");
 
   const deferredSearch = useDeferredValue(search);
 
@@ -55,7 +106,7 @@ function DirectoryInner() {
     const q = deferredSearch.trim().toLowerCase();
     const ratingFloor = minRating ? Number(minRating) : null;
 
-    return contractors.filter((c: ContractorCard) => {
+    const matched = contractors.filter((c: ContractorCard) => {
       if (category && c.category !== category) return false;
       if (city && c.city !== city) return false;
       if (ratingFloor !== null) {
@@ -68,7 +119,9 @@ function DirectoryInner() {
         .toLowerCase();
       return haystack.includes(q);
     });
-  }, [contractors, deferredSearch, category, city, minRating]);
+
+    return sortContractors(matched, sort);
+  }, [contractors, deferredSearch, category, city, minRating, sort]);
 
   if (contractors === undefined) {
     return <p className="loading">Loading Spokane contractors…</p>;
@@ -140,20 +193,38 @@ function DirectoryInner() {
           {filtered.length}{" "}
           {filtered.length === 1 ? "contractor" : "contractors"}
         </span>
-        {(search || category || city || minRating) && (
-          <button
-            type="button"
-            className="button button-ghost"
-            onClick={() => {
-              setSearch("");
-              setCategory("");
-              setCity("");
-              setMinRating("");
-            }}
-          >
-            Clear filters
-          </button>
-        )}
+        <div className="results-actions">
+          <label className="sort-control">
+            <span className="sort-icon" aria-hidden>
+              <IconSort />
+            </span>
+            <span className="visually-hidden">Sort by</span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              aria-label="Sort listings"
+            >
+              <option value="rating">Top rated</option>
+              <option value="reviews">Most reviews</option>
+              <option value="name-asc">Name A–Z</option>
+              <option value="name-desc">Name Z–A</option>
+            </select>
+          </label>
+          {(search || category || city || minRating) && (
+            <button
+              type="button"
+              className="button button-ghost"
+              onClick={() => {
+                setSearch("");
+                setCategory("");
+                setCity("");
+                setMinRating("");
+              }}
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
       </div>
 
       {filtered.length === 0 ? (
@@ -183,7 +254,19 @@ function DirectoryInner() {
               </a>
 
               <div className="contractor-aside">
-                <StarRating rating={c.rating} reviewCount={c.reviewCount} />
+                <div className="aside-top">
+                  <StarRating rating={c.rating} reviewCount={c.reviewCount} />
+                  <ShareButton
+                    contractor={{
+                      slug: c.slug,
+                      name: c.name,
+                      category: c.category,
+                      city: c.city,
+                      phone: c.phone,
+                      website: c.website,
+                    }}
+                  />
+                </div>
                 {c.phone ? (
                   <p className="contractor-phone">{formatPhone(c.phone)}</p>
                 ) : null}
