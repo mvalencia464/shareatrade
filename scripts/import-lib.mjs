@@ -130,16 +130,77 @@ export function slugify(name) {
     .slice(0, 80);
 }
 
-export function titleCaseCity(city) {
-  const titled = city
-    .trim()
+/** Decode HTML entities commonly left in scraped city fields. */
+export function decodeHtmlEntities(value) {
+  return String(value)
+    .replace(/\\?&#0*39;/gi, "'")
+    .replace(/\\?&#x0*27;/gi, "'")
+    .replace(/&apos;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+}
+
+/** Fingerprint for city alias matching (letters/digits only). */
+export function cityFingerprint(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[''`´′]/g, "")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+/** Canonical display names keyed by {@link cityFingerprint}. */
+const CITY_CANONICAL_BY_FINGERPRINT = new Map([
+  ["coeurdalene", "Coeur d'Alene"],
+  ["spokanevly", "Spokane Valley"],
+  ["spokanevalley", "Spokane Valley"],
+  ["libertylake", "Liberty Lake"],
+  ["postfalls", "Post Falls"],
+  ["airwayheights", "Airway Heights"],
+  ["ninemilefalls", "Nine Mile Falls"],
+  ["medicallake", "Medical Lake"],
+  ["newmanlake", "Newman Lake"],
+  ["otisorchards", "Otis Orchards"],
+]);
+
+/** Non-city / multi-place junk that should not appear in the city filter. */
+const CITY_REJECT_FINGERPRINTS = new Set([
+  "ste204",
+  "lakecoeurdalenehaydenlakeandthespokaneriver",
+]);
+
+/**
+ * Normalize a free-text city for storage and exact-match filters.
+ * Returns undefined when the value is empty or rejected junk.
+ */
+export function normalizeCity(city) {
+  if (city == null) return undefined;
+
+  let cleaned = decodeHtmlEntities(city)
+    .replace(/\\+'/g, "'")
+    .replace(/[’`´′]/g, "'")
+    .replace(/[,.;]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return undefined;
+
+  const fingerprint = cityFingerprint(cleaned);
+  if (CITY_REJECT_FINGERPRINTS.has(fingerprint)) return undefined;
+
+  const canonical = CITY_CANONICAL_BY_FINGERPRINT.get(fingerprint);
+  if (canonical) return canonical;
+
+  return cleaned
     .toLowerCase()
     .split(/\s+/)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
-  return titled
-    .replace(/\bCoeur D'alene\b/i, "Coeur d'Alene")
-    .replace(/\bCoeur D'\b/i, "Coeur d'");
+}
+
+/** @deprecated Prefer {@link normalizeCity}. */
+export function titleCaseCity(city) {
+  return normalizeCity(city) ?? "";
 }
 
 export function parseSocials(raw) {
@@ -196,6 +257,7 @@ export function resolveWaOrIdLocation(stateRaw, cityRaw) {
   const state = (stateRaw ?? "").trim();
   const city = (cityRaw ?? "").trim();
   const lower = state.toLowerCase().replace(/’/g, "'");
+  const stateFingerprint = cityFingerprint(decodeHtmlEntities(state));
 
   // Blank state: keep (Spokane-area scrape often omitted state)
   if (!lower) {
@@ -221,14 +283,21 @@ export function resolveWaOrIdLocation(stateRaw, cityRaw) {
   }
 
   // Misfiled city-as-state values that are still in WA/ID
-  if (lower === "coeur d'alene" || lower === "coeur d’alene") {
+  if (stateFingerprint === "coeurdalene") {
     return { state: "Idaho", city: city || "Coeur d'Alene" };
   }
-  if (lower === "meridian") {
+  if (stateFingerprint === "meridian") {
     return { state: "Idaho", city: city || "Meridian" };
   }
-  if (lower === "spokane" || lower === "spokane valley") {
-    return { state: "Washington", city: city || titleCaseCity(state) };
+  if (
+    stateFingerprint === "spokane" ||
+    stateFingerprint === "spokanevalley" ||
+    stateFingerprint === "spokanevly"
+  ) {
+    return {
+      state: "Washington",
+      city: city || normalizeCity(state) || undefined,
+    };
   }
 
   return null;

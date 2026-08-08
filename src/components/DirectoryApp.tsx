@@ -1,12 +1,14 @@
 import { useQuery } from "convex/react";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
+import { useFavorites } from "../hooks/useFavorites";
+import { formatPhone, phoneTelHref } from "../lib/phone";
 import { ConvexProvider } from "./ConvexProvider";
+import { FavoriteButton } from "./FavoriteButton";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
 import { ShareButton } from "./ShareButton";
 import { StarRating } from "./StarRating";
-import { formatPhone } from "../lib/phone";
 
 type SocialLink = { platform: string; url: string };
 
@@ -27,6 +29,7 @@ type ContractorCard = {
 };
 
 type SortKey = "rating" | "reviews" | "name-asc" | "name-desc";
+type ListView = "all" | "saved";
 
 function IconSort() {
   return (
@@ -45,6 +48,44 @@ function IconSort() {
         strokeWidth="1.7"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconPhone() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M8.2 4.8c.4-.4 1-.5 1.5-.3l2 0.7c.6.2 1 .8.9 1.4l-.3 1.8c-.1.5.1 1 .5 1.3l1.4 1.4c.3.3.8.5 1.3.5l1.8-.3c.6-.1 1.2.3 1.4.9l.7 2c.2.5.1 1.1-.3 1.5l-1.1 1.1c-.5.5-1.2.7-1.9.6-3.3-.6-6.4-2.8-8.8-5.2S3.9 9.9 3.3 6.6c-.1-.7.1-1.4.6-1.9l1.1-1.1z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconMail() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect
+        x="3.5"
+        y="5.5"
+        width="17"
+        height="13"
+        rx="2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M4.5 7.5 12 13l7.5-5.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -75,16 +116,41 @@ function sortContractors(list: ContractorCard[], sort: SortKey): ContractorCard[
   }
 }
 
+function readViewFromLocation(): ListView {
+  if (typeof window === "undefined") return "all";
+  return new URLSearchParams(window.location.search).get("view") === "saved"
+    ? "saved"
+    : "all";
+}
+
 function DirectoryInner() {
   const contractors = useQuery(api.contractors.list);
+  const { favorites, favoriteCount, isFavorite, toggleFavorite, ready } =
+    useFavorites();
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [city, setCity] = useState("");
   const [minRating, setMinRating] = useState("");
   const [sort, setSort] = useState<SortKey>("rating");
+  const [view, setView] = useState<ListView>("all");
 
   const deferredSearch = useDeferredValue(search);
+
+  useEffect(() => {
+    setView(readViewFromLocation());
+    const onPopState = () => setView(readViewFromLocation());
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  function setListView(next: ListView) {
+    setView(next);
+    const url = new URL(window.location.href);
+    if (next === "saved") url.searchParams.set("view", "saved");
+    else url.searchParams.delete("view");
+    window.history.replaceState({}, "", url);
+  }
 
   const facets = useMemo(() => {
     if (!contractors) return { categories: [] as string[], cities: [] as string[] };
@@ -105,8 +171,10 @@ function DirectoryInner() {
     if (!contractors) return [];
     const q = deferredSearch.trim().toLowerCase();
     const ratingFloor = minRating ? Number(minRating) : null;
+    const favoriteSet = new Set(favorites);
 
     const matched = contractors.filter((c: ContractorCard) => {
+      if (view === "saved" && !favoriteSet.has(c.slug)) return false;
       if (category && c.category !== category) return false;
       if (city && c.city !== city) return false;
       if (ratingFloor !== null) {
@@ -121,11 +189,22 @@ function DirectoryInner() {
     });
 
     return sortContractors(matched, sort);
-  }, [contractors, deferredSearch, category, city, minRating, sort]);
+  }, [
+    contractors,
+    deferredSearch,
+    category,
+    city,
+    minRating,
+    sort,
+    view,
+    favorites,
+  ]);
 
   if (contractors === undefined) {
     return <p className="loading">Loading Spokane contractors…</p>;
   }
+
+  const hasFilters = Boolean(search || category || city || minRating);
 
   return (
     <div className="directory">
@@ -133,10 +212,37 @@ function DirectoryInner() {
         <p className="hero-eyebrow">Spokane &amp; Inland Northwest</p>
         <h1>Find a contractor for your next project</h1>
         <p>
-          Browse local listings by trade, city, and rating—then open a profile
-          for contact details and Google Business links.
+          Free to browse—no account, no sign-in. Filter by trade, city, and
+          rating, save listings on this device, then open a profile to call or
+          email.
+        </p>
+        <p className="hero-note">
+          <a href="/how-it-works">How it works</a>
+          {" · "}
+          Hearts save to this browser only
         </p>
       </section>
+
+      <div className="view-tabs" role="tablist" aria-label="Directory views">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "all"}
+          className={`view-tab${view === "all" ? " is-active" : ""}`}
+          onClick={() => setListView("all")}
+        >
+          All listings
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "saved"}
+          className={`view-tab${view === "saved" ? " is-active" : ""}`}
+          onClick={() => setListView("saved")}
+        >
+          Saved{ready && favoriteCount > 0 ? ` (${favoriteCount})` : ""}
+        </button>
+      </div>
 
       <div className="filters">
         <label>
@@ -190,15 +296,24 @@ function DirectoryInner() {
 
       <div className="results-meta">
         <span>
-          {filtered.length}{" "}
-          {filtered.length === 1 ? "contractor" : "contractors"}
+          {view === "saved" ? (
+            <>
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "saved contractor" : "saved contractors"}
+            </>
+          ) : (
+            <>
+              {filtered.length}{" "}
+              {filtered.length === 1 ? "contractor" : "contractors"} found
+            </>
+          )}
         </span>
         <div className="results-actions">
           <label className="sort-control">
             <span className="sort-icon" aria-hidden>
               <IconSort />
             </span>
-            <span className="visually-hidden">Sort by</span>
+            <span className="sort-label">Sort by</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
@@ -210,7 +325,7 @@ function DirectoryInner() {
               <option value="name-desc">Name Z–A</option>
             </select>
           </label>
-          {(search || category || city || minRating) && (
+          {hasFilters && (
             <button
               type="button"
               className="button button-ghost"
@@ -228,57 +343,125 @@ function DirectoryInner() {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="empty">No contractors match these filters.</p>
+        <div className="empty">
+          {view === "saved" ? (
+            <>
+              <p>No saved contractors on this device yet.</p>
+              <p className="empty-hint">
+                Tap the heart on any listing to save it here. Saves stay in this
+                browser—no account needed.
+              </p>
+              <button
+                type="button"
+                className="button button-primary"
+                onClick={() => setListView("all")}
+              >
+                Browse all listings
+              </button>
+            </>
+          ) : (
+            <p>No contractors match these filters.</p>
+          )}
+        </div>
       ) : (
         <ul className="contractor-list">
-          {filtered.map((c, index) => (
-            <li
-              key={c._id}
-              className="contractor-card"
-              style={{ animationDelay: `${Math.min(index, 12) * 0.03}s` }}
-            >
-              <a className="contractor-main" href={`/contractors/${c.slug}`}>
-                <LogoMark name={c.name} logoUrl={c.logoUrl} />
-                <div className="contractor-copy">
-                  <h2 title={c.name}>{c.name}</h2>
-                  <p className="contractor-sub">
-                    {c.category}
-                    {c.city ? ` · ${c.city}` : ""}
-                  </p>
-                  {c.email ? (
-                    <p className="contractor-email" title={c.email}>
-                      {c.email}
-                    </p>
-                  ) : null}
+          {filtered.map((c, index) => {
+            const tel = phoneTelHref(c.phone);
+            const saved = isFavorite(c.slug);
+            return (
+              <li
+                key={c._id}
+                className="contractor-card"
+                style={{ animationDelay: `${Math.min(index, 12) * 0.03}s` }}
+              >
+                <div className="contractor-main">
+                  <a
+                    className="contractor-identity"
+                    href={`/contractors/${c.slug}`}
+                  >
+                    <LogoMark name={c.name} logoUrl={c.logoUrl} />
+                    <div className="contractor-copy">
+                      <h2 title={c.name}>{c.name}</h2>
+                      <p className="contractor-sub">
+                        {c.category}
+                        {c.city ? ` · ${c.city}` : ""}
+                      </p>
+                      <div className="contractor-rating">
+                        <StarRating
+                          rating={c.rating}
+                          reviewCount={c.reviewCount}
+                        />
+                      </div>
+                    </div>
+                  </a>
                 </div>
-              </a>
 
-              <div className="contractor-aside">
-                <div className="aside-top">
-                  <StarRating rating={c.rating} reviewCount={c.reviewCount} />
-                  <ShareButton
-                    contractor={{
-                      slug: c.slug,
-                      name: c.name,
-                      category: c.category,
-                      city: c.city,
-                      phone: c.phone,
-                      website: c.website,
-                    }}
+                <div className="contractor-aside">
+                  <div className="contractor-contact">
+                    {c.phone ? (
+                      tel ? (
+                        <a className="contact-line contact-phone" href={tel}>
+                          <span className="contact-icon" aria-hidden>
+                            <IconPhone />
+                          </span>
+                          <span>{formatPhone(c.phone)}</span>
+                        </a>
+                      ) : (
+                        <p className="contact-line">
+                          <span className="contact-icon" aria-hidden>
+                            <IconPhone />
+                          </span>
+                          <span>{formatPhone(c.phone)}</span>
+                        </p>
+                      )
+                    ) : null}
+                    {c.email ? (
+                      <a
+                        className="contact-line contact-email"
+                        href={`mailto:${c.email}`}
+                        title={c.email}
+                      >
+                        <span className="contact-icon" aria-hidden>
+                          <IconMail />
+                        </span>
+                        <span>{c.email}</span>
+                      </a>
+                    ) : null}
+                  </div>
+
+                  <QuickLinks
+                    website={c.website}
+                    gbpUrl={c.gbpUrl}
+                    socials={c.socials}
                   />
+
+                  <div className="contractor-actions">
+                    <a
+                      className="button button-primary button-view-profile"
+                      href={`/contractors/${c.slug}`}
+                    >
+                      View profile
+                    </a>
+                    <ShareButton
+                      contractor={{
+                        slug: c.slug,
+                        name: c.name,
+                        category: c.category,
+                        city: c.city,
+                        phone: c.phone,
+                        website: c.website,
+                      }}
+                    />
+                    <FavoriteButton
+                      slug={c.slug}
+                      saved={saved}
+                      onToggle={toggleFavorite}
+                    />
+                  </div>
                 </div>
-                {c.phone ? (
-                  <p className="contractor-phone">{formatPhone(c.phone)}</p>
-                ) : null}
-                <QuickLinks
-                  website={c.website}
-                  gbpUrl={c.gbpUrl}
-                  socials={c.socials}
-                  email={c.email}
-                />
-              </div>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

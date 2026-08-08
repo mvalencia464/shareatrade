@@ -1,0 +1,74 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>How it works | Spokane Contractors</title>
+    <meta
+      name="description"
+      content="Browse Spokane contractors for free with no sign-in. Save favorites on your device and contact listings directly."
+    />
+  </Fragment>
+
+  <article class="how-it-works">
+    <p class="hero-eyebrow">Simple by design</p>
+    <h1>How it works</h1>
+    <p class="lede">
+      Spokane Contractors is a free local directory. Browse listings, open a
+      profile, and contact the business—without creating an account.
+    </p>
+
+    <section>
+      <h2>No sign-in required</h2>
+      <p>
+        You do not need to register, log in, or leave an email to use this site.
+        There is no paywall and no “create a free account to continue” step.
+        Search, filter, call, and email from the listing itself.
+      </p>
+    </section>
+
+    <section>
+      <h2>Find a contractor</h2>
+      <ol>
+        <li>Filter by trade, city, or rating—or search by name.</li>
+        <li>Open <strong>View profile</strong> for full contact details, license info when available, and Google Business links.</li>
+        <li>Tap a phone number to call, or use email and website links when listed.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Save with the heart</h2>
+      <p>
+        Tap the heart on a listing to save it. Open the <a href="/?view=saved">Saved</a> tab anytime to revisit your shortlist.
+      </p>
+      <p>
+        Saves live in this browser on this device only (local storage). That keeps
+        the directory free of accounts while still letting you bookmark contractors
+        while you compare options.
+      </p>
+    </section>
+
+    <section>
+      <h2>Limits of device saves</h2>
+      <ul>
+        <li>Saved lists do not sync to your phone, another computer, or another browser.</li>
+        <li>Clearing site data, cookies, or using private/incognito mode can erase saves.</li>
+        <li>If you switch devices, start a fresh shortlist—or share listing links with yourself.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Before you hire</h2>
+      <p>
+        Listings are a starting point. Confirm licensing, insurance, and scope of
+        work directly with the contractor before signing a contract.
+      </p>
+    </section>
+
+    <p class="how-actions">
+      <a class="button button-primary" href="/">Browse contractors</a>
+      <a class="button button-secondary" href="/?view=saved">Open saved</a>
+    </p>
+  </article>
+</BaseLayout>

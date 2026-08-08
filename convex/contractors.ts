@@ -203,10 +203,14 @@ export const upsertBatch = internalMutation({
         )
         .unique();
 
+      // Blank string from import means "clear city" (JSON drops undefined).
+      const city = contractor.city?.trim() ? contractor.city : undefined;
+      const doc = { ...contractor, city };
+
       if (existing) {
         // Preserve license enrichment across CSV re-imports.
         await ctx.db.patch(existing._id, {
-          ...contractor,
+          ...doc,
           licenseNumber: existing.licenseNumber,
           licenseStatus: existing.licenseStatus,
           licenseType: existing.licenseType,
@@ -217,7 +221,7 @@ export const upsertBatch = internalMutation({
         });
         updated += 1;
       } else {
-        await ctx.db.insert("contractors", contractor);
+        await ctx.db.insert("contractors", doc);
         inserted += 1;
       }
     }

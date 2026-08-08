@@ -18,9 +18,9 @@ import {
   optionalString,
   parseNumber,
   parseSocials,
+  normalizeCity,
   resolveWaOrIdLocation,
   slugify,
-  titleCaseCity,
 } from "./import-lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -82,7 +82,8 @@ function mapRow(row, slug, location) {
     googleCid: String(row.google_cid).trim(),
     googleMapsRank: rank,
     category: row.Category.trim(),
-    city: cityRaw ? titleCaseCity(cityRaw) : undefined,
+    // Always send city ("" clears junk); upsert treats blank as unset.
+    city: (cityRaw ? normalizeCity(cityRaw) : undefined) ?? "",
     state: location.state,
     website: optionalString(row.Website),
     gbpUrl: row["GBP URL"].trim(),

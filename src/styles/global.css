@@ -66,11 +66,17 @@ select {
 .site-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.65rem 1.25rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.85rem 1.5rem;
   margin-bottom: 1.75rem;
   padding: 0.35rem 0 1.1rem;
   border-bottom: 1px solid var(--line);
+}
+
+.brand-block {
+  display: grid;
+  gap: 0.2rem;
 }
 
 .brand {
@@ -88,6 +94,23 @@ select {
   font-size: 0.92rem;
 }
 
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.site-nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: var(--pine-deep);
+}
+
 .site-footer {
   margin-top: 3rem;
   padding-top: 1.25rem;
@@ -95,6 +118,16 @@ select {
   color: var(--ink-soft);
   font-size: 0.88rem;
   line-height: 1.5;
+}
+
+.site-footer a {
+  color: var(--pine-deep);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
 }
 
 .env-warning {
@@ -135,6 +168,52 @@ select {
   color: var(--ink-soft);
   font-size: 1.02rem;
   line-height: 1.55;
+}
+
+.hero-note {
+  margin-top: 0.75rem !important;
+  font-size: 0.9rem !important;
+}
+
+.hero-note a {
+  color: var(--pine-deep);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.hero-note a:hover {
+  text-decoration: underline;
+}
+
+.view-tabs {
+  display: inline-flex;
+  gap: 0.35rem;
+  padding: 0.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.view-tab {
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font-weight: 650;
+  font-size: 0.88rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.view-tab.is-active {
+  background: var(--pine);
+  color: #f7faf7;
+}
+
+.view-tab:hover:not(.is-active) {
+  color: var(--pine-deep);
+  background: var(--pine-soft);
 }
 
 .directory {
@@ -216,6 +295,12 @@ select {
   align-items: center;
   gap: 0.35rem;
   color: var(--pine-deep);
+}
+
+.sort-label {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: var(--ink-soft);
 }
 
 .sort-icon {
@@ -344,19 +429,17 @@ select {
 
 .contractor-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 1.1rem 1.35rem;
   align-items: center;
-  padding: 0.85rem 1rem;
-  background: var(--surface);
-  border: 1px solid transparent;
+  padding: 1rem 1.1rem;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
-    background 0.2s ease,
     box-shadow 0.2s ease;
   animation: rise 0.5s ease both;
 }
@@ -364,23 +447,26 @@ select {
 .contractor-card:hover {
   transform: translateY(-2px);
   border-color: rgba(42, 106, 69, 0.22);
-  background: var(--surface-solid);
   box-shadow: var(--shadow-hover);
 }
 
 .contractor-main {
+  min-width: 0;
+}
+
+.contractor-identity {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 0.9rem;
-  align-items: center;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 0.95rem;
+  align-items: start;
   min-width: 0;
   text-decoration: none;
   color: inherit;
 }
 
 .logo-mark {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 14px;
   object-fit: contain;
   /* Mid sage so white logos aren’t lost on white cards. */
@@ -410,37 +496,133 @@ select {
 
 .contractor-copy h2 {
   margin: 0 0 0.18rem;
-  font-size: 1.05rem;
-  font-weight: 650;
+  font-size: 1.12rem;
+  font-weight: 700;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.contractor-sub,
-.contractor-email,
-.contractor-phone {
+.contractor-sub {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   line-height: 1.35;
 }
 
-.contractor-email {
-  margin-top: 0.2rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  color: var(--pine-deep);
+.contractor-rating {
+  margin-top: 0.55rem;
 }
 
 .contractor-aside {
   display: grid;
-  justify-items: end;
-  gap: 0.4rem;
-  text-align: right;
+  gap: 0.65rem;
+  justify-items: stretch;
+  min-width: 0;
+}
+
+.contractor-contact {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.contact-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 550;
+}
+
+a.contact-line:hover {
+  color: var(--pine-deep);
+}
+
+.contact-icon {
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  color: var(--ink-soft);
+}
+
+.contact-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.contact-line span:last-child {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contractor-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.contractor-actions .share-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border-color: var(--line);
+  background: var(--surface-solid);
+}
+
+.favorite-button {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-solid);
+  color: var(--ink-soft);
+  cursor: pointer;
+  flex: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.favorite-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.favorite-button:hover {
+  border-color: rgba(42, 106, 69, 0.35);
+  color: var(--pine-deep);
+  transform: translateY(-1px);
+}
+
+.favorite-button.is-saved {
+  background: #fdecef;
+  border-color: rgba(176, 58, 78, 0.28);
+  color: #b03a4e;
+}
+
+.favorite-button-lg {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+}
+
+.favorite-button-lg svg {
+  width: 20px;
+  height: 20px;
 }
 
 .star-rating {
@@ -505,7 +687,7 @@ select {
 .quick-links {
   display: inline-flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0.35rem;
 }
 
@@ -610,11 +792,83 @@ select {
   font-size: 0.84rem;
 }
 
+.button.button-view-profile {
+  border-radius: 12px;
+  padding: 0.72rem 1.15rem;
+  flex: 1 1 auto;
+  min-width: 8.5rem;
+}
+
 .empty,
 .loading {
   padding: 2.25rem 1rem;
   text-align: center;
   color: var(--ink-soft);
+}
+
+.empty-hint {
+  max-width: 28rem;
+  margin: 0.55rem auto 1.1rem;
+  line-height: 1.5;
+}
+
+.how-it-works {
+  max-width: 42rem;
+  animation: rise 0.6s ease both;
+}
+
+.how-it-works h1 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.how-it-works p,
+.how-it-works li {
+  color: var(--ink);
+  line-height: 1.55;
+  opacity: 0.82;
+}
+
+.how-it-works .lede {
+  margin: 0 0 1.75rem;
+  color: var(--ink);
+  opacity: 0.78;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.how-it-works section {
+  margin-bottom: 1.5rem;
+}
+
+.how-it-works h2 {
+  margin: 0 0 0.45rem;
+  font-size: 1.05rem;
+}
+
+.how-it-works p {
+  margin: 0 0 0.65rem;
+}
+
+.how-it-works ol,
+.how-it-works ul {
+  margin: 0 0 0.65rem;
+  padding-left: 1.2rem;
+}
+
+.how-it-works a {
+  color: var(--pine-deep);
+  font-weight: 650;
+}
+
+.how-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.75rem;
 }
 
 .detail {
@@ -933,25 +1187,31 @@ select {
     grid-template-columns: 1fr;
   }
 
+  .sort-label {
+    display: none;
+  }
+
   .contractor-card {
     grid-template-columns: 1fr;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
 
   .contractor-aside {
-    justify-items: start;
-    text-align: left;
+    justify-items: stretch;
   }
 
   .quick-links {
     justify-content: flex-start;
   }
 
-  .contractor-copy h2,
-  .contractor-email {
+  .contractor-copy h2 {
     white-space: normal;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+  }
+
+  .button-view-profile {
+    min-width: 0;
   }
 }

@@ -1,12 +1,14 @@
 import { useQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
+import { useFavorites } from "../hooks/useFavorites";
+import { formatPhone, phoneTelHref } from "../lib/phone";
 import { ConvexProvider } from "./ConvexProvider";
 import { CoverImage } from "./CoverImage";
+import { FavoriteButton } from "./FavoriteButton";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
 import { StarRating } from "./StarRating";
-import { formatPhone, phoneTelHref } from "../lib/phone";
 
 type Neighbor = {
   slug: string;
@@ -161,6 +163,7 @@ function ContractorPager({
 
 function DetailInner({ slug }: { slug: string }) {
   const contractor = useQuery(api.contractors.getBySlug, { slug });
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const [cachedNav] = useState(() =>
     typeof sessionStorage === "undefined" ? null : readNavCache(slug),
@@ -263,6 +266,12 @@ function DetailInner({ slug }: { slug: string }) {
                 Call {formatPhone(contractor.phone)}
               </a>
             ) : null}
+            <FavoriteButton
+              slug={contractor.slug}
+              saved={isFavorite(contractor.slug)}
+              onToggle={toggleFavorite}
+              size="lg"
+            />
           </div>
 
           <QuickLinks
@@ -280,7 +289,15 @@ function DetailInner({ slug }: { slug: string }) {
         <section className="detail-block">
           <h2>Contact</h2>
           {contractor.phone ? (
-            <p>{formatPhone(contractor.phone)}</p>
+            <p>
+              <a
+                href={
+                  phoneTelHref(contractor.phone) ?? `tel:${contractor.phone}`
+                }
+              >
+                {formatPhone(contractor.phone)}
+              </a>
+            </p>
           ) : (
             <p>No phone listed</p>
           )}

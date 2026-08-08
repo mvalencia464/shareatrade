@@ -20,16 +20,23 @@ import "../styles/global.css";
   <body>
     <div class="site-shell">
       <header class="site-header">
-        <a class="brand" href="/">Spokane Contractors</a>
-        <p class="brand-tag">Local trades for local projects</p>
+        <div class="brand-block">
+          <a class="brand" href="/">Spokane Contractors</a>
+          <p class="brand-tag">Free to use · No sign-in</p>
+        </div>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/">Directory</a>
+          <a href="/?view=saved">Saved</a>
+          <a href="/how-it-works">How it works</a>
+        </nav>
       </header>
       <main>
         <slot />
       </main>
       <footer class="site-footer">
         <p>
-          A resource for Spokane-area homeowners and contractors. Verify licensing
-          and insurance before hiring.
+          Free Spokane-area contractor directory—no sign-in required. Verify
+          licensing and insurance before hiring. <a href="/how-it-works">How it works</a>
         </p>
       </footer>
     </div>
