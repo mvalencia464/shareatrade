@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { DirectoryApp } from "../components/DirectoryApp";
+
+const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>Spokane Contractors | Local trade directory</title>
+    <meta
+      name="description"
+      content="Find Spokane-area contractors by trade, city, and rating for your next home project."
+    />
+  </Fragment>
+  {convexUrl ? (
+    <DirectoryApp client:load convexUrl={convexUrl} />
+  ) : (
+    <p class="env-warning">
+      Set PUBLIC_CONVEX_URL in .env.local after running npx convex dev.
+    </p>
+  )}
+</BaseLayout>

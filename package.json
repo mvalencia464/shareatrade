@@ -1,0 +1,29 @@
+{
+  "name": "spokane-directory",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "dev:backend": "convex dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "import:contractors": "node scripts/import-contractors.mjs",
+    "import:contractors:dry": "node scripts/import-contractors.mjs --dry-run",
+    "enrich:licenses": "node scripts/enrich-licenses.mjs",
+    "enrich:licenses:dry": "node scripts/enrich-licenses.mjs --dry-run"
+  },
+  "dependencies": {
+    "@astrojs/react": "^6.0.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "astro": "^7.2.0",
+    "convex": "^1.43.0",
+    "csv-parse": "^7.0.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}
