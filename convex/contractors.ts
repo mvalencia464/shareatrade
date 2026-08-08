@@ -33,8 +33,9 @@ const contractorCardValidator = v.object({
   email: v.optional(v.string()),
   logoUrl: v.optional(v.string()),
   website: v.optional(v.string()),
-  gbpUrl: v.string(),
+  gbpUrl: v.optional(v.string()),
   socials: v.array(socialLinkValidator),
+  source: v.optional(v.string()),
 });
 
 const contractorDetailValidator = v.object({
@@ -48,7 +49,7 @@ const contractorDetailValidator = v.object({
   city: v.optional(v.string()),
   state: v.optional(v.string()),
   website: v.optional(v.string()),
-  gbpUrl: v.string(),
+  gbpUrl: v.optional(v.string()),
   phone: v.optional(v.string()),
   email: v.optional(v.string()),
   address: v.optional(v.string()),
@@ -58,6 +59,7 @@ const contractorDetailValidator = v.object({
   logoUrl: v.optional(v.string()),
   mainImageUrl: v.optional(v.string()),
   socials: v.array(socialLinkValidator),
+  source: v.optional(v.string()),
   sourceUpdatedAt: v.number(),
   ...licenseFields,
 });
@@ -71,7 +73,7 @@ const contractorInputValidator = v.object({
   city: v.optional(v.string()),
   state: v.optional(v.string()),
   website: v.optional(v.string()),
-  gbpUrl: v.string(),
+  gbpUrl: v.optional(v.string()),
   phone: v.optional(v.string()),
   email: v.optional(v.string()),
   address: v.optional(v.string()),
@@ -81,7 +83,12 @@ const contractorInputValidator = v.object({
   logoUrl: v.optional(v.string()),
   mainImageUrl: v.optional(v.string()),
   socials: v.array(socialLinkValidator),
+  source: v.optional(v.string()),
   sourceUpdatedAt: v.number(),
+  licenseNumber: v.optional(v.string()),
+  licenseState: v.optional(v.string()),
+  licenseMatchedBy: v.optional(v.string()),
+  licenseUpdatedAt: v.optional(v.number()),
 });
 
 async function loadAllContractors(ctx: QueryCtx) {
@@ -120,6 +127,7 @@ export const list = query({
         website: c.website,
         gbpUrl: c.gbpUrl,
         socials: c.socials,
+        source: c.source,
       })),
     );
   },
@@ -163,22 +171,28 @@ export const listForEnrichment = internalQuery({
   returns: v.array(
     v.object({
       _id: v.id("contractors"),
+      slug: v.string(),
       name: v.string(),
       phone: v.optional(v.string()),
       city: v.optional(v.string()),
       state: v.optional(v.string()),
       licenseNumber: v.optional(v.string()),
+      googleCid: v.string(),
+      source: v.optional(v.string()),
     }),
   ),
   handler: async (ctx) => {
     const contractors = await loadAllContractors(ctx);
     return contractors.map((c) => ({
       _id: c._id,
+      slug: c.slug,
       name: c.name,
       phone: c.phone,
       city: c.city,
       state: c.state,
       licenseNumber: c.licenseNumber,
+      googleCid: c.googleCid,
+      source: c.source,
     }));
   },
 });
@@ -205,19 +219,22 @@ export const upsertBatch = internalMutation({
 
       // Blank string from import means "clear city" (JSON drops undefined).
       const city = contractor.city?.trim() ? contractor.city : undefined;
-      const doc = { ...contractor, city };
+      const gbpUrl = contractor.gbpUrl?.trim() ? contractor.gbpUrl : undefined;
+      const doc = { ...contractor, city, gbpUrl };
 
       if (existing) {
-        // Preserve license enrichment across CSV re-imports.
+        // Preserve license enrichment across CSV re-imports unless incoming provides one.
         await ctx.db.patch(existing._id, {
           ...doc,
-          licenseNumber: existing.licenseNumber,
+          licenseNumber: contractor.licenseNumber ?? existing.licenseNumber,
           licenseStatus: existing.licenseStatus,
           licenseType: existing.licenseType,
-          licenseState: existing.licenseState,
+          licenseState: contractor.licenseState ?? existing.licenseState,
           licenseExpiresAt: existing.licenseExpiresAt,
-          licenseMatchedBy: existing.licenseMatchedBy,
-          licenseUpdatedAt: existing.licenseUpdatedAt,
+          licenseMatchedBy:
+            contractor.licenseMatchedBy ?? existing.licenseMatchedBy,
+          licenseUpdatedAt:
+            contractor.licenseUpdatedAt ?? existing.licenseUpdatedAt,
         });
         updated += 1;
       } else {

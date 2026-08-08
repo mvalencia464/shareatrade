@@ -251,14 +251,16 @@ function DetailInner({ slug }: { slug: string }) {
                 Visit website
               </a>
             ) : null}
-            <a
-              className="button button-secondary"
-              href={contractor.gbpUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Google Business
-            </a>
+            {contractor.gbpUrl ? (
+              <a
+                className="button button-secondary"
+                href={contractor.gbpUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Google Business
+              </a>
+            ) : null}
             {contractor.phone ? (
               <a
                 className="button button-secondary"
@@ -328,17 +330,29 @@ function DetailInner({ slug }: { slug: string }) {
         <section className="detail-block">
           <h2>Listing details</h2>
           <p>Category: {contractor.category}</p>
-          <p>Google Maps rank: #{contractor.googleMapsRank}</p>
-          <div className="detail-block-stars">
-            <StarRating
-              rating={contractor.rating}
-              reviewCount={contractor.reviewCount}
-            />
-          </div>
-          <p>
-            Google Business Profile:{" "}
-            {contractor.claimed ? "Claimed" : "Unclaimed"}
-          </p>
+          {contractor.source ? <p>Source: {contractor.source}</p> : null}
+          {contractor.gbpUrl ? (
+            <>
+              <p>Google Maps rank: #{contractor.googleMapsRank}</p>
+              <div className="detail-block-stars">
+                <StarRating
+                  rating={contractor.rating}
+                  reviewCount={contractor.reviewCount}
+                />
+              </div>
+              <p>
+                Google Business Profile:{" "}
+                {contractor.claimed ? "Claimed" : "Unclaimed"}
+              </p>
+            </>
+          ) : (
+            <div className="detail-block-stars">
+              <StarRating
+                rating={contractor.rating}
+                reviewCount={contractor.reviewCount}
+              />
+            </div>
+          )}
         </section>
 
         {contractor.licenseNumber ? (

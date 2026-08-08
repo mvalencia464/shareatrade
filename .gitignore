@@ -20,6 +20,7 @@ pnpm-debug.log*
 
 # import audit output
 import-report.json
+nicc-import-report.json
 license-enrichment-report.json
 
 # macOS-specific files

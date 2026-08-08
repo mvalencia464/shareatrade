@@ -25,7 +25,7 @@ type ContractorCard = {
   email?: string;
   logoUrl?: string;
   website?: string;
-  gbpUrl: string;
+  gbpUrl?: string;
   socials: SocialLink[];
 };
 
