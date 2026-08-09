@@ -954,9 +954,13 @@ a.contact-line:hover {
   padding-left: 1.2rem;
 }
 
-.how-it-works a {
+.how-it-works a:not(.button) {
   color: var(--pine-deep);
   font-weight: 650;
+}
+
+.how-it-works a.button-primary {
+  color: #f5f8fb;
 }
 
 .how-actions {
