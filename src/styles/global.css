@@ -67,11 +67,13 @@ select {
 .no-signup-sticker {
   --font-script: "Caveat", "Segoe Print", "Comic Sans MS", cursive;
   display: inline-flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
   width: fit-content;
   max-width: 100%;
   margin: 0 0 0.95rem 0.15rem;
-  padding: 0.35rem 0.85rem 0.45rem;
+  padding: 0.4rem 0.9rem 0.5rem;
   background:
     linear-gradient(145deg, #f7ebad 0%, #ebcc52 52%, #d9b53c 100%);
   color: #2a2410;
@@ -83,6 +85,15 @@ select {
   transform: rotate(-3deg);
   transform-origin: left center;
   animation: sticker-pop 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+.no-signup-sticker-kicker {
+  font-family: var(--font-script);
+  font-size: clamp(0.95rem, 2.2vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  opacity: 0.72;
 }
 
 .no-signup-sticker-copy {
