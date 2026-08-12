@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CONTACT_EMAIL, contractorHelpMailto } from "../lib/site";
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>For contractors | Spokane List</title>
+    <meta
+      name="description"
+      content="Free Spokane-area directory listings for contractors. Optional help with Google reviews, Business Profile, or a simple website."
+    />
+  </Fragment>
+
+  <article class="how-it-works">
+    <p class="hero-eyebrow">For contractors</p>
+    <h1>Your listing is the point</h1>
+    <p class="lede">
+      This directory is free. Homeowners use it to find a trade and share a clean
+      profile in neighborhood chats and Facebook groups. You don’t need an
+      account, and you don’t need to buy anything to stay listed.
+    </p>
+
+    <section>
+      <h2>What the free listing does</h2>
+      <ul>
+        <li>A shareable page with your name, trade, city, phone, and site.</li>
+        <li>Google rating and review count when we have them.</li>
+        <li>A listing link that holds up when someone pastes it in a group.</li>
+      </ul>
+      <p>
+        Keep your
+        <a href="https://business.google.com/" target="_blank" rel="noreferrer"
+          >Google Business Profile</a
+        >
+        current, then <a href="/get-listed">request a listing</a> or a fix. We
+        refresh from GBP—we don’t run a second profile you have to manage here.
+      </p>
+    </section>
+
+    <section>
+      <h2>If you ever want a hand</h2>
+      <p>
+        Some local contractors ask for help getting more Google reviews, cleaning
+        up a Business Profile, or putting up a simple website that matches this
+        listing. If that’s useful, you’re welcome to write. If not, the directory
+        stays free either way.
+      </p>
+      <p>
+        <a href={contractorHelpMailto()}>Email {CONTACT_EMAIL}</a>
+      </p>
+    </section>
+
+    <p class="how-actions">
+      <a class="button button-primary" href="/get-listed">Request a listing</a>
+      <a class="button button-secondary" href="/">See the directory</a>
+    </p>
+  </article>
+</BaseLayout>

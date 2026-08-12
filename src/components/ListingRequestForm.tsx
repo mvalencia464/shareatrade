@@ -64,6 +64,11 @@ function ListingRequestFormInner() {
           your GBP listing is accurate. We’ll review requests and refresh the
           directory as needed.
         </p>
+        <p>
+          Your listing stays free. If you ever want help with Google reviews,
+          your Business Profile, or a simple website, there’s an optional note
+          on <a href="/for-contractors">resources for contractors</a>.
+        </p>
         <button
           type="button"
           className="button button-secondary"

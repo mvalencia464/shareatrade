@@ -5,6 +5,7 @@ import { useFavorites } from "../hooks/useFavorites";
 import { formatPhone, phoneTelHref } from "../lib/phone";
 import { ConvexProvider } from "./ConvexProvider";
 import { CoverImage } from "./CoverImage";
+import { ContractorHelpNote } from "./ContractorHelpNote";
 import { FavoriteButton } from "./FavoriteButton";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
@@ -396,6 +397,8 @@ function DetailInner({ slug }: { slug: string }) {
           </section>
         ) : null}
       </div>
+
+      <ContractorHelpNote />
 
       <ContractorPager currentSlug={slug} neighbors={neighbors} />
     </article>
