@@ -9,7 +9,7 @@ export const SHARE_EXAMPLE = {
   path: "/contractors/valley-ridge-electric",
 };
 
-export function shareExampleLines(origin = "https://spokanecontractors.com") {
+export function shareExampleLines(origin = "https://spokanelist.com") {
   return [
     SHARE_EXAMPLE.name,
     `${SHARE_EXAMPLE.category} · ${SHARE_EXAMPLE.city}`,
