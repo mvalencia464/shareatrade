@@ -750,6 +750,7 @@ a.contact-line:hover {
 }
 
 .contractor-toolbar {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1053,11 +1054,149 @@ a.contact-line:hover {
   color: #f5f8fb;
 }
 
+.how-it-works .share-sheet p {
+  opacity: 1;
+  color: inherit;
+}
+
 .how-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
   margin-top: 1.75rem;
+}
+
+.share-sheet {
+  margin: 0.85rem 0 0.35rem;
+  padding: 0.85rem 0.95rem 0.95rem;
+  max-width: 22rem;
+  border-radius: 18px;
+  background: #f7f8fa;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.share-sheet.is-compact {
+  margin: 0;
+  padding: 0.7rem 0.8rem 0.8rem;
+  max-width: none;
+}
+
+.share-sheet-handle {
+  width: 36px;
+  height: 4px;
+  margin: 0 auto 0.65rem;
+  border-radius: 99px;
+  background: rgba(26, 35, 48, 0.18);
+}
+
+.share-sheet-kicker {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.share-sheet-title {
+  margin: 0 0 0.45rem;
+  font-weight: 750;
+  font-size: 0.98rem;
+}
+
+.share-sheet-body {
+  margin: 0;
+  padding: 0.65rem 0.7rem;
+  border-radius: 10px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.share-sheet-actions {
+  display: flex;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+}
+
+.share-sheet-actions span {
+  flex: 1;
+  text-align: center;
+  padding: 0.4rem 0.2rem;
+  border-radius: 9px;
+  background: var(--pine-soft);
+  color: var(--pine-deep);
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.share-hint {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 8;
+  width: min(18.5rem, calc(100vw - 2.5rem));
+  padding: 0.75rem 0.8rem 0.85rem;
+  border-radius: 16px;
+  background: var(--surface-solid);
+  border: 1px solid rgba(47, 95, 122, 0.22);
+  box-shadow: var(--shadow-hover);
+  animation: rise 0.35s ease both;
+}
+
+.share-hint::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 52px;
+  width: 12px;
+  height: 12px;
+  background: var(--surface-solid);
+  border-left: 1px solid rgba(47, 95, 122, 0.22);
+  border-top: 1px solid rgba(47, 95, 122, 0.22);
+  transform: rotate(45deg);
+}
+
+.share-hint-copy {
+  margin: 0 2.4rem 0.65rem 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.share-hint-dismiss {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.22rem 0.45rem;
+  background: var(--pine-soft);
+  color: var(--pine-deep);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.share-hint-dismiss:hover {
+  background: var(--pine);
+  color: #f5f8fb;
+}
+
+.contractor-toolbar:has(.share-hint) .share-button {
+  border-color: rgba(47, 95, 122, 0.35);
+  box-shadow: 0 0 0 3px rgba(47, 95, 122, 0.16);
+}
+
+.contractor-card:has(.share-hint) {
+  z-index: 2;
+  overflow: visible;
 }
 
 .get-listed {
@@ -1625,6 +1764,16 @@ a.contact-line:hover {
 
   .contractor-toolbar {
     justify-content: flex-start;
+  }
+
+  .share-hint {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+
+  .share-hint::before {
+    right: 44px;
   }
 
   .quick-links {

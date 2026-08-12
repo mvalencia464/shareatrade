@@ -9,6 +9,7 @@ import { FavoriteButton } from "./FavoriteButton";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
 import { ShareButton } from "./ShareButton";
+import { ShareHintOverlay } from "./ShareHintOverlay";
 import { StarRating } from "./StarRating";
 
 type SocialLink = { platform: string; url: string };
@@ -404,6 +405,7 @@ function DirectoryInner() {
                         website: c.website,
                       }}
                     />
+                    {index === 0 && view === "all" ? <ShareHintOverlay /> : null}
                     <FavoriteButton
                       slug={c.slug}
                       saved={saved}

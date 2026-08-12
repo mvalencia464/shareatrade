@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { ShareExampleSheet } from "../components/ShareExampleSheet";
 ---
 
 <BaseLayout>
@@ -25,6 +26,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <li>Open a profile for contact info and license details when we have them.</li>
         <li>Tap to call, email, or visit their site.</li>
       </ol>
+    </section>
+
+    <section>
+      <h2>Share a listing</h2>
+      <p>
+        Tap the share icon on a card or profile. On a phone, the system share
+        sheet opens so you can send it in Messages, Mail, or another app. If
+        share isn’t available, we copy the same details to your clipboard.
+      </p>
+      <p>Copied text looks like this:</p>
+      <ShareExampleSheet />
     </section>
 
     <section>
