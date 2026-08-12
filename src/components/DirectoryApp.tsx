@@ -33,6 +33,51 @@ type ContractorCard = {
 type SortKey = "rating" | "reviews" | "name-asc" | "name-desc";
 type ListView = "all" | "saved";
 
+const CORE_CITIES = new Set([
+  "spokane",
+  "spokane valley",
+  "liberty lake",
+  "airway heights",
+  "cheney",
+  "medical lake",
+  "deer park",
+  "millwood",
+]);
+
+function locationRank(city?: string): number {
+  if (!city) return 2;
+  return CORE_CITIES.has(city.trim().toLowerCase()) ? 0 : 1;
+}
+
+function sortContractors(list: ContractorCard[], sort: SortKey): ContractorCard[] {
+  const items = [...list];
+  switch (sort) {
+    case "reviews":
+      return items.sort((a, b) => {
+        const diff = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
+        if (diff !== 0) return diff;
+        const local = locationRank(a.city) - locationRank(b.city);
+        if (local !== 0) return local;
+        return a.name.localeCompare(b.name);
+      });
+    case "name-asc":
+      return items.sort((a, b) => a.name.localeCompare(b.name));
+    case "name-desc":
+      return items.sort((a, b) => b.name.localeCompare(a.name));
+    case "rating":
+    default:
+      return items.sort((a, b) => {
+        const diff = (b.rating ?? 0) - (a.rating ?? 0);
+        if (diff !== 0) return diff;
+        const local = locationRank(a.city) - locationRank(b.city);
+        if (local !== 0) return local;
+        const reviews = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
+        if (reviews !== 0) return reviews;
+        return a.name.localeCompare(b.name);
+      });
+  }
+}
+
 function IconSort() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -53,31 +98,6 @@ function IconSort() {
       />
     </svg>
   );
-}
-
-function sortContractors(list: ContractorCard[], sort: SortKey): ContractorCard[] {
-  const items = [...list];
-  switch (sort) {
-    case "reviews":
-      return items.sort((a, b) => {
-        const diff = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
-        if (diff !== 0) return diff;
-        return a.name.localeCompare(b.name);
-      });
-    case "name-asc":
-      return items.sort((a, b) => a.name.localeCompare(b.name));
-    case "name-desc":
-      return items.sort((a, b) => b.name.localeCompare(a.name));
-    case "rating":
-    default:
-      return items.sort((a, b) => {
-        const diff = (b.rating ?? 0) - (a.rating ?? 0);
-        if (diff !== 0) return diff;
-        const reviews = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
-        if (reviews !== 0) return reviews;
-        return a.name.localeCompare(b.name);
-      });
-  }
 }
 
 function readViewFromLocation(): ListView {

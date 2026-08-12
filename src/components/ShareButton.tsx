@@ -39,11 +39,13 @@ function buildSharePayload(contractor: ShareContractor) {
     contractor.website ?? null,
     url,
   ].filter(Boolean);
+  const clipboard = lines.join("\n");
   return {
     title: contractor.name,
-    text: lines.slice(0, -1).join("\n"),
+    // Full body with the listing URL last so Facebook/etc. unfurl Spokane List.
+    text: clipboard,
     url,
-    clipboard: lines.join("\n"),
+    clipboard,
   };
 }
 
@@ -60,7 +62,6 @@ export function ShareButton({ contractor }: { contractor: ShareContractor }) {
         await navigator.share({
           title: payload.title,
           text: payload.text,
-          url: payload.url,
         });
         setStatus("shared");
         window.setTimeout(() => setStatus("idle"), 1600);
