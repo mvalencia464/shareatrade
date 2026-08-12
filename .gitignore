@@ -22,6 +22,7 @@ pnpm-debug.log*
 import-report.json
 nicc-import-report.json
 license-enrichment-report.json
+localprospects-last.json
 
 # macOS-specific files
 .DS_Store

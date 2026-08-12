@@ -210,12 +210,19 @@ export const upsertBatch = internalMutation({
     let updated = 0;
 
     for (const contractor of args.contractors) {
-      const existing = await ctx.db
+      const existingByCid = await ctx.db
         .query("contractors")
         .withIndex("by_google_cid", (q) =>
           q.eq("googleCid", contractor.googleCid),
         )
         .unique();
+      const existingBySlug = existingByCid
+        ? null
+        : await ctx.db
+            .query("contractors")
+            .withIndex("by_slug", (q) => q.eq("slug", contractor.slug))
+            .unique();
+      const existing = existingByCid ?? existingBySlug;
 
       // Blank string from import means "clear city" (JSON drops undefined).
       const city = contractor.city?.trim() ? contractor.city : undefined;

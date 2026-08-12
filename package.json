@@ -16,7 +16,9 @@
     "import:nicc": "node scripts/import-nicc.mjs",
     "import:nicc:dry": "node scripts/import-nicc.mjs --dry-run",
     "enrich:licenses": "node scripts/enrich-licenses.mjs",
-    "enrich:licenses:dry": "node scripts/enrich-licenses.mjs --dry-run"
+    "enrich:licenses:dry": "node scripts/enrich-licenses.mjs --dry-run",
+    "import:localprospects": "node scripts/import-localprospects.mjs",
+    "import:localprospects:dry": "node scripts/import-localprospects.mjs --dry-run"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
