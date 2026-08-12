@@ -66,6 +66,8 @@ select {
 
 .no-signup-sticker {
   --font-script: "Caveat", "Segoe Print", "Comic Sans MS", cursive;
+  --sticker-tilt: -2.5deg;
+  position: relative;
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
@@ -73,27 +75,51 @@ select {
   width: fit-content;
   max-width: 100%;
   margin: 0 0 0.95rem 0.15rem;
-  padding: 0.4rem 0.9rem 0.5rem;
+  padding: 0.48rem 1.05rem 0.52rem;
+  color: var(--pine-deep);
+  border: none;
+  border-radius: 2px;
   background:
-    linear-gradient(145deg, #f7ebad 0%, #ebcc52 52%, #d9b53c 100%);
-  color: #2a2410;
-  border: 2px solid rgba(42, 36, 16, 0.16);
-  border-radius: 0.4rem 1rem 0.5rem 0.85rem;
+    repeating-linear-gradient(
+      -22deg,
+      rgba(255, 255, 255, 0.22) 0 1px,
+      transparent 1px 8px
+    ),
+    linear-gradient(180deg, #f6f1e4 0%, #e8dfc8 100%);
   box-shadow:
-    2px 3px 0 rgba(42, 36, 16, 0.1),
-    0 10px 22px rgba(26, 35, 48, 0.1);
-  transform: rotate(-3deg);
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -1px 0 rgba(90, 70, 30, 0.08),
+    2px 4px 0 rgba(26, 35, 48, 0.06),
+    0 10px 20px rgba(26, 35, 48, 0.08);
+  font-family: var(--font-script);
+  transform: rotate(var(--sticker-tilt));
   transform-origin: left center;
   animation: sticker-pop 0.55s cubic-bezier(0.22, 1.2, 0.36, 1) both;
 }
 
-.no-signup-sticker-kicker {
-  font-family: var(--font-script);
-  font-size: clamp(0.95rem, 2.2vw, 1.1rem);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1;
-  opacity: 0.72;
+.no-signup-sticker::before,
+.no-signup-sticker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0.55rem;
+  pointer-events: none;
+  opacity: 0.35;
+  background: linear-gradient(
+    90deg,
+    rgba(90, 70, 30, 0.12),
+    transparent 70%
+  );
+}
+
+.no-signup-sticker::before {
+  left: 0;
+}
+
+.no-signup-sticker::after {
+  right: 0;
+  transform: scaleX(-1);
 }
 
 .no-signup-sticker-copy {
@@ -114,11 +140,11 @@ select {
 @keyframes sticker-pop {
   from {
     opacity: 0;
-    transform: rotate(-9deg) translateY(-0.45rem) scale(0.92);
+    transform: rotate(calc(var(--sticker-tilt) - 6deg)) translateY(-0.45rem) scale(0.92);
   }
   to {
     opacity: 1;
-    transform: rotate(-3deg) translateY(0) scale(1);
+    transform: rotate(var(--sticker-tilt)) translateY(0) scale(1);
   }
 }
 
