@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { CONTACT_EMAIL, contractorHelpMailto } from "../lib/site";
+import { ContactPerson } from "../components/ContactPerson";
 ---
 
 <BaseLayout>
@@ -46,9 +46,7 @@ import { CONTACT_EMAIL, contractorHelpMailto } from "../lib/site";
         listing. If that’s useful, you’re welcome to write. If not, the directory
         stays free either way.
       </p>
-      <p>
-        <a href={contractorHelpMailto()}>Email {CONTACT_EMAIL}</a>
-      </p>
+      <ContactPerson />
     </section>
 
     <p class="how-actions">

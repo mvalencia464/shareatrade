@@ -39,4 +39,4 @@ npm run dev      # terminal 2
 ```
 
 - `/` — filterable directory
-- `/contractors/[slug]` — company detail
+- `/[slug]` — company detail (`/contractors/[slug]` redirects here)

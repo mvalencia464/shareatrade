@@ -1047,7 +1047,9 @@ a.contact-line:hover {
   color: #f5f8fb;
 }
 
-.how-it-works .share-sheet p {
+.how-it-works .share-sheet p,
+.how-it-works .contact-person-name,
+.how-it-works .contact-person-email {
   opacity: 1;
   color: inherit;
 }
@@ -1402,6 +1404,10 @@ a.contact-line:hover {
   font-weight: 650;
 }
 
+.request-success .contact-person {
+  margin: 0 0 1rem;
+}
+
 @media (max-width: 700px) {
   .request-grid {
     grid-template-columns: 1fr;
@@ -1530,6 +1536,64 @@ a.contact-line:hover {
 .quiet-note a {
   color: var(--pine-deep);
   font-weight: 650;
+}
+
+.contact-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin: 0.35rem 0 0;
+  padding: 0.35rem 0.55rem 0.35rem 0.35rem;
+  border-radius: 999px;
+  text-decoration: none;
+  color: inherit;
+  max-width: 100%;
+}
+
+.contact-person:hover {
+  background: var(--pine-soft);
+}
+
+.contact-person-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+}
+
+.contact-person.is-compact .contact-person-photo {
+  width: 28px;
+  height: 28px;
+}
+
+.contact-person-copy {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.contact-person-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--pine-deep);
+  line-height: 1.2;
+}
+
+.contact-person-email {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  line-height: 1.2;
+}
+
+.contact-person.is-compact .contact-person-name {
+  font-size: 0.82rem;
+}
+
+.contact-person.is-compact .contact-person-email {
+  font-size: 0.72rem;
 }
 
 .detail-block {

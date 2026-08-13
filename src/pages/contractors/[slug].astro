@@ -1,8 +1,7 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { ContractorDetailApp } from "../../components/ContractorDetailApp";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../convex/_generated/api";
+import { listingPath } from "../../lib/site";
 
 export async function getStaticPaths() {
   const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
@@ -13,32 +12,11 @@ export async function getStaticPaths() {
   const contractors = await client.query(api.contractors.list, {});
   return contractors.map((contractor) => ({
     params: { slug: contractor.slug },
-    props: {
-      name: contractor.name,
-      category: contractor.category,
-      city: contractor.city,
-    },
   }));
 }
 
-const { slug } = Astro.params;
-const { name, category, city } = Astro.props;
-const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
-
-const title = name ?? "Contractor";
-const description = `${category ?? "Contractor"}${city ? ` in ${city}` : ""} — Spokane Contractors directory.`;
+const slug = Astro.params.slug;
+if (slug) {
+  return Astro.redirect(listingPath(slug), 301);
+}
 ---
-
-<BaseLayout>
-  <Fragment slot="head">
-    <title>{title} | Spokane Contractors</title>
-    <meta name="description" content={description} />
-  </Fragment>
-  {
-    convexUrl && slug ? (
-      <ContractorDetailApp client:load convexUrl={convexUrl} slug={slug} />
-    ) : (
-      <p class="env-warning">Missing contractor slug or PUBLIC_CONVEX_URL.</p>
-    )
-  }
-</BaseLayout>

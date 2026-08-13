@@ -121,13 +121,21 @@ export function isContractorCategory(category) {
 }
 
 export function slugify(name) {
-  return name
+  const slug = name
     .toLowerCase()
     .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+  const reserved = new Set([
+    "get-listed",
+    "for-contractors",
+    "how-it-works",
+    "hiring-help",
+    "contractors",
+  ]);
+  return reserved.has(slug) ? `${slug}-listing` : slug;
 }
 
 /** Decode HTML entities commonly left in scraped city fields. */

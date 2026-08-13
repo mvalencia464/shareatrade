@@ -6,7 +6,7 @@ export const SHARE_EXAMPLE = {
   city: "Spokane Valley",
   phone: "(509) 555-0198",
   website: "https://valleyridgeelectric.example",
-  path: "/contractors/valley-ridge-electric",
+  path: "/valley-ridge-electric",
 };
 
 export function shareExampleLines(origin = "https://spokanelist.com") {

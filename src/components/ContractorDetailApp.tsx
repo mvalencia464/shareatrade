@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
 import { formatPhone, phoneTelHref } from "../lib/phone";
+import { listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
 import { CoverImage } from "./CoverImage";
 import { ContractorHelpNote } from "./ContractorHelpNote";
@@ -81,10 +82,10 @@ function ContractorPager({
 
       if (event.key === "ArrowLeft" && prev) {
         event.preventDefault();
-        window.location.assign(`/contractors/${prev.slug}`);
+        window.location.assign(listingPath(prev.slug));
       } else if (event.key === "ArrowRight" && next) {
         event.preventDefault();
-        window.location.assign(`/contractors/${next.slug}`);
+        window.location.assign(listingPath(next.slug));
       }
     }
 
@@ -101,7 +102,7 @@ function ContractorPager({
       {prev ? (
         <a
           className="pager-link pager-prev"
-          href={`/contractors/${prev.slug}`}
+          href={listingPath(prev.slug)}
           title={`${prev.name} (←)`}
         >
           <span className="pager-arrow" aria-hidden>
@@ -137,7 +138,7 @@ function ContractorPager({
       {next ? (
         <a
           className="pager-link pager-next"
-          href={`/contractors/${next.slug}`}
+          href={listingPath(next.slug)}
           title={`${next.name} (→)`}
         >
           <span className="pager-copy">

@@ -2,6 +2,7 @@ import { useMutation } from "convex/react";
 import { useState, type FormEvent } from "react";
 import { api } from "../../convex/_generated/api";
 import { ConvexProvider } from "./ConvexProvider";
+import { ContactPerson } from "./ContactPerson";
 
 type RequestKind = "add" | "update";
 
@@ -66,9 +67,9 @@ function ListingRequestFormInner() {
         </p>
         <p>
           Your listing stays free. If you ever want help with Google reviews,
-          your Business Profile, or a simple website, there’s an optional note
-          on <a href="/for-contractors">resources for contractors</a>.
+          your Business Profile, or a simple website, you’re welcome to write.
         </p>
+        <ContactPerson compact />
         <button
           type="button"
           className="button button-secondary"

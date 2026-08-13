@@ -1,5 +1,6 @@
 import { useState, type MouseEvent } from "react";
 import { formatPhone } from "../lib/phone";
+import { listingUrl } from "../lib/site";
 
 type ShareContractor = {
   slug: string;
@@ -28,10 +29,7 @@ function IconShare() {
 }
 
 function buildSharePayload(contractor: ShareContractor) {
-  const url =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/contractors/${contractor.slug}`
-      : `/contractors/${contractor.slug}`;
+  const url = listingUrl(contractor.slug);
   const lines = [
     contractor.name,
     [contractor.category, contractor.city].filter(Boolean).join(" · "),

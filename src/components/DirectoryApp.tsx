@@ -4,6 +4,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
 import { formatPhone, phoneTelHref } from "../lib/phone";
+import { listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
 import { FavoriteButton } from "./FavoriteButton";
 import { LogoMark } from "./LogoMark";
@@ -349,7 +350,7 @@ function DirectoryInner() {
                 <div className="contractor-main">
                   <a
                     className="contractor-identity"
-                    href={`/contractors/${c.slug}`}
+                    href={listingPath(c.slug)}
                   >
                     <LogoMark name={c.name} logoUrl={c.logoUrl} />
                     <div className="contractor-copy">
@@ -372,7 +373,7 @@ function DirectoryInner() {
                   <div className="contractor-cta-row">
                     <a
                       className="button button-secondary button-card-cta"
-                      href={`/contractors/${c.slug}`}
+                      href={listingPath(c.slug)}
                     >
                       View profile
                     </a>

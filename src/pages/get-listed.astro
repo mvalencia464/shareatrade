@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { ContactPerson } from "../components/ContactPerson";
 import { ListingRequestForm } from "../components/ListingRequestForm";
 
 const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
@@ -41,9 +42,9 @@ const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
       </ol>
       <p class="quiet-inline">
         Listing is free either way. If you ever want a hand with reviews, your
-        Business Profile, or a simple site, see{" "}
-        <a href="/for-contractors">resources for contractors</a>.
+        Business Profile, or a simple site, you’re welcome to write.
       </p>
+      <ContactPerson compact />
     </section>
 
     {
