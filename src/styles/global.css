@@ -290,12 +290,17 @@ select {
 
 @media (min-width: 40rem) {
   .nav-hamburger {
-    display: none;
+    display: none !important;
+  }
+
+  details.nav-drawer {
+    display: contents;
   }
 
   details.nav-drawer > .site-nav,
   details.nav-drawer:not([open]) > .site-nav {
-    display: flex;
+    display: flex !important;
+    content-visibility: visible !important;
   }
 }
 

@@ -117,6 +117,18 @@ function current(hrefPath: string, saved = false) {
         if (!nav) return;
         const menus = () => nav.querySelectorAll("details.nav-menu");
 
+        const desktopNav = window.matchMedia("(min-width: 40rem)");
+
+        function isDesktopNav() {
+          return desktopNav.matches;
+        }
+
+        function syncDrawer() {
+          if (!drawer) return;
+          if (isDesktopNav()) drawer.setAttribute("open", "");
+          else drawer.removeAttribute("open");
+        }
+
         function closeMenus(except) {
           menus().forEach((el) => {
             if (el !== except) el.removeAttribute("open");
@@ -124,8 +136,12 @@ function current(hrefPath: string, saved = false) {
         }
 
         function closeDrawer() {
+          if (isDesktopNav()) return;
           drawer?.removeAttribute("open");
         }
+
+        syncDrawer();
+        desktopNav.addEventListener("change", syncDrawer);
 
         nav.addEventListener("toggle", (event) => {
           const target = event.target;
