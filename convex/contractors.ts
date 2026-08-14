@@ -39,6 +39,7 @@ const contractorCardValidator = v.object({
   licenseNumber: v.optional(v.string()),
   licenseStatus: v.optional(v.string()),
   licenseState: v.optional(v.string()),
+  licenseUpdatedAt: v.optional(v.number()),
 });
 
 const contractorDetailValidator = v.object({
@@ -134,6 +135,7 @@ export const list = query({
         licenseNumber: c.licenseNumber,
         licenseStatus: c.licenseStatus,
         licenseState: c.licenseState,
+        licenseUpdatedAt: c.licenseUpdatedAt,
       })),
     );
   },

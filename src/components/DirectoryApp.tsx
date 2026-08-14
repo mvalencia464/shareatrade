@@ -34,6 +34,7 @@ type ContractorCard = {
   licenseNumber?: string;
   licenseStatus?: string;
   licenseState?: string;
+  licenseUpdatedAt?: number;
 };
 
 type SortKey = "rating" | "reviews" | "name-asc" | "name-desc";
@@ -421,6 +422,7 @@ function DirectoryInner() {
                           number={c.licenseNumber}
                           status={c.licenseStatus}
                           state={c.licenseState}
+                          updatedAt={c.licenseUpdatedAt}
                         />
                       </p>
                       <div className="contractor-rating">

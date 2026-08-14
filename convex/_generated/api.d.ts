@@ -9,6 +9,9 @@
  */
 
 import type * as contractors from "../contractors.js";
+import type * as crons from "../crons.js";
+import type * as lib_liMatch from "../lib/liMatch.js";
+import type * as licenses from "../licenses.js";
 import type * as listingRequests from "../listingRequests.js";
 
 import type {
@@ -19,6 +22,9 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   contractors: typeof contractors;
+  crons: typeof crons;
+  "lib/liMatch": typeof lib_liMatch;
+  licenses: typeof licenses;
   listingRequests: typeof listingRequests;
 }>;
 

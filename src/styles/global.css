@@ -702,9 +702,9 @@ select {
 }
 
 .license-badge.is-verified {
-  border-color: rgba(47, 122, 74, 0.35);
-  background: var(--pine-soft);
-  color: var(--pine-deep);
+  border-color: #1b7f3a;
+  background: #e7f6ec;
+  color: #146c32;
 }
 
 .license-badge-state {

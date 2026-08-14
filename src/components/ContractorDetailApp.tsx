@@ -230,6 +230,7 @@ function DetailInner({ slug }: { slug: string }) {
                 number={contractor.licenseNumber}
                 status={contractor.licenseStatus}
                 state={contractor.licenseState}
+                updatedAt={contractor.licenseUpdatedAt}
               />
             </div>
           </div>
@@ -390,6 +391,15 @@ function DetailInner({ slug }: { slug: string }) {
             {contractor.licenseExpiresAt ? (
               <p>Expires: {contractor.licenseExpiresAt}</p>
             ) : null}
+            {contractor.licenseUpdatedAt ? (
+              <p>
+                Last checked:{" "}
+                {new Date(contractor.licenseUpdatedAt).toLocaleDateString(
+                  "en-US",
+                  { month: "short", day: "numeric", year: "numeric" },
+                )}
+              </p>
+            ) : null}
             <p>
               {contractor.licenseState === "ID" ||
               contractor.licenseState === "Idaho" ? (
@@ -411,10 +421,9 @@ function DetailInner({ slug }: { slug: string }) {
               )}
             </p>
             <p className="license-note">
-              Public registration from Washington L&amp;I (and Idaho DOPL when
-              we have a number). Always confirm before hiring. Idaho does not
-              publish an open license API, so many Idaho listings will not show
-              a badge until we can match them another way.
+              Snapshot from public records, not a license guarantee. Confirm on
+              L&amp;I (or Idaho DOPL) before you hire. Matching can be wrong or
+              stale.
             </p>
           </section>
         ) : null}
