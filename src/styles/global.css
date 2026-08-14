@@ -166,6 +166,139 @@ select {
   border-bottom: 1px solid var(--line);
 }
 
+.nav-drawer {
+  margin-left: auto;
+}
+
+.nav-hamburger {
+  list-style: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-solid);
+  color: var(--pine-deep);
+  cursor: pointer;
+}
+
+.nav-hamburger::-webkit-details-marker {
+  display: none;
+}
+
+.nav-hamburger:focus-visible {
+  outline: 2px solid var(--pine);
+  outline-offset: 2px;
+}
+
+.nav-hamburger-bars,
+.nav-hamburger-bars::before,
+.nav-hamburger-bars::after {
+  display: block;
+  width: 1.15rem;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.nav-hamburger-bars {
+  position: relative;
+}
+
+.nav-hamburger-bars::before,
+.nav-hamburger-bars::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.nav-hamburger-bars::before {
+  top: -6px;
+}
+
+.nav-hamburger-bars::after {
+  top: 6px;
+}
+
+@media (max-width: 39.99rem) {
+  .no-signup-sticker {
+    margin: 0 0 0.45rem 0.05rem;
+    padding: 0.28rem 0.7rem 0.3rem;
+  }
+
+  .no-signup-sticker-copy {
+    font-size: 1.1rem;
+  }
+
+  .site-header {
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .brand {
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    height: 2.15rem;
+  }
+
+  .brand-name {
+    font-size: 1.15rem;
+  }
+
+  .brand-tag {
+    font-size: 0.72rem;
+  }
+
+  .nav-drawer {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  details.nav-drawer:not([open]) > .site-nav {
+    display: none;
+  }
+
+  .nav-drawer[open] .site-nav {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: min(18rem, calc(100vw - 2.5rem));
+    padding: 0.45rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface-solid);
+    box-shadow: var(--shadow);
+  }
+
+  .nav-drawer .nav-panel {
+    width: min(22rem, calc(100vw - 3rem));
+    position: static;
+    box-shadow: none;
+  }
+}
+
+@media (min-width: 40rem) {
+  .nav-hamburger {
+    display: none;
+  }
+
+  details.nav-drawer > .site-nav,
+  details.nav-drawer:not([open]) > .site-nav {
+    display: flex;
+  }
+}
+
 .brand-block {
   display: grid;
   gap: 0.2rem;
@@ -1818,6 +1951,101 @@ a.contact-line:hover {
   display: grid;
   gap: 0.85rem;
   margin-bottom: 0.35rem;
+}
+
+.listing-bar {
+  display: none;
+}
+
+@media (max-width: 39.99rem) {
+  .listing-bar {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--surface-solid);
+    box-shadow: 0 -12px 32px rgba(3, 39, 70, 0.14);
+  }
+
+  .listing-bar .share-button {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    height: 3.55rem;
+    padding: 0 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border: 0;
+    border-radius: 0;
+    background: var(--surface-solid);
+    color: var(--pine-deep);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .listing-bar .share-button:hover,
+  .listing-bar .share-button:focus-visible {
+    background: var(--pine-soft);
+    transform: none;
+  }
+
+  .listing-bar .share-button.is-done {
+    background: var(--pine-soft);
+    color: var(--pine-deep);
+  }
+
+  .listing-bar .share-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .listing-bar .share-button::after {
+    display: none;
+  }
+
+  .listing-bar-call {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 3.55rem;
+    padding: 0 0.9rem;
+    border-radius: 0;
+    background: var(--pine);
+    color: #f5f8fb;
+    text-decoration: none;
+    font-weight: 750;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  .listing-bar-call:hover,
+  .listing-bar-call:focus-visible {
+    background: var(--pine-deep);
+  }
+
+  .listing-bar-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  .detail {
+    padding-bottom: 5.25rem;
+  }
 }
 
 .pager {

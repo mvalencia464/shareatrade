@@ -16,7 +16,7 @@ function current(hrefPath: string, saved = false) {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -43,46 +43,51 @@ function current(hrefPath: string, saved = false) {
             </span>
           </a>
         </div>
-        <nav class="site-nav" aria-label="Primary">
-          <details class="nav-menu">
-            <summary>Homeowners</summary>
-            <div class="nav-panel">
-              <a href="/" aria-current={current("/")}>
-                <span class="nav-link-title">Directory</span>
-                <span class="nav-link-sub">Browse by trade, city, and rating</span>
-              </a>
-              <a href="/?view=saved" aria-current={current("/", true)}>
-                <span class="nav-link-title">Saved</span>
-                <span class="nav-link-sub">Names you’ve kept on this device</span>
-              </a>
-              <a href="/how-it-works" aria-current={current("/how-it-works")}>
-                <span class="nav-link-title">How it works</span>
-                <span class="nav-link-sub">Find, save, and share a listing</span>
-              </a>
-              <a href="/hiring-help" aria-current={current("/hiring-help")}>
-                <span class="nav-link-title">Hiring help</span>
-                <span class="nav-link-sub">What to ask before you hire</span>
-              </a>
-              <a href="/why" aria-current={current("/why")}>
-                <span class="nav-link-title">Why this exists</span>
-                <span class="nav-link-sub">Why neighbors share names here</span>
-              </a>
-            </div>
-          </details>
-          <details class="nav-menu">
-            <summary>Contractors</summary>
-            <div class="nav-panel">
-              <a href="/get-listed" aria-current={current("/get-listed")}>
-                <span class="nav-link-title">Get listed</span>
-                <span class="nav-link-sub">Request a free directory listing</span>
-              </a>
-              <a href="/for-contractors" aria-current={current("/for-contractors")}>
-                <span class="nav-link-title">For contractors</span>
-                <span class="nav-link-sub">What a listing includes</span>
-              </a>
-            </div>
-          </details>
-        </nav>
+        <details class="nav-drawer">
+          <summary class="nav-hamburger" aria-label="Menu">
+            <span class="nav-hamburger-bars" aria-hidden="true"></span>
+          </summary>
+          <nav class="site-nav" aria-label="Primary">
+            <details class="nav-menu">
+              <summary>Homeowners</summary>
+              <div class="nav-panel">
+                <a href="/" aria-current={current("/")}>
+                  <span class="nav-link-title">Directory</span>
+                  <span class="nav-link-sub">Browse by trade, city, and rating</span>
+                </a>
+                <a href="/?view=saved" aria-current={current("/", true)}>
+                  <span class="nav-link-title">Saved</span>
+                  <span class="nav-link-sub">Names you’ve kept on this device</span>
+                </a>
+                <a href="/how-it-works" aria-current={current("/how-it-works")}>
+                  <span class="nav-link-title">How it works</span>
+                  <span class="nav-link-sub">Find, save, and share a listing</span>
+                </a>
+                <a href="/hiring-help" aria-current={current("/hiring-help")}>
+                  <span class="nav-link-title">Hiring help</span>
+                  <span class="nav-link-sub">What to ask before you hire</span>
+                </a>
+                <a href="/why" aria-current={current("/why")}>
+                  <span class="nav-link-title">Why this exists</span>
+                  <span class="nav-link-sub">Why neighbors share names here</span>
+                </a>
+              </div>
+            </details>
+            <details class="nav-menu">
+              <summary>Contractors</summary>
+              <div class="nav-panel">
+                <a href="/get-listed" aria-current={current("/get-listed")}>
+                  <span class="nav-link-title">Get listed</span>
+                  <span class="nav-link-sub">Request a free directory listing</span>
+                </a>
+                <a href="/for-contractors" aria-current={current("/for-contractors")}>
+                  <span class="nav-link-title">For contractors</span>
+                  <span class="nav-link-sub">What a listing includes</span>
+                </a>
+              </div>
+            </details>
+          </nav>
+        </details>
       </header>
       <main>
         <slot />
@@ -100,38 +105,55 @@ function current(hrefPath: string, saved = false) {
           <a href="/get-listed">Get listed</a>
           {" · "}
           <a href="/for-contractors">For contractors</a>
+          {" · "}
+          <a href="/terms">Terms & privacy</a>
         </p>
       </footer>
     </div>
     <script is:inline>
       (function () {
+        const drawer = document.querySelector("details.nav-drawer");
         const nav = document.querySelector(".site-nav");
         if (!nav) return;
         const menus = () => nav.querySelectorAll("details.nav-menu");
 
-        function closeAll(except) {
+        function closeMenus(except) {
           menus().forEach((el) => {
             if (el !== except) el.removeAttribute("open");
           });
         }
 
+        function closeDrawer() {
+          drawer?.removeAttribute("open");
+        }
+
         nav.addEventListener("toggle", (event) => {
           const target = event.target;
           if (!(target instanceof HTMLDetailsElement) || !target.open) return;
-          closeAll(target);
+          if (target.classList.contains("nav-menu")) closeMenus(target);
         });
 
         document.addEventListener("pointerdown", (event) => {
-          if (event.target instanceof Node && nav.contains(event.target)) return;
-          closeAll();
+          if (
+            event.target instanceof Node &&
+            ((drawer && drawer.contains(event.target)) || nav.contains(event.target))
+          ) {
+            return;
+          }
+          closeMenus();
+          closeDrawer();
         });
 
         document.addEventListener("keydown", (event) => {
           if (event.key !== "Escape") return;
           const openMenu = nav.querySelector("details.nav-menu[open]");
-          closeAll();
-          const summary = openMenu?.querySelector("summary");
-          if (summary instanceof HTMLElement) summary.focus();
+          const drawerWasOpen = Boolean(drawer?.open);
+          closeMenus();
+          closeDrawer();
+          const focusEl =
+            openMenu?.querySelector("summary") ??
+            (drawerWasOpen ? drawer?.querySelector(".nav-hamburger") : null);
+          if (focusEl instanceof HTMLElement) focusEl.focus();
         });
       })();
     </script>

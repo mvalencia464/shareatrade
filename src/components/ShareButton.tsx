@@ -21,7 +21,13 @@ function IconShare() {
   );
 }
 
-export function ShareButton({ contractor }: { contractor: ShareContractor }) {
+export function ShareButton({
+  contractor,
+  variant = "icon",
+}: {
+  contractor: ShareContractor;
+  variant?: "icon" | "bar";
+}) {
   const [status, setStatus] = useState<"idle" | "shared" | "copied">("idle");
 
   async function onShare(event: MouseEvent) {
@@ -57,7 +63,9 @@ export function ShareButton({ contractor }: { contractor: ShareContractor }) {
       ? "Copied"
       : status === "shared"
         ? "Shared"
-        : `Share ${contractor.name}`;
+        : variant === "bar"
+          ? "Share"
+          : `Share ${contractor.name}`;
 
   return (
     <button
@@ -69,6 +77,7 @@ export function ShareButton({ contractor }: { contractor: ShareContractor }) {
       onClick={onShare}
     >
       <IconShare />
+      {variant === "bar" ? <span>{label}</span> : null}
     </button>
   );
 }

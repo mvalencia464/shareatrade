@@ -1,4 +1,5 @@
 import { useQuery } from "convex/react";
+import { Phone } from "@phosphor-icons/react";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
@@ -206,13 +207,24 @@ function DetailInner({ slug }: { slug: string }) {
     );
   }
 
+  const shareContractor = {
+    slug: contractor.slug,
+    name: contractor.name,
+    category: contractor.category,
+    city: contractor.city,
+    phone: contractor.phone,
+    website: contractor.website,
+    rating: contractor.rating,
+    reviewCount: contractor.reviewCount,
+  };
+
   return (
+    <>
     <article className="detail">
       <div className="detail-topbar">
         <a className="back-link" href="/">
           ← All contractors
         </a>
-        <ContractorPager currentSlug={slug} neighbors={neighbors} />
       </div>
 
       <div className="detail-hero">
@@ -278,18 +290,7 @@ function DetailInner({ slug }: { slug: string }) {
                 Call {formatPhone(contractor.phone)}
               </a>
             ) : null}
-            <ShareButton
-              contractor={{
-                slug: contractor.slug,
-                name: contractor.name,
-                category: contractor.category,
-                city: contractor.city,
-                phone: contractor.phone,
-                website: contractor.website,
-                rating: contractor.rating,
-                reviewCount: contractor.reviewCount,
-              }}
-            />
+            <ShareButton contractor={shareContractor} />
             <FavoriteButton
               slug={contractor.slug}
               saved={isFavorite(contractor.slug)}
@@ -433,6 +434,20 @@ function DetailInner({ slug }: { slug: string }) {
 
       <ContractorPager currentSlug={slug} neighbors={neighbors} />
     </article>
+      <div className="listing-bar">
+        <ShareButton contractor={shareContractor} variant="bar" />
+        {contractor.phone ? (
+          <a
+            className="listing-bar-call"
+            href={phoneTelHref(contractor.phone) ?? `tel:${contractor.phone}`}
+            aria-label={`Call ${contractor.name}`}
+          >
+            <Phone size={26} weight="duotone" aria-hidden />
+            <span className="listing-bar-name">{contractor.name}</span>
+          </a>
+        ) : null}
+      </div>
+    </>
   );
 }
 

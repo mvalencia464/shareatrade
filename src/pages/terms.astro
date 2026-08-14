@@ -1,0 +1,123 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { CONTACT_EMAIL, SITE_NAME } from "../lib/site";
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>Terms & privacy | {SITE_NAME}</title>
+    <meta
+      name="description"
+      content="Terms of use and privacy notes for the Spokane List contractor directory. Not legal advice. Not affiliated with listed businesses or Google."
+    />
+  </Fragment>
+
+  <article class="how-it-works">
+    <p class="hero-eyebrow">Legal</p>
+    <h1>Terms & privacy</h1>
+    <p class="lede">
+      Plain-language rules for using {SITE_NAME}. This page is not legal advice.
+      If something here doesn’t match how you need to use the directory, don’t
+      rely on the site for that purpose. Last updated August 14, 2026.
+    </p>
+
+    <section>
+      <h2>Who we are (and aren’t)</h2>
+      <p>
+        {SITE_NAME} is an independent, free directory of Spokane-area trades.
+        We are not Google, Meta, Nextdoor, Washington L&amp;I, the Washington
+        Department of Labor &amp; Industries, any city or county, any insurer,
+        or any contractor listed here. Listing a business does not mean we
+        employ them, endorse them, inspect their work, or have a partnership
+        with them.
+      </p>
+      <p>
+        Names, logos, ratings, reviews, photos, and websites that appear on
+        listings belong to their owners. We use publicly available business
+        information (especially Google Business Profile) so neighbors can share
+        a complete name—not because those companies asked us to speak for them.
+      </p>
+    </section>
+
+    <section>
+      <h2>Not advice</h2>
+      <p>
+        Nothing on this site is legal, insurance, tax, financial, construction,
+        or professional advice. Hiring help pages are general orientation only.
+        License badges and L&amp;I lookups, when we show them, can be incomplete,
+        delayed, or wrong. You still verify licensing, bonding, insurance,
+        permits, and scope with the contractor, the relevant agency, and your
+        insurer or adjuster before you hire or pay anyone.
+      </p>
+    </section>
+
+    <section>
+      <h2>Using the directory</h2>
+      <p>
+        The directory is for personal, non-commercial browsing and sharing of
+        listing links. You agree not to scrape, bulk-copy, or republish our
+        database; not to misrepresent a listing as your own; and not to use
+        contact details here for spam or unrelated marketing. We may add,
+        edit, hide, or remove listings at any time, including when a Google
+        Business Profile changes or a request looks inaccurate.
+      </p>
+      <p>
+        Ratings and review counts come from third parties (usually Google)
+        when we have them. They are not our scores. A listing is not a
+        recommendation. You choose who to call and what to check.
+      </p>
+    </section>
+
+    <section>
+      <h2>No warranties</h2>
+      <p>
+        The site is provided as-is. We do not warrant that listings are
+        current, complete, or that a contractor is available, licensed,
+        insured, or good at the job. We are not a party to any contract
+        between you and a contractor. To the fullest extent allowed by law,
+        {SITE_NAME} and its operator are not liable for hiring decisions,
+        property damage, unpaid work, insurance disputes, or losses that
+        come from using or not being able to use this site. Some states
+        don’t allow certain limitations; those limits apply only as far as
+        the law allows.
+      </p>
+    </section>
+
+    <section>
+      <h2>Privacy</h2>
+      <p>
+        We don’t require an account to browse. Favorites and a few UI hints
+        (like whether you’ve seen the share tip) stay in your browser’s
+        local storage on this device. We don’t sync those to a user profile.
+      </p>
+      <p>
+        If you submit a listing request, we store what you send—typically
+        business name, trade, city, phone, email, website, Google Business
+        Profile link, and notes—so we can review and refresh the directory.
+        We use that to operate the site, not to sell a list of homeowners or
+        contractors. Hosting and database providers (including Convex) process
+        that data for us.
+      </p>
+      <p>
+        The public site shows business contact details that already appear
+        (or reasonably appear) on public profiles. Clicking a contractor’s
+        phone, email, website, or social link takes you to them—or to Google,
+        L&amp;I, or another third party—with their own privacy practices.
+      </p>
+      <p>
+        We don’t knowingly collect information from children under 13. This
+        directory isn’t directed at them.
+      </p>
+    </section>
+
+    <section>
+      <h2>Changes</h2>
+      <p>
+        We may update this page. The “last updated” date at the top is the
+        signal. Continued use after a change means you accept the new text.
+        Questions:{" "}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+      </p>
+    </section>
+  </article>
+</BaseLayout>
