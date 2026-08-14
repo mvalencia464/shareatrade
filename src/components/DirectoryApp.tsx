@@ -3,7 +3,7 @@ import { EnvelopeSimple, Phone } from "@phosphor-icons/react";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
-import { sortCategoriesPopularFirst } from "../lib/gbpCategories";
+import { isPopularGbpCategory, sortCategoriesPopularFirst } from "../lib/gbpCategories";
 import { formatPhone, phoneTelHref } from "../lib/phone";
 import { listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
@@ -142,10 +142,18 @@ function DirectoryInner() {
   }
 
   const facets = useMemo(() => {
-    if (!contractors) return { categories: [] as string[], cities: [] as string[] };
+    if (!contractors) {
+      return {
+        popularCategories: [] as string[],
+        otherCategories: [] as string[],
+        cities: [] as string[],
+      };
+    }
     const categories = sortCategoriesPopularFirst([
       ...new Set(contractors.map((c) => c.category)),
     ]);
+    const popularCategories = categories.filter((c) => isPopularGbpCategory(c));
+    const otherCategories = categories.filter((c) => !isPopularGbpCategory(c));
     const cities = [
       ...new Set(
         contractors
@@ -153,7 +161,7 @@ function DirectoryInner() {
           .filter((value): value is string => Boolean(value && value.trim())),
       ),
     ].sort((a, b) => a.localeCompare(b));
-    return { categories, cities };
+    return { popularCategories, otherCategories, cities };
   }, [contractors]);
 
   const filtered = useMemo(() => {
@@ -219,6 +227,12 @@ function DirectoryInner() {
     <div className="directory">
       <section className="hero hero-compact">
         <h1>{view === "saved" ? "Saved contractors" : "Find a contractor"}</h1>
+        {view === "all" ? (
+          <p className="hero-why">
+            Built for neighborhood chats.{" "}
+            <a href="/why">Why this directory exists</a>
+          </p>
+        ) : null}
       </section>
 
       <div className="filters">
@@ -238,11 +252,24 @@ function DirectoryInner() {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="">All categories</option>
-            {facets.categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
+            {facets.popularCategories.length > 0 ? (
+              <optgroup label="Popular">
+                {facets.popularCategories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+            {facets.otherCategories.length > 0 ? (
+              <optgroup label="All categories">
+                {facets.otherCategories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
           </select>
         </label>
         <label>

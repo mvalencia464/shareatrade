@@ -7,8 +7,9 @@ export const RESERVED_LISTING_SLUGS = [
   "get-listed",
   "for-contractors",
   "how-it-works",
-  "hiring-help",
-  "contractors",
+    "hiring-help",
+    "why",
+    "contractors",
 ] as const;
 
 export function listingPath(slug: string) {

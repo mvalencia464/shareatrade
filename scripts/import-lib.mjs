@@ -135,6 +135,7 @@ export function slugify(name) {
     "for-contractors",
     "how-it-works",
     "hiring-help",
+    "why",
     "contractors",
   ]);
   return reserved.has(slug) ? `${slug}-listing` : slug;

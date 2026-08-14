@@ -27,7 +27,10 @@ const popularRank = new Map(
   POPULAR_GBP_CATEGORIES.map((name, index) => [name, index]),
 );
 
-/** Sort dataset categories: popular (file order) first, then A–Z. */
+/** True when the name is in the official popular home-services list. */
+export function isPopularGbpCategory(category: string): boolean {
+  return popularSet.has(category);
+}
 export function sortCategoriesPopularFirst(categories: string[]): string[] {
   return [...categories].sort((a, b) => {
     const rankA = popularRank.get(a);

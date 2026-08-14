@@ -300,6 +300,22 @@ select {
   letter-spacing: -0.04em;
 }
 
+.hero-why {
+  margin: 0.4rem 0 0;
+  max-width: none;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.hero-why a {
+  font-weight: 650;
+  color: var(--pine-deep);
+}
+
+.hero-why a:hover {
+  color: var(--ink);
+}
+
 .hero p {
   margin: 0;
   max-width: 38rem;
