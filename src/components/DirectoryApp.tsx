@@ -8,6 +8,7 @@ import { formatPhone, phoneTelHref } from "../lib/phone";
 import { listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
 import { FavoriteButton } from "./FavoriteButton";
+import { LicenseBadge } from "./LicenseBadge";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
 import { ShareButton } from "./ShareButton";
@@ -30,6 +31,9 @@ type ContractorCard = {
   website?: string;
   gbpUrl?: string;
   socials: SocialLink[];
+  licenseNumber?: string;
+  licenseStatus?: string;
+  licenseState?: string;
 };
 
 type SortKey = "rating" | "reviews" | "name-asc" | "name-desc";
@@ -413,6 +417,11 @@ function DirectoryInner() {
                       <p className="contractor-sub">
                         {c.category}
                         {c.city ? ` · ${c.city}` : ""}
+                        <LicenseBadge
+                          number={c.licenseNumber}
+                          status={c.licenseStatus}
+                          state={c.licenseState}
+                        />
                       </p>
                       <div className="contractor-rating">
                         <StarRating
@@ -479,6 +488,8 @@ function DirectoryInner() {
                         city: c.city,
                         phone: c.phone,
                         website: c.website,
+                        rating: c.rating,
+                        reviewCount: c.reviewCount,
                       }}
                     />
                     {index === 0 && currentPage === 1 && view === "all" ? (

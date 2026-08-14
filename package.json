@@ -20,7 +20,9 @@
     "import:localprospects": "node scripts/import-localprospects.mjs",
     "import:localprospects:dry": "node scripts/import-localprospects.mjs --dry-run",
     "search:localprospects": "node scripts/search-localprospects.mjs",
-    "search:localprospects:dry": "node scripts/search-localprospects.mjs --dry-run"
+    "search:localprospects:dry": "node scripts/search-localprospects.mjs --dry-run",
+    "export:highlevel": "node scripts/export-highlevel.mjs",
+    "export:highlevel:dry": "node scripts/export-highlevel.mjs --dry-run"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",

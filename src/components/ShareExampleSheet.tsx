@@ -13,7 +13,6 @@ export function ShareExampleSheet({
     <div className={`share-sheet${compact ? " is-compact" : ""}`} role="img" aria-label="Example share message">
       <div className="share-sheet-handle" aria-hidden />
       <p className="share-sheet-kicker">Share listing</p>
-      <p className="share-sheet-title">{lines[0]}</p>
       <pre className="share-sheet-body">{lines.join("\n")}</pre>
       <div className="share-sheet-actions" aria-hidden>
         <span>Messages</span>

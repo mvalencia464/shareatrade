@@ -1,15 +1,8 @@
 import { useState, type MouseEvent } from "react";
-import { formatPhone } from "../lib/phone";
-import { listingUrl } from "../lib/site";
-
-type ShareContractor = {
-  slug: string;
-  name: string;
-  category: string;
-  city?: string;
-  phone?: string;
-  website?: string;
-};
+import {
+  buildShareText,
+  type ShareContractor,
+} from "../lib/shareListing";
 
 function IconShare() {
   return (
@@ -28,52 +21,30 @@ function IconShare() {
   );
 }
 
-function buildSharePayload(contractor: ShareContractor) {
-  const url = listingUrl(contractor.slug);
-  const lines = [
-    contractor.name,
-    [contractor.category, contractor.city].filter(Boolean).join(" · "),
-    contractor.phone ? formatPhone(contractor.phone) : null,
-    contractor.website ?? null,
-    url,
-  ].filter(Boolean);
-  const clipboard = lines.join("\n");
-  return {
-    title: contractor.name,
-    // Full body with the listing URL last so Facebook/etc. unfurl Spokane List.
-    text: clipboard,
-    url,
-    clipboard,
-  };
-}
-
 export function ShareButton({ contractor }: { contractor: ShareContractor }) {
   const [status, setStatus] = useState<"idle" | "shared" | "copied">("idle");
 
   async function onShare(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
-    const payload = buildSharePayload(contractor);
+    const text = buildShareText(contractor);
 
     try {
       if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-        await navigator.share({
-          title: payload.title,
-          text: payload.text,
-        });
+        // Text-only so the name is not duplicated as a share-sheet title.
+        await navigator.share({ text });
         setStatus("shared");
         window.setTimeout(() => setStatus("idle"), 1600);
         return;
       }
     } catch (error) {
-      // User cancel — don't fall through to clipboard.
       if (error instanceof DOMException && error.name === "AbortError") {
         return;
       }
     }
 
     try {
-      await navigator.clipboard.writeText(payload.clipboard);
+      await navigator.clipboard.writeText(text);
       setStatus("copied");
       window.setTimeout(() => setStatus("idle"), 1600);
     } catch {

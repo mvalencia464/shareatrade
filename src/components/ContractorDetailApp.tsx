@@ -8,6 +8,7 @@ import { ConvexProvider } from "./ConvexProvider";
 import { CoverImage } from "./CoverImage";
 import { ContractorHelpNote } from "./ContractorHelpNote";
 import { FavoriteButton } from "./FavoriteButton";
+import { LicenseBadge } from "./LicenseBadge";
 import { LogoMark } from "./LogoMark";
 import { QuickLinks } from "./QuickLinks";
 import { ShareButton } from "./ShareButton";
@@ -225,6 +226,11 @@ function DetailInner({ slug }: { slug: string }) {
             <div>
               <p className="detail-kicker">{contractor.category}</p>
               <h1>{contractor.name}</h1>
+              <LicenseBadge
+                number={contractor.licenseNumber}
+                status={contractor.licenseStatus}
+                state={contractor.licenseState}
+              />
             </div>
           </div>
 
@@ -279,6 +285,8 @@ function DetailInner({ slug }: { slug: string }) {
                 city: contractor.city,
                 phone: contractor.phone,
                 website: contractor.website,
+                rating: contractor.rating,
+                reviewCount: contractor.reviewCount,
               }}
             />
             <FavoriteButton
@@ -383,17 +391,30 @@ function DetailInner({ slug }: { slug: string }) {
               <p>Expires: {contractor.licenseExpiresAt}</p>
             ) : null}
             <p>
-              <a
-                href="https://secure.lni.wa.gov/verify/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Verify on WA L&amp;I
-              </a>
+              {contractor.licenseState === "ID" ||
+              contractor.licenseState === "Idaho" ? (
+                <a
+                  href="https://edopl.idaho.gov/OnlineServices/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Verify on Idaho DOPL
+                </a>
+              ) : (
+                <a
+                  href="https://secure.lni.wa.gov/verify/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Verify on WA L&amp;I
+                </a>
+              )}
             </p>
             <p className="license-note">
-              Public registration data from Washington L&amp;I. Always confirm
-              before hiring.
+              Public registration from Washington L&amp;I (and Idaho DOPL when
+              we have a number). Always confirm before hiring. Idaho does not
+              publish an open license API, so many Idaho listings will not show
+              a badge until we can match them another way.
             </p>
           </section>
         ) : null}

@@ -36,6 +36,9 @@ const contractorCardValidator = v.object({
   gbpUrl: v.optional(v.string()),
   socials: v.array(socialLinkValidator),
   source: v.optional(v.string()),
+  licenseNumber: v.optional(v.string()),
+  licenseStatus: v.optional(v.string()),
+  licenseState: v.optional(v.string()),
 });
 
 const contractorDetailValidator = v.object({
@@ -128,6 +131,9 @@ export const list = query({
         gbpUrl: c.gbpUrl,
         socials: c.socials,
         source: c.source,
+        licenseNumber: c.licenseNumber,
+        licenseStatus: c.licenseStatus,
+        licenseState: c.licenseState,
       })),
     );
   },
@@ -193,6 +199,43 @@ export const listForEnrichment = internalQuery({
       licenseNumber: c.licenseNumber,
       googleCid: c.googleCid,
       source: c.source,
+    }));
+  },
+});
+
+export const listForCrm = internalQuery({
+  args: {},
+  returns: v.array(
+    v.object({
+      name: v.string(),
+      phone: v.optional(v.string()),
+      email: v.optional(v.string()),
+      website: v.optional(v.string()),
+      gbpUrl: v.optional(v.string()),
+      category: v.string(),
+      city: v.optional(v.string()),
+      state: v.optional(v.string()),
+      address: v.optional(v.string()),
+      rating: v.optional(v.number()),
+      reviewCount: v.optional(v.number()),
+      claimed: v.boolean(),
+    }),
+  ),
+  handler: async (ctx) => {
+    const contractors = await loadAllContractors(ctx);
+    return contractors.map((c) => ({
+      name: c.name,
+      phone: c.phone,
+      email: c.email,
+      website: c.website,
+      gbpUrl: c.gbpUrl,
+      category: c.category,
+      city: c.city,
+      state: c.state,
+      address: c.address,
+      rating: c.rating,
+      reviewCount: c.reviewCount,
+      claimed: c.claimed,
     }));
   },
 });
