@@ -211,30 +211,108 @@ select {
 .site-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 1rem;
+  align-items: flex-start;
+  gap: 0.35rem 1.15rem;
   font-size: 0.92rem;
   font-weight: 600;
 }
 
-.site-nav a {
+.nav-menu {
+  position: relative;
+}
+
+.nav-menu > summary {
+  list-style: none;
+  cursor: pointer;
   color: var(--ink-soft);
+  padding: 0.2rem 0;
+}
+
+.nav-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav-menu > summary::after {
+  content: "";
+  display: inline-block;
+  width: 0.38rem;
+  height: 0.38rem;
+  margin-left: 0.4rem;
+  margin-bottom: 0.12rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  vertical-align: middle;
+}
+
+.nav-menu[open] > summary,
+.nav-menu > summary:hover,
+.nav-menu > summary:focus-visible {
+  color: var(--pine-deep);
+}
+
+.nav-menu > summary:focus-visible {
+  outline: 2px solid var(--pine);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.nav-panel {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.55rem;
+  padding: 0.5rem;
+  width: min(28rem, calc(100vw - 2.5rem));
+  max-width: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-solid);
+  box-shadow: var(--shadow);
+}
+
+.nav-panel a {
+  display: grid;
+  gap: 0.18rem;
+  padding: 0.62rem 0.85rem;
+  border-radius: 8px;
+  color: var(--pine-deep);
   text-decoration: none;
 }
 
-.site-nav a:hover {
-  color: var(--pine-deep);
-}
-
-.site-nav a.nav-cta {
-  color: var(--pine-deep);
-  padding: 0.35rem 0.7rem;
-  border: 1px solid rgba(3, 39, 70, 0.28);
-  border-radius: 999px;
-  background: var(--surface-solid);
-}
-
-.site-nav a.nav-cta:hover {
+.nav-panel a:hover,
+.nav-panel a:focus-visible {
   background: var(--pine-soft);
+}
+
+.nav-panel a:focus-visible {
+  outline: 2px solid var(--pine);
+  outline-offset: 0;
+}
+
+.nav-panel a[aria-current="page"] {
+  background: var(--pine-soft);
+}
+
+.nav-link-title {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.nav-link-sub {
+  color: var(--ink-soft);
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+@media (min-width: 40rem) {
+  .nav-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 20;
+    margin-top: 0.4rem;
+  }
 }
 
 .site-footer {

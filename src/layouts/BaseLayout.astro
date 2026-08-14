@@ -1,5 +1,15 @@
 ---
 import "../styles/global.css";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isSaved = path === "/" && Astro.url.searchParams.get("view") === "saved";
+const isDirectory = path === "/" && !isSaved;
+
+function current(hrefPath: string, saved = false) {
+  if (saved) return isSaved ? "page" : undefined;
+  if (hrefPath === "/") return isDirectory ? "page" : undefined;
+  return path === hrefPath ? "page" : undefined;
+}
 ---
 
 <!doctype html>
@@ -34,12 +44,44 @@ import "../styles/global.css";
           </a>
         </div>
         <nav class="site-nav" aria-label="Primary">
-          <a href="/">Directory</a>
-          <a href="/?view=saved">Saved</a>
-          <a href="/how-it-works">How it works</a>
-          <a href="/why">Why</a>
-          <a href="/hiring-help">Hiring help</a>
-          <a class="nav-cta" href="/get-listed">Get listed</a>
+          <details class="nav-menu">
+            <summary>Homeowners</summary>
+            <div class="nav-panel">
+              <a href="/" aria-current={current("/")}>
+                <span class="nav-link-title">Directory</span>
+                <span class="nav-link-sub">Browse by trade, city, and rating</span>
+              </a>
+              <a href="/?view=saved" aria-current={current("/", true)}>
+                <span class="nav-link-title">Saved</span>
+                <span class="nav-link-sub">Names you’ve kept on this device</span>
+              </a>
+              <a href="/how-it-works" aria-current={current("/how-it-works")}>
+                <span class="nav-link-title">How it works</span>
+                <span class="nav-link-sub">Find, save, and share a listing</span>
+              </a>
+              <a href="/hiring-help" aria-current={current("/hiring-help")}>
+                <span class="nav-link-title">Hiring help</span>
+                <span class="nav-link-sub">What to ask before you hire</span>
+              </a>
+              <a href="/why" aria-current={current("/why")}>
+                <span class="nav-link-title">Why this exists</span>
+                <span class="nav-link-sub">Why neighbors share names here</span>
+              </a>
+            </div>
+          </details>
+          <details class="nav-menu">
+            <summary>Contractors</summary>
+            <div class="nav-panel">
+              <a href="/get-listed" aria-current={current("/get-listed")}>
+                <span class="nav-link-title">Get listed</span>
+                <span class="nav-link-sub">Request a free directory listing</span>
+              </a>
+              <a href="/for-contractors" aria-current={current("/for-contractors")}>
+                <span class="nav-link-title">For contractors</span>
+                <span class="nav-link-sub">What a listing includes</span>
+              </a>
+            </div>
+          </details>
         </nav>
       </header>
       <main>
@@ -61,5 +103,37 @@ import "../styles/global.css";
         </p>
       </footer>
     </div>
+    <script is:inline>
+      (function () {
+        const nav = document.querySelector(".site-nav");
+        if (!nav) return;
+        const menus = () => nav.querySelectorAll("details.nav-menu");
+
+        function closeAll(except) {
+          menus().forEach((el) => {
+            if (el !== except) el.removeAttribute("open");
+          });
+        }
+
+        nav.addEventListener("toggle", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLDetailsElement) || !target.open) return;
+          closeAll(target);
+        });
+
+        document.addEventListener("pointerdown", (event) => {
+          if (event.target instanceof Node && nav.contains(event.target)) return;
+          closeAll();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "Escape") return;
+          const openMenu = nav.querySelector("details.nav-menu[open]");
+          closeAll();
+          const summary = openMenu?.querySelector("summary");
+          if (summary instanceof HTMLElement) summary.focus();
+        });
+      })();
+    </script>
   </body>
 </html>
