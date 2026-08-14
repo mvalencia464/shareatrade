@@ -23,6 +23,7 @@ import-report.json
 nicc-import-report.json
 license-enrichment-report.json
 localprospects-last.json
+localprospects-search-cache/
 
 # macOS-specific files
 .DS_Store

@@ -1,6 +1,10 @@
 import { useMutation } from "convex/react";
 import { useState, type FormEvent } from "react";
 import { api } from "../../convex/_generated/api";
+import {
+  OTHER_GBP_CATEGORIES,
+  POPULAR_GBP_CATEGORIES,
+} from "../lib/gbpCategories";
 import { ConvexProvider } from "./ConvexProvider";
 import { ContactPerson } from "./ContactPerson";
 
@@ -151,9 +155,19 @@ function ListingRequestFormInner() {
           <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="e.g. Plumber"
+            placeholder="Search popular trades first"
             maxLength={80}
+            list="gbp-categories"
+            autoComplete="off"
           />
+          <datalist id="gbp-categories">
+            {POPULAR_GBP_CATEGORIES.map((name) => (
+              <option key={`popular-${name}`} value={name} />
+            ))}
+            {OTHER_GBP_CATEGORIES.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
         </label>
         <label>
           City

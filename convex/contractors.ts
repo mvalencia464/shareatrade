@@ -92,7 +92,7 @@ const contractorInputValidator = v.object({
 });
 
 async function loadAllContractors(ctx: QueryCtx) {
-  // Directory is ~1k filtered rows; full collect is intentional for client-side filters.
+  // Full collect is intentional: directory search/filters run on the client.
   return await ctx.db.query("contractors").collect();
 }
 

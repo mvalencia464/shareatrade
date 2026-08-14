@@ -15,8 +15,8 @@ export function ContactPerson({ compact = false }: { compact?: boolean }) {
         className="contact-person-photo"
         src={CONTACT_PHOTO}
         alt=""
-        width={compact ? 28 : 40}
-        height={compact ? 28 : 40}
+        width={compact ? 44 : 64}
+        height={compact ? 44 : 64}
       />
       <span className="contact-person-copy">
         <span className="contact-person-name">{CONTACT_NAME}</span>

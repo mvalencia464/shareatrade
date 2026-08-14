@@ -90,6 +90,7 @@ const CATEGORY_KEYWORDS = [
   "sewer",
   "drain cleaning",
   "carpet cleaning",
+  "carpet install",
   "house cleaning",
   "cleaning service",
 ];
@@ -102,6 +103,7 @@ const EXPLICIT_KEEP = new Set(
     "Woodworker",
     "Home automation company",
     "Drafting service",
+    "Hot tub store",
   ].map((c) => c.toLowerCase()),
 );
 
@@ -313,4 +315,48 @@ export function resolveWaOrIdLocation(stateRaw, cityRaw) {
 
 export function isWaOrIdState(stateRaw, cityRaw) {
   return resolveWaOrIdLocation(stateRaw, cityRaw) !== null;
+}
+
+const GREATER_SPOKANE_WA_FINGERPRINTS = new Set([
+  "spokane",
+  "spokanevalley",
+  "spokanevly",
+  "libertylake",
+  "airwayheights",
+  "cheney",
+  "medicallake",
+  "ninemilefalls",
+  "otisorchards",
+  "newmanlake",
+  "deerpark",
+  "mead",
+  "millwood",
+  "colbert",
+  "greenacres",
+  "veradale",
+  "chattaroy",
+  "elk",
+  "marshall",
+  "fourlakes",
+  "fairchildafb",
+  "fairchild",
+  "spangle",
+  "townandcountry",
+  "countryhomes",
+]);
+
+/**
+ * Keep listings in the greater Spokane WA metro. Drop Idaho and other states.
+ */
+export function isGreaterSpokaneWa(stateRaw, cityRaw) {
+  const loc = resolveWaOrIdLocation(stateRaw, cityRaw);
+  if (!loc) return false;
+  if (loc.state === "Idaho") return false;
+  if (loc.state && loc.state !== "Washington") return false;
+
+  const city = loc.city || cityRaw || "";
+  const fingerprint = cityFingerprint(city);
+  if (!fingerprint) return loc.state === "Washington";
+  if (GREATER_SPOKANE_WA_FINGERPRINTS.has(fingerprint)) return true;
+  return fingerprint.includes("spokane");
 }

@@ -3,6 +3,7 @@ import { EnvelopeSimple, Phone } from "@phosphor-icons/react";
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
+import { sortCategoriesPopularFirst } from "../lib/gbpCategories";
 import { formatPhone, phoneTelHref } from "../lib/phone";
 import { listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
@@ -33,6 +34,8 @@ type ContractorCard = {
 
 type SortKey = "rating" | "reviews" | "name-asc" | "name-desc";
 type ListView = "all" | "saved";
+
+const PAGE_SIZE = 100;
 
 const CORE_CITIES = new Set([
   "spokane",
@@ -119,6 +122,7 @@ function DirectoryInner() {
   const [minRating, setMinRating] = useState("");
   const [sort, setSort] = useState<SortKey>("rating");
   const [view, setView] = useState<ListView>("all");
+  const [page, setPage] = useState(1);
 
   const deferredSearch = useDeferredValue(search);
 
@@ -139,9 +143,9 @@ function DirectoryInner() {
 
   const facets = useMemo(() => {
     if (!contractors) return { categories: [] as string[], cities: [] as string[] };
-    const categories = [
+    const categories = sortCategoriesPopularFirst([
       ...new Set(contractors.map((c) => c.category)),
-    ].sort((a, b) => a.localeCompare(b));
+    ]);
     const cities = [
       ...new Set(
         contractors
@@ -184,6 +188,26 @@ function DirectoryInner() {
     view,
     favorites,
   ]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [deferredSearch, category, city, minRating, sort, view]);
+
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pageItems = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+  const rangeStart = filtered.length === 0 ? 0 : pageStart + 1;
+  const rangeEnd = pageStart + pageItems.length;
+
+  function goToPage(next: number) {
+    const clamped = Math.min(Math.max(1, next), pageCount);
+    setPage(clamped);
+    document.querySelector(".results-meta")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
 
   if (contractors === undefined) {
     return <p className="loading">Loading Spokane contractors…</p>;
@@ -258,6 +282,9 @@ function DirectoryInner() {
             <>
               {filtered.length}{" "}
               {filtered.length === 1 ? "contractor" : "contractors"} found
+              {filtered.length > PAGE_SIZE
+                ? ` · ${rangeStart}–${rangeEnd}`
+                : ""}
             </>
           )}
         </span>
@@ -337,8 +364,9 @@ function DirectoryInner() {
           )}
         </div>
       ) : (
+        <>
         <ul className="contractor-list">
-          {filtered.map((c, index) => {
+          {pageItems.map((c, index) => {
             const tel = phoneTelHref(c.phone);
             const saved = isFavorite(c.slug);
             return (
@@ -426,7 +454,9 @@ function DirectoryInner() {
                         website: c.website,
                       }}
                     />
-                    {index === 0 && view === "all" ? <ShareHintOverlay /> : null}
+                    {index === 0 && currentPage === 1 && view === "all" ? (
+                      <ShareHintOverlay />
+                    ) : null}
                     <FavoriteButton
                       slug={c.slug}
                       saved={saved}
@@ -438,6 +468,30 @@ function DirectoryInner() {
             );
           })}
         </ul>
+        {pageCount > 1 ? (
+          <nav className="directory-pager" aria-label="Directory pages">
+            <button
+              type="button"
+              className="button button-secondary"
+              disabled={currentPage <= 1}
+              onClick={() => goToPage(currentPage - 1)}
+            >
+              Previous
+            </button>
+            <p className="directory-pager-status">
+              Page {currentPage} of {pageCount}
+            </p>
+            <button
+              type="button"
+              className="button button-secondary"
+              disabled={currentPage >= pageCount}
+              onClick={() => goToPage(currentPage + 1)}
+            >
+              Next
+            </button>
+          </nav>
+        ) : null}
+        </>
       )}
     </div>
   );

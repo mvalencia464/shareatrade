@@ -12,16 +12,12 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  formatPhone,
   isContractorCategory,
-  normalizeCity,
-  resolveWaOrIdLocation,
-  slugify,
 } from "./import-lib.mjs";
+import { hostnameFromDomain, mapBusiness } from "./localprospects-map.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
-const SOURCE = "localprospects";
 const API_BASE = "https://localprospects.ai/api/v1";
 const DEFAULT_DOMAIN = "deckbuildersspokanewa.com";
 
@@ -78,110 +74,6 @@ function runConvex(functionName, args) {
   } catch {
     return out;
   }
-}
-
-function hostnameFromDomain(value) {
-  const raw = String(value).trim();
-  try {
-    const url = raw.includes("://") ? new URL(raw) : new URL(`https://${raw}`);
-    return url.hostname.replace(/^www\./, "").toLowerCase();
-  } catch {
-    return raw.replace(/^www\./, "").toLowerCase();
-  }
-}
-
-function socialsFromWeb(socials) {
-  if (!socials || typeof socials !== "object") return [];
-  return Object.entries(socials)
-    .filter(([, url]) => typeof url === "string" && url.startsWith("http"))
-    .map(([platform, url]) => ({
-      platform: platform.toLowerCase(),
-      url,
-    }));
-}
-
-function inferCategory(business, domain) {
-  const category = String(business.category ?? "").trim();
-  if (isContractorCategory(category)) return category;
-
-  const blob = [
-    business.name,
-    domain,
-    business.website,
-    business.web?.meta_description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (blob.includes("deck")) return "Deck builder";
-  return category;
-}
-
-function cidFromSchema(business) {
-  const schemas = business.web?.schema_org;
-  if (!Array.isArray(schemas)) return undefined;
-  for (const schema of schemas) {
-    const mapUrl = schema?.hasMap;
-    if (typeof mapUrl !== "string") continue;
-    const hex = mapUrl.match(/:0x([0-9a-f]+)/i)?.[1];
-    if (hex) return BigInt(`0x${hex}`).toString();
-  }
-  return undefined;
-}
-
-function mapBusiness(business, domain) {
-  const contact = business.contact ?? {};
-  const reputation = business.reputation ?? {};
-  const name = String(business.name ?? "").trim();
-  const category = inferCategory(business, domain);
-  const host = hostnameFromDomain(domain);
-  const googleCid =
-    String(
-      business.google_cid ?? business.googleCid ?? business.cid ?? "",
-    ).trim() ||
-    cidFromSchema(business) ||
-    `lp:${host}`;
-  const gbpUrl =
-    business.gbp_url ||
-    (googleCid.startsWith("lp:")
-      ? undefined
-      : `https://www.google.com/maps?cid=${googleCid}`);
-
-  const location = resolveWaOrIdLocation(
-    contact.state_code || contact.state,
-    contact.city,
-  );
-
-  return {
-    name,
-    category,
-    location,
-    contractor: {
-      slug: slugify(name) || slugify(host) || "contractor",
-      name,
-      googleCid,
-      googleMapsRank: Number(business.rank) || 0,
-      category,
-      city: normalizeCity(contact.city) ?? "",
-      state: location?.state,
-      website: business.website || `https://${host}`,
-      gbpUrl: gbpUrl || undefined,
-      phone: formatPhone(business.phone),
-      email: business.email || undefined,
-      address: contact.address || undefined,
-      rating:
-        typeof reputation.rating === "number" ? reputation.rating : undefined,
-      reviewCount:
-        typeof reputation.reviews === "number" ? reputation.reviews : undefined,
-      claimed: Boolean(reputation.is_claimed),
-      logoUrl: business.logo || undefined,
-      mainImageUrl: business.main_image || undefined,
-      socials: socialsFromWeb(business.web?.socials),
-      source: SOURCE,
-      sourceUpdatedAt: Date.now(),
-    },
-  };
 }
 
 async function enrichLead(apiKey, domain) {
