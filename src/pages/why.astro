@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { ShareGroupMockup } from "../components/ShareGroupMockup";
 ---
 
 <BaseLayout>
@@ -7,7 +8,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <title>Why this directory exists | Spokane List</title>
     <meta
       name="description"
-      content="Spokane List exists so neighbors can share a local contractor in a Facebook group without hunting for a phone, website, or portfolio."
+      content="One tap, no sign-up: share a Spokane contractor in a group chat with the name, number, and listing."
     />
   </Fragment>
 
@@ -15,44 +16,36 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <p class="hero-eyebrow">Why we’re here</p>
     <h1>Share a name that actually helps</h1>
     <p class="lede">
-      This directory is for the moment someone in a Spokane Facebook group, Nextdoor
-      thread, or neighborhood chat asks “anyone know a good plumber?” You shouldn’t
-      need an account—or twenty minutes of digging—to answer.
+      One tap. No sign-up. When a neighbor asks for a plumber, you paste a
+      complete name—not a scavenger hunt.
     </p>
 
+    <ShareGroupMockup origin="https://spokanelist.com" />
+
     <section>
-      <h2>What usually happens in those groups</h2>
+      <h2>The usual thread</h2>
       <p>
-        People recommend a name from memory. Then the next comments are the same
-        questions: what’s their number, do they have a site, can I see their work?
-        Folks scroll old posts, open Google, then hunt for a portfolio that lives
-        on a website or Instagram. That’s a lot of work for a neighbor trying to
-        be helpful.
+        Someone drops a name from memory. Then the pile-on: what’s their number,
+        do they have a site, can I see their work? You’re hunting Google and old
+        posts instead of being helpful.
       </p>
     </section>
 
     <section>
-      <h2>What this is for</h2>
+      <h2>One tap. No account.</h2>
       <p>
-        Tap share on a listing. You get a clean note: name, trade, city, phone,
-        their website, and a Spokane List link. If their portfolio is on the site
-        or Instagram, those links are on the profile too—so the person asking
-        doesn’t have to go looking.
-      </p>
-      <p>
-        Filter by trade and city, call from the card, or heart a few names while
-        you compare. No signup. Google ratings come along when we have them. You
-        still check license and insurance yourself before you hire.
+        Tap share. They get the name, trade, city, phone, website, and a listing
+        link. You don’t create a login to browse, save, or send it. You still
+        verify license and insurance before you hire.
       </p>
     </section>
 
     <section>
-      <h2>For the contractor being recommended</h2>
+      <h2>If you’re the contractor</h2>
       <p>
-        You already get work from groups and word of mouth. This isn’t a second
-        profile to manage, and it isn’t a paid listing. Keep your Google Business
-        Profile current. When someone shares you, they paste something complete
-        instead of a screenshot. The listing stays free either way.
+        Free listing. No second profile to manage. Keep your Google Business
+        Profile current—when a neighbor shares you, they paste something complete
+        instead of a screenshot.
       </p>
     </section>
 

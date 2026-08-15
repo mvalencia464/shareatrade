@@ -1340,6 +1340,217 @@ a.contact-line:hover {
   margin-top: 1.75rem;
 }
 
+.share-thread {
+  margin: 0 0 1.75rem;
+  padding: 0.85rem 0.9rem 1rem;
+  border-radius: var(--radius);
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.share-thread-label {
+  margin: 0 0 0.75rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.share-thread-post,
+.share-thread-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.share-thread-post {
+  padding-bottom: 0.7rem;
+}
+
+.share-thread-engage {
+  margin: 0 0 0.15rem;
+  padding: 0.15rem 0 0.65rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.share-thread-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.45rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 550;
+  opacity: 1;
+}
+
+.share-thread-stats-sep {
+  margin: 0 0.1rem;
+}
+
+.share-thread-reacts {
+  display: inline-flex;
+  margin-right: 0.15rem;
+}
+
+.share-thread-chip {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: 0 0 0 1.5px var(--surface-solid);
+}
+
+.share-thread-chip + .share-thread-chip {
+  margin-left: -0.28rem;
+}
+
+.share-thread-chip.is-like {
+  background: #1877f2;
+}
+
+.share-thread-chip.is-heart {
+  background: #f33e58;
+}
+
+.share-thread-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.25rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid var(--line);
+}
+
+.share-thread-actions span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.2rem;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.share-thread-comment {
+  margin-top: 0.75rem;
+  padding-left: 0.85rem;
+}
+
+.share-thread-comment + .share-thread-comment {
+  margin-top: 0.65rem;
+}
+
+.share-thread-avatar {
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--pine-soft);
+}
+
+.share-thread-avatar.is-post {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.share-thread-avatar.is-comment {
+  width: 2rem;
+  height: 2rem;
+}
+
+.share-thread-col {
+  min-width: 0;
+  flex: 1;
+}
+
+.share-thread-copy {
+  margin: 0.2rem 0 0;
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+  opacity: 1;
+}
+
+.share-thread-from {
+  margin: 0;
+  color: var(--pine-deep);
+  font-size: 0.88rem;
+  font-weight: 750;
+  opacity: 1;
+}
+
+.share-thread-meta {
+  color: var(--ink-soft);
+  font-weight: 550;
+}
+
+.share-thread-bubble {
+  padding: 0.55rem 0.75rem 0.7rem;
+  border-radius: 14px;
+  background: var(--paper);
+}
+
+.share-thread-body {
+  margin: 0.35rem 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.share-thread-thanks {
+  margin: 0.2rem 0 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 550;
+  line-height: 1.4;
+  opacity: 1;
+}
+
+.share-thread-comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.28rem 0 0 0.7rem;
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 1;
+}
+
+.share-thread-likes {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+  padding: 0.08rem 0.35rem 0.08rem 0.2rem;
+  border-radius: 999px;
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-weight: 650;
+}
+
+.how-it-works .share-thread-copy,
+.how-it-works .share-thread-from,
+.how-it-works .share-thread-body,
+.how-it-works .share-thread-stats,
+.how-it-works .share-thread-thanks,
+.how-it-works .share-thread-comment-meta {
+  opacity: 1;
+}
+
 .share-sheet {
   margin: 0.85rem 0 0.35rem;
   padding: 0.85rem 0.95rem 0.95rem;
