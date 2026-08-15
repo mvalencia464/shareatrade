@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { ShareExampleSheet } from "../components/ShareExampleSheet";
+import { ShareGroupMockup } from "../components/ShareGroupMockup";
 ---
 
 <BaseLayout>
@@ -8,16 +8,16 @@ import { ShareExampleSheet } from "../components/ShareExampleSheet";
     <title>How it works | Spokane Contractors</title>
     <meta
       name="description"
-      content="Free Spokane contractor directory—no account. Filter, call, save favorites on this device."
+      content="One tap, no sign-up. Find a Spokane-area contractor and share a complete name in a neighborhood chat."
     />
   </Fragment>
 
   <article class="how-it-works">
     <h1>How it works</h1>
     <p class="lede">
-      Free directory for Spokane-area homeowners. No account. Find a trade, open
-      a profile, call or share it in a neighborhood chat.{" "}
-      <a href="/why">Why this directory exists</a>.
+      One tap. No sign-up. Find a trade, open a listing, call—or share a complete
+      name in a neighborhood chat.{" "}
+      <a href="/why">Why this exists</a>.
     </p>
 
     <section>
@@ -30,42 +30,37 @@ import { ShareExampleSheet } from "../components/ShareExampleSheet";
     </section>
 
     <section>
-      <h2>Share a listing</h2>
+      <h2>Share in one tap</h2>
       <p>
-        Tap the share icon on a card or profile. On a phone, the system share
-        sheet opens so you can send it in Messages, Mail, or another app. If
-        share isn’t available, we copy the same details to your clipboard. The
-        paste includes rating, phone, their site, and a details &amp; portfolio
-        link last so that’s the preview most apps pick up.
+        Tap share on a card or profile. On a phone, your share sheet opens. If it
+        doesn’t, we copy the same note. No account. The paste is the name, rating,
+        phone, site, and listing link—ready for a group thread.
       </p>
-      <p>Copied text looks like this:</p>
-      <ShareExampleSheet origin="https://spokanelist.com" />
+      <ShareGroupMockup origin="https://spokanelist.com" />
     </section>
 
     <section>
       <h2>Saved list</h2>
       <p>
-        Heart a listing to save it. Check <a href="/?view=saved">Saved</a> anytime.
-        Saves stay on this browser only—they don’t sync across phones or computers,
-        and clearing site data wipes them.
+        Heart a listing to keep it. Open <a href="/?view=saved">Saved</a> anytime.
+        Saves stay on this browser only.
       </p>
     </section>
 
     <section>
       <h2>Before you hire</h2>
       <p>
-        Double-check licensing, insurance, and scope with the contractor yourself.
-        There’s a short <a href="/hiring-help">hiring help</a> page with questions
-        and official links—not legal advice.
+        Verify licensing, insurance, and scope yourself. Short questions and
+        official links are on <a href="/hiring-help">hiring help</a>—not legal
+        advice.
       </p>
     </section>
 
     <section>
       <h2>Contractors</h2>
       <p>
-        We pull from Google Business Profile. Keep yours current, then{" "}
-        <a href="/get-listed">request a listing</a> (or flag a fix). Listing is
-        free. Optional notes for trades are on{" "}
+        Listings come from Google Business Profile. Keep yours current, then{" "}
+        <a href="/get-listed">request a listing</a>. Free. More on{" "}
         <a href="/for-contractors">resources for contractors</a>.
       </p>
     </section>
