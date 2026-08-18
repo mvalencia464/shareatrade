@@ -31,6 +31,28 @@ npm run enrich:licenses
 
 License numbers appear on contractor detail pages with a link to verify on L&I.
 
+## Refresh Google ratings (DataForSEO)
+
+Monthly (or weekly) refresh of rating and review count by Google CID. Crons in `convex/crons.ts` stay commented until the directory has traffic.
+
+Set Convex env (not `.env.local`):
+
+```bash
+npx convex env set DATAFORSEO_LOGIN "your-login"
+npx convex env set DATAFORSEO_PASSWORD "your-password"
+# optional: npx convex env set DATAFORSEO_SANDBOX 1
+# optional: npx convex env set DATAFORSEO_LOCATION "Spokane,Washington,United States"
+```
+
+```bash
+npm run gbp:refresh:post:dry          # who would be sent (skips nicc: ids)
+npm run gbp:refresh:post -- --limit=10
+# wait until tasks finish (often ~5 min, up to 45)
+npm run gbp:refresh:collect
+```
+
+Uncomment the monthly (or weekly) pair in `convex/crons.ts` when you want it on. Collect should run about an hour after post. Standard queue only — no review-text endpoint, no Maps rank recrawl.
+
 ## Develop
 
 ```bash

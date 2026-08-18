@@ -299,6 +299,51 @@ export const upsertBatch = internalMutation({
   },
 });
 
+export const patchGbpSnapshots = internalMutation({
+  args: {
+    updates: v.array(
+      v.object({
+        id: v.id("contractors"),
+        rating: v.optional(v.number()),
+        reviewCount: v.optional(v.number()),
+        phone: v.optional(v.string()),
+        website: v.optional(v.string()),
+        gbpUrl: v.optional(v.string()),
+        claimed: v.optional(v.boolean()),
+        sourceUpdatedAt: v.number(),
+      }),
+    ),
+  },
+  returns: v.number(),
+  handler: async (ctx, args) => {
+    let patched = 0;
+    for (const update of args.updates) {
+      const existing = await ctx.db.get(update.id);
+      if (!existing) continue;
+      const fields: {
+        rating?: number;
+        reviewCount?: number;
+        phone?: string;
+        website?: string;
+        gbpUrl?: string;
+        claimed?: boolean;
+        sourceUpdatedAt: number;
+      } = { sourceUpdatedAt: update.sourceUpdatedAt };
+      if (update.rating !== undefined) fields.rating = update.rating;
+      if (update.reviewCount !== undefined) {
+        fields.reviewCount = update.reviewCount;
+      }
+      if (update.phone) fields.phone = update.phone;
+      if (update.website) fields.website = update.website;
+      if (update.gbpUrl) fields.gbpUrl = update.gbpUrl;
+      if (update.claimed !== undefined) fields.claimed = update.claimed;
+      await ctx.db.patch(update.id, fields);
+      patched += 1;
+    }
+    return patched;
+  },
+});
+
 export const patchLicenses = internalMutation({
   args: {
     updates: v.array(
