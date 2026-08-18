@@ -234,8 +234,8 @@ function DirectoryInner() {
         <h1>{view === "saved" ? "Saved contractors" : "Find a contractor"}</h1>
         {view === "all" ? (
           <p className="hero-why">
-            Built for neighborhood chats.{" "}
-            <a href="/why">Why this directory exists</a>
+            Find a recommended trade. Share their name in one click.{" "}
+            <a href="/why">Why this exists</a>
           </p>
         ) : null}
       </section>
