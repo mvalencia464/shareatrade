@@ -1,0 +1,50 @@
+---
+interface Props {
+  rating?: number;
+  reviewsLabel?: string;
+  href?: string;
+}
+
+const { rating, reviewsLabel, href } = Astro.props;
+const Tag = href ? "a" : "div";
+
+function starFill(value: number, index: number): number {
+  return Math.max(0, Math.min(1, value - index));
+}
+---
+
+<Tag
+  class="cs-card cs-reviews"
+  href={href}
+  rel={href ? "nofollow noopener noreferrer" : undefined}
+>
+  <div class="cs-reviews-row">
+    {
+      rating != null ? (
+        <>
+          <span class="cs-stars" aria-hidden="true">
+            {[0, 1, 2, 3, 4].map((i) => {
+              const fill = starFill(rating, i);
+              return (
+                <span class="cs-star">
+                  <svg viewBox="0 0 24 24" class="cs-star-base">
+                    <path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.47L12 17.27 6.2 20.37l1.11-6.47-4.7-4.58 6.49-.94L12 2.5z" />
+                  </svg>
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="cs-star-fill"
+                    style={`clip-path: inset(0 ${(1 - fill) * 100}% 0 0)`}
+                  >
+                    <path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.47L12 17.27 6.2 20.37l1.11-6.47-4.7-4.58 6.49-.94L12 2.5z" />
+                  </svg>
+                </span>
+              );
+            })}
+          </span>
+          <span class="cs-rating-num">{rating.toFixed(1)}</span>
+        </>
+      ) : null
+    }
+  </div>
+  {reviewsLabel ? <span class="cs-reviews-label">{reviewsLabel}</span> : null}
+</Tag>

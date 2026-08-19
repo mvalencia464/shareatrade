@@ -111,6 +111,23 @@ function sortByRatingThenName<T extends { rating?: number; name: string }>(
   });
 }
 
+function pickPreferredContractor<
+  T extends {
+    reviewCount?: number;
+    rating?: number;
+    sourceUpdatedAt?: number;
+  },
+>(rows: T[]): T | null {
+  if (rows.length === 0) return null;
+  return [...rows].sort((a, b) => {
+    const reviews = (b.reviewCount ?? -1) - (a.reviewCount ?? -1);
+    if (reviews !== 0) return reviews;
+    const rating = (b.rating ?? -1) - (a.rating ?? -1);
+    if (rating !== 0) return rating;
+    return (b.sourceUpdatedAt ?? 0) - (a.sourceUpdatedAt ?? 0);
+  })[0]!;
+}
+
 export const list = query({
   args: {},
   returns: v.array(contractorCardValidator),
@@ -166,11 +183,11 @@ export const getBySlug = query({
   args: { slug: v.string() },
   returns: v.union(contractorDetailValidator, v.null()),
   handler: async (ctx, args) => {
-    const contractor = await ctx.db
+    const matches = await ctx.db
       .query("contractors")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
-      .unique();
-    return contractor;
+      .collect();
+    return pickPreferredContractor(matches);
   },
 });
 
@@ -260,13 +277,13 @@ export const upsertBatch = internalMutation({
         .withIndex("by_google_cid", (q) =>
           q.eq("googleCid", contractor.googleCid),
         )
-        .unique();
+        .first();
       const existingBySlug = existingByCid
         ? null
         : await ctx.db
             .query("contractors")
             .withIndex("by_slug", (q) => q.eq("slug", contractor.slug))
-            .unique();
+            .first();
       const existing = existingByCid ?? existingBySlug;
 
       // Blank string from import means "clear city" (JSON drops undefined).

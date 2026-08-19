@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { ContractorDetailApp } from "../components/ContractorDetailApp";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../convex/_generated/api";
+import { uniqueBySlug } from "../lib/site";
 
 export async function getStaticPaths() {
   const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
@@ -10,7 +11,7 @@ export async function getStaticPaths() {
     return [];
   }
   const client = new ConvexHttpClient(convexUrl);
-  const contractors = await client.query(api.contractors.list, {});
+  const contractors = uniqueBySlug(await client.query(api.contractors.list, {}));
   return contractors.map((contractor) => ({
     params: { slug: contractor.slug },
     props: {

@@ -1,6 +1,7 @@
 # Public directory — Google/Bing should index listings.
 User-agent: *
 Allow: /
+Disallow: /go/
 
 User-agent: GPTBot
 Disallow: /

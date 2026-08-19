@@ -11,10 +11,24 @@ export const RESERVED_LISTING_SLUGS = [
   "why",
   "terms",
   "contractors",
+  "go",
 ] as const;
 
 export function listingPath(slug: string) {
   return `/${slug}`;
+}
+
+export function companySitePath(slug: string) {
+  return `/go/${slug}`;
+}
+
+export function uniqueBySlug<T extends { slug: string }>(items: T[]): T[] {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.slug)) return false;
+    seen.add(item.slug);
+    return true;
+  });
 }
 
 export function listingUrl(slug: string, origin?: string) {

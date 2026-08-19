@@ -1,0 +1,273 @@
+---
+import CompanySiteLayout from "../../layouts/CompanySiteLayout.astro";
+import CompanySiteReviews from "../../components/CompanySiteReviews.astro";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../../../convex/_generated/api";
+import {
+  formatReviewCount,
+  siteCustomValues,
+  type SiteCustomValues,
+} from "../../lib/siteCustomValues";
+import {
+  DEMO_CREW_PHOTO,
+  DEMO_PROJECTS,
+  DEMO_REVIEWS,
+  DEMO_TEAM,
+  demoAbout,
+} from "../../lib/companySiteDemo";
+import { SITE_NAME, uniqueBySlug } from "../../lib/site";
+import CompanySiteStars from "../../components/CompanySiteStars.astro";
+
+export async function getStaticPaths() {
+  const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
+  if (!convexUrl) {
+    return [];
+  }
+  const client = new ConvexHttpClient(convexUrl);
+  const contractors = uniqueBySlug(await client.query(api.contractors.list, {}));
+  return contractors.map((contractor) => ({
+    params: { slug: contractor.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
+
+let values: SiteCustomValues | null = null;
+if (convexUrl && slug) {
+  const client = new ConvexHttpClient(convexUrl);
+  const contractor = await client.query(api.contractors.getBySlug, { slug });
+  if (contractor) {
+    values = siteCustomValues(contractor);
+  }
+}
+
+const title = values ? values.business_name : "Company";
+const description = values
+  ? `${values.niche} serving ${values.service_area}`
+  : "";
+
+const initial = values?.business_name.trim().charAt(0).toUpperCase() || "?";
+const reviewsLabel =
+  values?.reviews != null
+    ? `${formatReviewCount(values.reviews)} Google review${values.reviews === 1 ? "" : "s"}`
+    : undefined;
+const about = values ? demoAbout(values) : null;
+const cityLabel = values?.city ?? "Spokane";
+const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
+---
+
+<CompanySiteLayout title={title} description={description}>
+  {
+    values ? (
+      <>
+        <div class="cs-cover">
+          {coverSrc ? <img src={coverSrc} alt="" /> : null}
+        </div>
+        <div class="cs-identity">
+          {values.logo_url ? (
+            <img class="cs-logo" src={values.logo_url} alt="" />
+          ) : (
+            <div class="cs-logo cs-logo-fallback" aria-hidden="true">
+              {initial}
+            </div>
+          )}
+          <h1 class="cs-name">{values.business_name}</h1>
+        </div>
+        <main class="cs-main">
+          <div class="cs-meta">
+            {values.niche ? <span class="cs-chip">{values.niche}</span> : null}
+            {values.service_area ? (
+              <span class="cs-chip">{values.service_area}</span>
+            ) : null}
+          </div>
+
+          {values.rating != null || values.reviews != null ? (
+            <CompanySiteReviews
+              rating={values.rating}
+              reviewsLabel={reviewsLabel}
+              href={values.gbp_url}
+            />
+          ) : null}
+
+          {values.license_number ? (
+            <div class="cs-card">
+              <p class="cs-kicker">License</p>
+              <p>
+                {values.license_type ? `${values.license_type} · ` : ""}
+                {values.license_number}
+                {values.license_status ? ` · ${values.license_status}` : ""}
+              </p>
+            </div>
+          ) : null}
+
+          {values.address ? (
+            <div class="cs-card">
+              <p class="cs-kicker">Address</p>
+              <p>{values.address}</p>
+            </div>
+          ) : null}
+
+          <p class="cs-proof">{values.proof_line}</p>
+
+          {about ? (
+            <section class="cs-section" aria-labelledby="cs-about-title">
+              <p class="cs-kicker">{about.kicker}</p>
+              <h2 id="cs-about-title" class="cs-h2">
+                A small local company — not a marketing machine
+              </h2>
+              <img class="cs-about-photo" src={about.photo} alt="" />
+              <blockquote class="cs-quote">“{about.quote}”</blockquote>
+              <div class="cs-owner">
+                <strong>{about.owner}</strong>
+                <span>{about.ownerTitle}</span>
+              </div>
+              <p class="cs-copy">{about.intro}</p>
+              <p class="cs-copy">{about.body}</p>
+              {values.phone_tel ? (
+                <a class="cs-inline-cta" href={values.phone_tel}>
+                  {about.cta}
+                </a>
+              ) : null}
+            </section>
+          ) : null}
+
+          <section class="cs-section" aria-labelledby="cs-work-title">
+            <p class="cs-kicker">Recent work</p>
+            <h2 id="cs-work-title" class="cs-h2">
+              Jobs around {cityLabel}
+            </h2>
+            <div class="cs-projects">
+              {DEMO_PROJECTS.map((project) => (
+                <figure class="cs-project">
+                  <img src={project.src} alt="" />
+                  <figcaption>
+                    <span>{project.place}</span>
+                    {project.label}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+
+          <section class="cs-section" aria-labelledby="cs-crew-title">
+            <p class="cs-kicker">The Summit Squad</p>
+            <h2 id="cs-crew-title" class="cs-h2">
+              Meet the folks who keep {cityLabel} dry
+            </h2>
+            <img class="cs-crew-photo" src={DEMO_CREW_PHOTO} alt="" />
+            <div class="cs-team">
+              {DEMO_TEAM.map((member) => (
+                <article class="cs-team-card">
+                  <img src={member.photo} alt="" />
+                  <div>
+                    <p class="cs-team-name">{member.name}</p>
+                    <p class="cs-team-role">{member.role}</p>
+                    <p class="cs-team-blurb">{member.blurb}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="cs-section" aria-labelledby="cs-reviews-title">
+            <p class="cs-kicker">What neighbors say</p>
+            <h2 id="cs-reviews-title" class="cs-h2">
+              {DEMO_REVIEWS.length} recent reviews
+            </h2>
+            <div class="cs-review-list">
+              {DEMO_REVIEWS.map((review) => (
+                <article class="cs-review-card">
+                  <header class="cs-review-head">
+                    <img class="cs-avatar" src={review.avatar} alt="" />
+                    <div class="cs-review-meta">
+                      <strong>{review.name}</strong>
+                      <span>
+                        {review.city} · {review.date}
+                      </span>
+                    </div>
+                    <CompanySiteStars rating={review.rating} />
+                  </header>
+                  <p>{review.text}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="cs-section" aria-labelledby="cs-quote-title">
+            <p class="cs-kicker">Free quote</p>
+            <h2 id="cs-quote-title" class="cs-h2">
+              Tell us what you need in {cityLabel}
+            </h2>
+            <p class="cs-copy">
+              Takes about a minute. We’ll text or call you back — no pressure.
+            </p>
+            <form class="cs-form" id="cs-quote-form" action="#" method="post" novalidate>
+              <label class="cs-field">
+                <span>Name</span>
+                <input type="text" name="name" autocomplete="name" placeholder="Your name" />
+              </label>
+              <label class="cs-field">
+                <span>Phone</span>
+                <input type="tel" name="phone" autocomplete="tel" placeholder="(509) 555-0123" />
+              </label>
+              <label class="cs-field">
+                <span>Email</span>
+                <input type="email" name="email" autocomplete="email" placeholder="you@email.com" />
+              </label>
+              <label class="cs-field">
+                <span>Address or neighborhood</span>
+                <input
+                  type="text"
+                  name="location"
+                  autocomplete="street-address"
+                  placeholder={cityLabel}
+                />
+              </label>
+              <label class="cs-field">
+                <span>What do you need?</span>
+                <textarea
+                  name="details"
+                  rows="4"
+                  placeholder={`A little about the ${values.niche.toLowerCase()} job`}
+                ></textarea>
+              </label>
+              <button class="cs-form-submit" type="submit">Get my free quote</button>
+              <p class="cs-form-note">Demo form — nothing is sent.</p>
+            </form>
+            <p class="cs-form-thanks" id="cs-quote-thanks" hidden>
+              Thanks — this demo doesn’t send yet. Use the call button if you want to reach the listing.
+            </p>
+          </section>
+
+          {values.website ? (
+            <a class="cs-link" href={values.website} rel="nofollow noopener noreferrer">
+              Visit website
+            </a>
+          ) : null}
+
+          <p class="cs-powered">
+            <a href="/">{SITE_NAME}</a>
+          </p>
+        </main>
+        {values.phone_tel && values.phone ? (
+          <a class="cs-call" href={values.phone_tel}>
+            Call {values.phone}
+          </a>
+        ) : null}
+      </>
+    ) : (
+      <p class="cs-missing">This company page is not available.</p>
+    )
+  }
+</CompanySiteLayout>
+
+<script>
+  const form = document.getElementById("cs-quote-form");
+  const thanks = document.getElementById("cs-quote-thanks");
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    form.setAttribute("hidden", "");
+    thanks?.removeAttribute("hidden");
+  });
+</script>
