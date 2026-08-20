@@ -39,6 +39,21 @@ const KNOWN_MARKETS = new Set([
   "charlotte",
   "salt-lake",
   "columbus",
+  "denver",
+  "phoenix",
+  "atlanta",
+  "northern-virginia",
+  "minneapolis",
+  "milwaukee",
+  "huntsville",
+  "richmond",
+  "charleston",
+  "omaha",
+  "oklahoma-city",
+  "birmingham",
+  "greenville",
+  "des-moines",
+  "seattle",
 ]);
 const BATCH_SIZE = 50;
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Pull already-enriched campaign leads (GET only) and write stamped
- * directory JSON for P1–P2 metros. Does not start campaigns or POST /search.
+ * directory JSON for P1–P4 metros. Does not start campaigns or POST /search.
  *
  * Usage:
  *   node scripts/export-lp-directory.mjs
@@ -106,6 +106,89 @@ const RING_PLACES = [
     "dublin",
     "hilliard",
     "worthington",
+  ]),
+  ...places("denver", ["co", "colorado"], [
+    "denver",
+    "littleton",
+    "castle rock",
+    "parker",
+    "arvada",
+    "centennial",
+    "englewood",
+    "westminster",
+  ]),
+  ...places("phoenix", ["az", "arizona"], [
+    "phoenix",
+    "gilbert",
+    "chandler",
+    "mesa",
+    "peoria",
+    "surprise",
+    "queen creek",
+  ]),
+  ...places("atlanta", ["ga", "georgia"], [
+    "atlanta",
+    "marietta",
+    "alpharetta",
+    "roswell",
+    "woodstock",
+    "kennesaw",
+    "lawrenceville",
+  ]),
+  ...places("northern-virginia", ["va", "virginia"], [
+    "sterling",
+    "ashburn",
+    "leesburg",
+    "fairfax",
+    "manassas",
+    "woodbridge",
+    "reston",
+  ]),
+  ...places("minneapolis", ["mn", "minnesota"], [
+    "minneapolis",
+    "plymouth",
+    "maple grove",
+    "eden prairie",
+    "woodbury",
+    "bloomington",
+  ]),
+  ...places("milwaukee", ["wi", "wisconsin"], [
+    "milwaukee",
+    "waukesha",
+    "brookfield",
+    "new berlin",
+    "west allis",
+    "wauwatosa",
+  ]),
+  ...places("huntsville", ["al", "alabama"], ["huntsville", "madison"]),
+  ...places("richmond", ["va", "virginia"], [
+    "richmond",
+    "midlothian",
+    "mechanicsville",
+    "glen allen",
+    "henrico",
+  ]),
+  ...places("charleston", ["sc", "south carolina"], [
+    "charleston",
+    "mount pleasant",
+    "mt pleasant",
+    "mt. pleasant",
+    "north charleston",
+    "summerville",
+  ]),
+  ...places("omaha", ["ne", "nebraska"], ["omaha"]),
+  ...places("oklahoma-city", ["ok", "oklahoma"], ["oklahoma city", "edmond"]),
+  ...places("birmingham", ["al", "alabama"], ["birmingham", "hoover"]),
+  ...places("greenville", ["sc", "south carolina"], ["greenville", "simpsonville"]),
+  ...places("des-moines", ["ia", "iowa"], ["des moines", "ankeny"]),
+  ...places("seattle", ["wa", "washington"], [
+    "seattle",
+    "everett",
+    "puyallup",
+    "snohomish",
+    "lake stevens",
+    "marysville",
+    "kirkland",
   ]),
 ];
 
