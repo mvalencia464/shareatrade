@@ -36,9 +36,11 @@ That command must use **this** Convex project (`clean-clownfish-658` in current 
 
 ## Cloudflare vs local
 
-Listing and `/go` pages are **SSR** (`prerender = false`) so Cloudflare does not prerender ~13k HTML files. Homepage and market hubs stay static.
+Listing, market hubs, and `/go` pages are **SSR** (`prerender = false`). Homepage and marketing pages stay static. On Cloudflare, `/why/` works as a static file; `/kansas-city` was 404ing because the Worker intercepted it and had no handler. Hubs now go through the Worker like listings.
 
-- Production: `@astrojs/cloudflare`, `output: 'server'`. Deploy the Worker (`npm run build` then Wrangler / CF Workers), not a static `dist` upload.
+- Production: `@astrojs/cloudflare`, `output: 'server'`. Deploy the Worker (`npm run build` then Wrangler). `wrangler.jsonc` must bind `ASSETS` to `dist/client`. Do not upload `dist/client` as a static-only Pages project without the Worker — listings will 404.
+- Sessions/KV are off (`session: false`). The adapter otherwise injects a `SESSION` KV binding we do not use.
+- Local: `npm run dev` uses `@astrojs/node`.
 - Local: `npm run dev` uses `@astrojs/node`. Workerd + Vite SSR crashed; do not switch local back to the Cloudflare adapter. After wiping Vite cache: `rm -rf node_modules/.vite`.
 - Prefer `astro dev --background` if you start the server from an agent. Stop with `astro dev stop`.
 

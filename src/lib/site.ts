@@ -16,15 +16,15 @@ export const RESERVED_LISTING_SLUGS = [
 ] as const;
 
 export function directoryPath(marketSlug: string) {
-  return `/${marketSlug}`;
+  return `/${marketSlug}/`;
 }
 
 export function listingPath(marketSlug: string, slug: string) {
-  return `/${marketSlug}/${slug}`;
+  return `/${marketSlug}/${slug}/`;
 }
 
 export function companySitePath(marketSlug: string, slug: string) {
-  return `/go/${marketSlug}/${slug}`;
+  return `/go/${marketSlug}/${slug}/`;
 }
 
 export function uniqueBySlug<T extends { slug: string }>(items: T[]): T[] {

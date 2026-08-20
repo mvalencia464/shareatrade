@@ -149,20 +149,25 @@ function hlHeaders(token, locationId) {
 }
 
 async function hlFetch(token, locationId, pathname, options = {}) {
-  const response = await fetch(`${API_BASE}${pathname}`, {
-    ...options,
-    headers: { ...hlHeaders(token, locationId), ...options.headers },
-  });
-  const text = await response.text();
-  let body = null;
-  if (text) {
-    try {
-      body = JSON.parse(text);
-    } catch {
-      body = { raw: text };
+  try {
+    const response = await fetch(`${API_BASE}${pathname}`, {
+      ...options,
+      headers: { ...hlHeaders(token, locationId), ...options.headers },
+    });
+    const text = await response.text();
+    let body = null;
+    if (text) {
+      try {
+        body = JSON.parse(text);
+      } catch {
+        body = { raw: text };
+      }
     }
+    return { ok: response.ok, status: response.status, body };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, status: 0, body: { message } };
   }
-  return { ok: response.ok, status: response.status, body };
 }
 
 function fieldKeys(field) {
@@ -291,7 +296,7 @@ async function upsertContact(token, locationId, payload) {
       method: "POST",
       body: JSON.stringify(payload),
     });
-    if (status === 429 || status === 502 || status === 503 || status === 524) {
+    if (status === 0 || status === 429 || status === 502 || status === 503 || status === 524) {
       await sleep(1000 * (attempt + 1));
       continue;
     }

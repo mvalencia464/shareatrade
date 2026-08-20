@@ -485,6 +485,7 @@ function DirectoryInner({ marketSlug }: { marketSlug: string }) {
                     />
                     <ShareButton
                       contractor={{
+                        marketSlug,
                         slug: c.slug,
                         name: c.name,
                         category: c.category,

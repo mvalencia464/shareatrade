@@ -14,6 +14,8 @@ const isDev = process.argv.includes('dev');
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
+  trailingSlash: 'always',
+  session: false,
   adapter: isDev
     ? node({ mode: 'standalone' })
     : cloudflare({
