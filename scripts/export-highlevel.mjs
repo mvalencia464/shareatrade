@@ -8,7 +8,7 @@
  *   node scripts/export-highlevel.mjs
  */
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -61,6 +61,8 @@ const CUSTOM_FIELD_NAMES = [
 ];
 
 const dryRun = process.argv.includes("--dry-run");
+const fromStart = process.argv.includes("--from-start");
+const checkpointPath = path.join(root, "exports", "hl-export-checkpoint.json");
 const limitArg = process.argv
   .find((arg) => arg.startsWith("--limit="))
   ?.slice("--limit=".length);
@@ -400,10 +402,26 @@ async function main() {
     return;
   }
 
+  mkdirSync(path.dirname(checkpointPath), { recursive: true });
+  let startIndex = 0;
+  if (!fromStart && existsSync(checkpointPath)) {
+    try {
+      const saved = JSON.parse(readFileSync(checkpointPath, "utf8"));
+      if (Number.isInteger(saved.nextIndex) && saved.nextIndex > 0) {
+        startIndex = Math.min(saved.nextIndex, payloads.length);
+      }
+    } catch {
+      startIndex = 0;
+    }
+  }
+  if (startIndex > 0) {
+    console.log(`Resuming from contact ${startIndex + 1}/${payloads.length}`);
+  }
+
   let created = 0;
   let updated = 0;
   let errors = 0;
-  for (let i = 0; i < payloads.length; i += 1) {
+  for (let i = startIndex; i < payloads.length; i += 1) {
     const result = await upsertContact(token, locationId, payloads[i]);
     if (!result.ok) {
       errors += 1;
@@ -415,14 +433,19 @@ async function main() {
     } else {
       updated += 1;
     }
-    if ((i + 1) % 50 === 0) {
+    if ((i + 1) % 50 === 0 || i + 1 === payloads.length) {
+      writeFileSync(
+        checkpointPath,
+        JSON.stringify({ nextIndex: i + 1, updatedAt: new Date().toISOString() }),
+      );
       console.log(
         `Progress ${i + 1}/${payloads.length} created=${created} updated=${updated} errors=${errors}`,
       );
     }
-    await sleep(200);
+    await sleep(80);
   }
 
+  if (existsSync(checkpointPath)) unlinkSync(checkpointPath);
   console.log(
     JSON.stringify({ created, updated, errors, total: payloads.length }, null, 2),
   );

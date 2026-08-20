@@ -1,8 +1,20 @@
 # Share a Trade
 
-Astro + Convex directory of local contractors. Neighbors find a trade and paste a complete listing into a group chat. Spokane is the first market.
+Astro + Convex directory of local contractors. Neighbors find a trade and paste a complete listing into a group chat.
 
-This repo is independent of [Spokane List](https://spokanelist.com). Do not point this app at the Spokane List Convex deployment.
+This repo is independent of [Spokane List](https://spokanelist.com). Do not point this app at the Spokane List Convex deployment, and do not push this work to a `spokane-list` remote.
+
+## Markets
+
+One URL per metro (`/nashville`), not per suburb. Towns are city filters inside that market. Registry: `src/lib/markets.ts` (site) and `convex/lib/markets.ts` (GBP location / WA license). Queue notes: `src/resources/cities.md`.
+
+**Live:** Spokane (CSV), then LP-stamped Boise, Raleigh, Portland, Indianapolis, Kansas City, Nashville, Charlotte, Salt Lake, Columbus, Denver, Phoenix, Atlanta, Northern Virginia, Minneapolis, Milwaukee, Huntsville, Richmond, Charleston, Omaha, Oklahoma City, Birmingham, Greenville, Des Moines, Seattle, Chicago, Cincinnati, Tulsa, Detroit.
+
+**Do not add:** 893 city URLs; Texas or California slugs; folding Cincinnati into Columbus; folding Tulsa into Oklahoma City; WA L&I on non-Spokane markets.
+
+City+state aliases matter. Bellevue WA is Seattle; Bellevue NE is Omaha. Plymouth MN is Minneapolis; Plymouth MI is Detroit. Loveland OH is Cincinnati; do not treat Colorado Loveland as Cincy.
+
+Spokane stays on CSV / NICC until a real Spokane LocalProspects campaign exists. LP rings are national suburbs, not Inland Northwest.
 
 ## Setup
 
@@ -11,57 +23,61 @@ npm install
 npx convex dev
 ```
 
-That command must create a **new** Convex project. Copy `CONVEX_URL` into `PUBLIC_CONVEX_URL` in `.env.local`.
+That command must use **this** Convex project (`clean-clownfish-658` in current `.env.local`). Copy `CONVEX_URL` into `PUBLIC_CONVEX_URL`. Never `npx convex deploy` against Spokane List.
 
-`astro build` (including Cloudflare) inlines `PUBLIC_CONVEX_URL`. Local files stay gitignored, so production uses the default in `astro.config.mjs` unless the project sets the same variable.
-
-Listing and `/go` pages render on demand (Cloudflare Worker) so the build no longer prerenders thousands of HTML files. Keep the homepage and market hubs static. Cloudflare should deploy with Wrangler / Workers (`npx wrangler deploy` after `npm run build`), not as a static `dist` upload. The adapter may provision a `SESSION` KV namespace; we do not use sessions in app code.
+`astro build` (including Cloudflare) inlines `PUBLIC_CONVEX_URL`. Production falls back to the default in `astro.config.mjs` unless the Cloudflare project sets the same variable. If the live site talks to a **different** Convex deployment than the one you import into, directories will be empty even when the Worker deploy succeeds.
 
 ## URLs
 
-- `/` — pick a market
-- `/spokane` — directory for that market
-- `/spokane/[slug]` — listing
-- `/go/spokane/[slug]` — unlisted company preview (noindex)
+- `/` — pick a market (`live: true` only)
+- `/{market}` — directory
+- `/{market}/{slug}` — listing
+- `/go/{market}/{slug}` — unlisted company preview (noindex). Listing pages link this as **Live site**.
+
+## Cloudflare vs local
+
+Listing and `/go` pages are **SSR** (`prerender = false`) so Cloudflare does not prerender ~13k HTML files. Homepage and market hubs stay static.
+
+- Production: `@astrojs/cloudflare`, `output: 'server'`. Deploy the Worker (`npm run build` then Wrangler / CF Workers), not a static `dist` upload.
+- Local: `npm run dev` uses `@astrojs/node`. Workerd + Vite SSR crashed; do not switch local back to the Cloudflare adapter. After wiping Vite cache: `rm -rf node_modules/.vite`.
+- Prefer `astro dev --background` if you start the server from an agent. Stop with `astro dev stop`.
+
+**Directory lists that hang on “Loading contractors…”** — Cloudflare can succeed while `contractors.listByMarket` `.collect()`s a whole metro and hits Convex’s 16MB read limit (Atlanta / Charlotte / Nashville size). Check the browser console. Smaller metros may still load. Fix is paginate or slim that query, not another CF setting.
 
 ## Import listings
 
-Spokane live data is the existing CSV (and NICC) import until a real Spokane LocalProspects campaign exists. Do **not** upsert `src/resources/directory-samples.json` — those rows are Boise/national fixtures for the mapper.
+Do **not** upsert `src/resources/directory-samples.json` (mixed metros). `--market` is required and must match the stamped JSON.
+
+Spokane CSV:
 
 ```bash
 npm run import:contractors:dry
 npm run import:contractors
 ```
 
-CSV import stamps `marketSlug: "spokane"` and keeps contractor-like categories only (WA/ID + blank state).
+CSV stamps `marketSlug: "spokane"` and keeps contractor-like categories (WA/ID + blank state).
 
-When they have a Spokane campaign, they export then we import **only** that file:
-
-```bash
-# other repo
-npx tsx src/cli.ts export-directory <campaignId> --market spokane
-# writes exports/directory-spokane.json
-
-# this repo
-npm run import:directory:dry -- --file exports/directory-spokane.json --market spokane
-npm run import:directory -- --file exports/directory-spokane.json --market spokane
-```
-
-`--market` is required and must be `spokane`, `boise`, `raleigh`, or `portland`. It skips any row not stamped with that slug. Dry-run the sample pack only to test the mapper (never upsert it):
+LocalProspects: GET campaign leads only. **Do not** `POST /search` or start a `ready` campaign (that bills). Cache is `localprospects-search-cache/` (gitignored). Stamp with city+state `RING_PLACES` in `scripts/export-lp-directory.mjs`. Empty GBP city falls back to `searched_location.city` (often `"Marietta, Georgia"`).
 
 ```bash
-npm run import:directory:dry -- --file src/resources/directory-samples.json --market boise
+node scripts/export-lp-directory.mjs --from-cache
+npm run import:directory -- --file exports/directory-nashville.json --market nashville
 ```
 
-P1 markets (`boise`, `raleigh`, `portland`) are in `MARKETS` but `live: false` until a real `exports/directory-{slug}.json` is imported. Homepage only lists `live` markets. Flip `live: true` after a successful import. Do not add P2+ slugs yet.
+`exports/directory-*.json` is gitignored. Re-export after alias changes, then import only markets whose counts grew.
+
+## HighLevel
 
 ```bash
-npm run import:directory -- --file exports/directory-boise.json --market boise
+npm run export:highlevel:dry -- --limit=3
+npm run export:highlevel
 ```
+
+Needs `HIGHLEVEL_TOKEN` and `HIGHLEVEL_LOCATION_ID`. Contacts get tags `shareatrade-list` plus the metro slug (`nashville`), **not** `spokane-list`. Custom TEXT fields `shareatrade_url` and `shareatrade_site` must already exist on the location; upserts cannot create fields. Create them in the HL UI (or API with `locations/customFields.write`). CRM reads go per market (`listForCrmByMarket`) because a full-table collect exceeds Convex limits. Rows with no phone and no email are skipped. Full sync is ~25k upserts at ~200ms each.
 
 ## Enrich WA licenses
 
-Spokane market only (Washington L&I):
+Spokane only (Washington L&I):
 
 ```bash
 npm run enrich:licenses:dry
@@ -89,5 +105,3 @@ npm run gbp:refresh:collect
 npx convex dev   # terminal 1
 npm run dev      # terminal 2
 ```
-
-Never run `npx convex deploy` against the Spokane List project from this repo.
