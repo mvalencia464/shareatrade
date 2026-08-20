@@ -20,6 +20,7 @@ export const TRADE_PACKS = [
 export const DEFAULT_TRADE_PACK = { id: "default" } as const;
 
 export const TRADE_PACK_CDN = "https://media.stokeleads.com/spokanelist";
+export const CREW_PHOTO_CDN = "https://media.stokeleads.com/shareatrade";
 
 export function tradePackId(niche: string): string {
   const n = niche.toLowerCase();
@@ -27,8 +28,15 @@ export function tradePackId(niche: string): string {
   return pack?.id ?? DEFAULT_TRADE_PACK.id;
 }
 
-export function nicheHeroPhoto(niche: string): string {
+function tradeFileId(niche: string): string {
   const id = tradePackId(niche);
-  const file = id === DEFAULT_TRADE_PACK.id ? "handyman" : id;
-  return `${TRADE_PACK_CDN}/${file}.avif`;
+  return id === DEFAULT_TRADE_PACK.id ? "handyman" : id;
+}
+
+export function nicheHeroPhoto(niche: string): string {
+  return `${TRADE_PACK_CDN}/${tradeFileId(niche)}.avif`;
+}
+
+export function nicheCrewPhoto(niche: string): string {
+  return `${CREW_PHOTO_CDN}/${tradeFileId(niche)}-crew.avif`;
 }

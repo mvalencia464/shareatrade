@@ -1,7 +1,7 @@
 import type { SiteCustomValues } from "./siteCustomValues";
 import { nicheHeroPhoto } from "./tradePacks";
 
-export { nicheHeroPhoto } from "./tradePacks";
+export { nicheCrewPhoto, nicheHeroPhoto } from "./tradePacks";
 
 const MEDIA = "https://media.stokeleads.com/spokanesummit";
 const AVATAR = "https://randomuser.me/api/portraits";
