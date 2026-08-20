@@ -10,6 +10,8 @@
 
 import type * as contractors from "../contractors.js";
 import type * as crons from "../crons.js";
+import type * as gbpRefresh from "../gbpRefresh.js";
+import type * as lib_dataforseo from "../lib/dataforseo.js";
 import type * as lib_liMatch from "../lib/liMatch.js";
 import type * as licenses from "../licenses.js";
 import type * as listingRequests from "../listingRequests.js";
@@ -23,6 +25,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   contractors: typeof contractors;
   crons: typeof crons;
+  gbpRefresh: typeof gbpRefresh;
+  "lib/dataforseo": typeof lib_dataforseo;
   "lib/liMatch": typeof lib_liMatch;
   licenses: typeof licenses;
   listingRequests: typeof listingRequests;

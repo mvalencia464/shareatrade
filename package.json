@@ -26,8 +26,7 @@
     "search:localprospects": "node scripts/search-localprospects.mjs",
     "search:localprospects:dry": "node scripts/search-localprospects.mjs --dry-run",
     "export:highlevel": "node scripts/export-highlevel.mjs",
-    "export:highlevel:dry": "node scripts/export-highlevel.mjs --dry-run",
-    "generate:trade-pack-images": "node scripts/generate-trade-pack-images.mjs"
+    "export:highlevel:dry": "node scripts/export-highlevel.mjs --dry-run"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
