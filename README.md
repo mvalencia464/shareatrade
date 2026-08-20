@@ -13,6 +13,8 @@ npx convex dev
 
 That command must create a **new** Convex project. Copy `CONVEX_URL` into `PUBLIC_CONVEX_URL` in `.env.local`.
 
+`astro build` (including Cloudflare Pages) inlines `PUBLIC_CONVEX_URL`. Local files stay gitignored, so production uses the default in `astro.config.mjs` unless the Pages project sets the same variable.
+
 ## URLs
 
 - `/` — pick a market
