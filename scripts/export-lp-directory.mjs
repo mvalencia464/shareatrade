@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Pull already-enriched campaign leads (GET only) and write stamped
- * directory JSON for P1 metros. Does not start campaigns or POST /search.
+ * directory JSON for P1–P2 metros. Does not start campaigns or POST /search.
  *
  * Usage:
  *   node scripts/export-lp-directory.mjs
  *   node scripts/export-lp-directory.mjs --from-cache
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { formatPhone, isContractorCategory, normalizeCity } from "./import-lib.mjs";
@@ -20,49 +20,96 @@ const cacheDir = path.join(root, "localprospects-search-cache");
 const exportDir = path.join(root, "exports");
 const fromCache = process.argv.includes("--from-cache");
 
-const P1 = [
-  {
-    slug: "boise",
-    states: new Set(["id", "idaho"]),
-    cities: new Set([
-      "boise",
-      "meridian",
-      "eagle",
-      "nampa",
-      "garden city",
-      "kuna",
-      "star",
-    ]),
-  },
-  {
-    slug: "raleigh",
-    states: new Set(["nc", "north carolina"]),
-    cities: new Set([
-      "raleigh",
-      "cary",
-      "apex",
-      "fuquay-varina",
-      "fuquay varina",
-      "garner",
-      "wake forest",
-      "holly springs",
-      "durham",
-    ]),
-  },
-  {
-    slug: "portland",
-    states: new Set(["or", "oregon", "wa", "washington"]),
-    cities: new Set([
-      "portland",
-      "beaverton",
-      "hillsboro",
-      "tigard",
-      "lake oswego",
-      "gresham",
-      "vancouver",
-    ]),
-  },
+function places(slug, stateList, cities) {
+  const states = new Set(stateList);
+  return cities.map((city) => ({ slug, city, states }));
+}
+
+const RING_PLACES = [
+  ...places("boise", ["id", "idaho"], [
+    "boise",
+    "meridian",
+    "eagle",
+    "nampa",
+    "garden city",
+    "kuna",
+    "star",
+  ]),
+  ...places("raleigh", ["nc", "north carolina"], [
+    "raleigh",
+    "cary",
+    "apex",
+    "fuquay-varina",
+    "fuquay varina",
+    "garner",
+    "wake forest",
+    "holly springs",
+    "durham",
+  ]),
+  ...places("portland", ["or", "oregon"], [
+    "portland",
+    "beaverton",
+    "hillsboro",
+    "tigard",
+    "lake oswego",
+    "gresham",
+  ]),
+  ...places("portland", ["wa", "washington"], ["vancouver"]),
+  ...places("indianapolis", ["in", "indiana"], [
+    "indianapolis",
+    "carmel",
+    "fishers",
+    "noblesville",
+    "greenwood",
+    "westfield",
+    "zionsville",
+  ]),
+  ...places("kansas-city", ["ks", "kansas", "mo", "missouri"], [
+    "kansas city",
+    "overland park",
+    "lenexa",
+    "olathe",
+    "lee's summit",
+    "lees summit",
+    "shawnee",
+  ]),
+  ...places("nashville", ["tn", "tennessee"], [
+    "nashville",
+    "franklin",
+    "murfreesboro",
+    "brentwood",
+    "hendersonville",
+    "gallatin",
+    "smyrna",
+  ]),
+  ...places("charlotte", ["nc", "north carolina"], [
+    "charlotte",
+    "concord",
+    "mooresville",
+    "cornelius",
+    "matthews",
+    "huntersville",
+  ]),
+  ...places("charlotte", ["sc", "south carolina"], ["rock hill"]),
+  ...places("salt-lake", ["ut", "utah"], [
+    "salt lake city",
+    "sandy",
+    "south jordan",
+    "west jordan",
+    "draper",
+    "lehi",
+    "midvale",
+  ]),
+  ...places("columbus", ["oh", "ohio"], [
+    "columbus",
+    "westerville",
+    "dublin",
+    "hilliard",
+    "worthington",
+  ]),
 ];
+
+const RING_SLUGS = [...new Set(RING_PLACES.map((place) => place.slug))];
 
 function norm(value) {
   return String(value ?? "")
@@ -89,22 +136,8 @@ function assignMarket(city, state) {
   const cityKey = norm(city);
   const st = stateKey(state);
   if (!cityKey || !st) return null;
-
-  if (cityKey === "vancouver") {
-    return st === "wa" || st === "washington" ? "portland" : null;
-  }
-  if (
-    ["portland", "beaverton", "hillsboro", "tigard", "lake oswego", "gresham"].includes(
-      cityKey,
-    )
-  ) {
-    return st === "or" || st === "oregon" ? "portland" : null;
-  }
-
-  for (const market of P1) {
-    if (!market.cities.has(cityKey) || !market.states.has(st)) continue;
-    if (market.slug === "portland") continue;
-    return market.slug;
+  for (const place of RING_PLACES) {
+    if (place.city === cityKey && place.states.has(st)) return place.slug;
   }
   return null;
 }
@@ -207,7 +240,8 @@ async function fetchCampaignLeads(apiKey, campaignId) {
     businesses.push(...batch);
     if (!body.has_more || batch.length === 0) break;
     page += 1;
-    await sleep(120);
+    if (page > 200) break;
+    await sleep(80);
   }
   mkdirSync(cacheDir, { recursive: true });
   writeFileSync(cachePath, JSON.stringify(businesses));
@@ -236,9 +270,17 @@ async function main() {
   mkdirSync(exportDir, { recursive: true });
   mkdirSync(cacheDir, { recursive: true });
 
-  const campaigns = await listCampaigns(apiKey);
-  const byMarket = { boise: [], raleigh: [], portland: [] };
-  const seenCid = { boise: new Set(), raleigh: new Set(), portland: new Set() };
+  const campaigns = fromCache
+    ? readdirSync(cacheDir)
+        .filter((name) => name.startsWith("campaign-") && name.endsWith("-leads.json"))
+        .map((name) => ({
+          id: name.slice("campaign-".length, -"-leads.json".length),
+          name: name,
+          status: "cached",
+        }))
+    : await listCampaigns(apiKey);
+  const byMarket = Object.fromEntries(RING_SLUGS.map((slug) => [slug, []]));
+  const seenCid = Object.fromEntries(RING_SLUGS.map((slug) => [slug, new Set()]));
   const summary = {
     campaigns: campaigns.length,
     pulled: 0,
@@ -257,7 +299,9 @@ async function main() {
     }
     const id = campaign.id || campaign.campaign_id;
     if (!id) continue;
+    console.log(`Fetching leads ${campaign.name} (${status}) ${id}`);
     const businesses = await fetchCampaignLeads(apiKey, id);
+    console.log(`  ${businesses.length} businesses`);
     summary.pulled += businesses.length;
     let kept = 0;
     for (const row of businesses) {
@@ -287,7 +331,7 @@ async function main() {
       keyword: campaign.keyword,
       status,
       businesses: businesses.length,
-      keptP1: kept,
+      keptRing: kept,
     });
   }
 

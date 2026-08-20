@@ -28,7 +28,18 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const reportPath = path.join(root, "directory-import-report.json");
-const KNOWN_MARKETS = new Set(["spokane", "boise", "raleigh", "portland"]);
+const KNOWN_MARKETS = new Set([
+  "spokane",
+  "boise",
+  "raleigh",
+  "portland",
+  "indianapolis",
+  "kansas-city",
+  "nashville",
+  "charlotte",
+  "salt-lake",
+  "columbus",
+]);
 const BATCH_SIZE = 50;
 
 const fileArg = process.argv
@@ -163,7 +174,9 @@ async function main() {
     throw new Error("Pass --file path/to/directory-spokane.json");
   }
   if (!marketFilter) {
-    throw new Error("Pass --market spokane|boise|raleigh|portland (required)");
+    throw new Error(
+      `Pass --market ${[...KNOWN_MARKETS].join("|")} (required)`,
+    );
   }
   if (!KNOWN_MARKETS.has(marketFilter)) {
     throw new Error(
