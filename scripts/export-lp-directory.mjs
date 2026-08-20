@@ -45,6 +45,8 @@ const RING_PLACES = [
     "wake forest",
     "holly springs",
     "durham",
+    "clayton",
+    "youngsville",
   ]),
   ...places("portland", ["or", "oregon"], [
     "portland",
@@ -81,6 +83,12 @@ const RING_PLACES = [
     "hendersonville",
     "gallatin",
     "smyrna",
+    "goodlettsville",
+    "spring hill",
+    "columbia",
+    "thompson's station",
+    "thompsons station",
+    "chapel hill",
   ]),
   ...places("charlotte", ["nc", "north carolina"], [
     "charlotte",
@@ -90,8 +98,10 @@ const RING_PLACES = [
     "matthews",
     "huntersville",
     "waxhaw",
+    "kannapolis",
+    "indian trail",
   ]),
-  ...places("charlotte", ["sc", "south carolina"], ["rock hill"]),
+  ...places("charlotte", ["sc", "south carolina"], ["rock hill", "fort mill"]),
   ...places("salt-lake", ["ut", "utah"], [
     "salt lake city",
     "sandy",
@@ -102,6 +112,9 @@ const RING_PLACES = [
     "midvale",
     "provo",
     "orem",
+    "riverton",
+    "murray",
+    "bluffdale",
   ]),
   ...places("columbus", ["oh", "ohio"], [
     "columbus",
@@ -119,6 +132,12 @@ const RING_PLACES = [
     "centennial",
     "englewood",
     "westminster",
+    "broomfield",
+    "lakewood",
+    "wheat ridge",
+    "aurora",
+    "highlands ranch",
+    "thornton",
   ]),
   ...places("phoenix", ["az", "arizona"], [
     "phoenix",
@@ -129,6 +148,10 @@ const RING_PLACES = [
     "surprise",
     "queen creek",
     "buckeye",
+    "glendale",
+    "goodyear",
+    "avondale",
+    "tempe",
   ]),
   ...places("atlanta", ["ga", "georgia"], [
     "atlanta",
@@ -139,6 +162,17 @@ const RING_PLACES = [
     "kennesaw",
     "lawrenceville",
     "peachtree city",
+    "norcross",
+    "newnan",
+    "suwanee",
+    "acworth",
+    "duluth",
+    "johns creek",
+    "peachtree corners",
+    "dacula",
+    "buford",
+    "cumming",
+    "lilburn",
   ]),
   ...places("northern-virginia", ["va", "virginia"], [
     "sterling",
@@ -148,6 +182,7 @@ const RING_PLACES = [
     "manassas",
     "woodbridge",
     "reston",
+    "herndon",
   ]),
   ...places("minneapolis", ["mn", "minnesota"], [
     "minneapolis",
@@ -156,6 +191,11 @@ const RING_PLACES = [
     "eden prairie",
     "woodbury",
     "bloomington",
+    "st louis park",
+    "st. louis park",
+    "brooklyn park",
+    "minnetonka",
+    "golden valley",
   ]),
   ...places("milwaukee", ["wi", "wisconsin"], [
     "milwaukee",
@@ -181,7 +221,15 @@ const RING_PLACES = [
     "north charleston",
     "summerville",
   ]),
-  ...places("omaha", ["ne", "nebraska"], ["omaha"]),
+  ...places("omaha", ["ne", "nebraska"], [
+    "omaha",
+    "papillion",
+    "la vista",
+    "bellevue",
+    "ralston",
+    "springfield",
+  ]),
+  ...places("omaha", ["ia", "iowa"], ["council bluffs"]),
   ...places("oklahoma-city", ["ok", "oklahoma"], ["oklahoma city", "edmond"]),
   ...places("birmingham", ["al", "alabama"], ["birmingham", "hoover"]),
   ...places("greenville", ["sc", "south carolina"], ["greenville", "simpsonville"]),
@@ -194,12 +242,38 @@ const RING_PLACES = [
     "lake stevens",
     "marysville",
     "kirkland",
+    "bellevue",
+    "redmond",
   ]),
   ...places("chicago", ["il", "illinois"], [
     "chicago",
     "naperville",
     "schaumburg",
     "hoffman estates",
+  ]),
+  ...places("cincinnati", ["oh", "ohio"], [
+    "cincinnati",
+    "loveland",
+    "mason",
+    "west chester",
+    "west chester township",
+  ]),
+  ...places("tulsa", ["ok", "oklahoma"], ["tulsa", "broken arrow"]),
+  ...places("detroit", ["mi", "michigan"], [
+    "detroit",
+    "novi",
+    "livonia",
+    "farmington hills",
+    "southfield",
+    "wixom",
+    "plymouth",
+    "farmington",
+    "northville",
+    "commerce township",
+    "redford township",
+    "redford",
+    "new hudson",
+    "walled lake",
   ]),
 ];
 
@@ -347,11 +421,15 @@ function marketForRow(row) {
   const fromListing = assignMarket(contact.city, contact.state_code || contact.state);
   if (fromListing) return fromListing;
   const searched = row.searched_location;
-  const place =
-    typeof searched === "string"
-      ? parsePlace(searched)
-      : parsePlace(searched?.name || searched?.cities?.[0] || "");
-  return assignMarket(place.city, place.state);
+  if (typeof searched === "string") {
+    const place = parsePlace(searched);
+    return assignMarket(place.city, place.state);
+  }
+  const place = parsePlace(
+    searched?.city || searched?.name || searched?.cities?.[0] || "",
+  );
+  const state = place.state || searched?.state_code || searched?.state || "";
+  return assignMarket(place.city, state);
 }
 
 async function main() {
@@ -382,6 +460,7 @@ async function main() {
     unmatched: 0,
     nonContractor: 0,
     badCid: 0,
+    unmatchedCities: {},
     byCampaign: [],
   };
 
@@ -412,6 +491,21 @@ async function main() {
       const marketSlug = marketForRow(row);
       if (!marketSlug) {
         summary.unmatched += 1;
+        const contact = row.contact ?? {};
+        let city = String(contact.city ?? "").trim();
+        let state = String(contact.state_code || contact.state || "").trim();
+        if (!city) {
+          const searched = row.searched_location;
+          const raw =
+            typeof searched === "string"
+              ? searched
+              : searched?.city || searched?.name || "";
+          const place = parsePlace(raw);
+          city = place.city;
+          state = place.state || searched?.state_code || searched?.state || "";
+        }
+        const key = `${city || "(no city)"}, ${state || "(no state)"}`;
+        summary.unmatchedCities[key] = (summary.unmatchedCities[key] ?? 0) + 1;
         continue;
       }
       if (seenCid[marketSlug].has(googleCid)) continue;
@@ -448,7 +542,27 @@ async function main() {
     console.log(`Wrote ${listings.length} ${slug} listings to ${file}`);
   }
 
-  console.log(JSON.stringify(summary, null, 2));
+  const unmatchedTop = Object.entries(summary.unmatchedCities)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 60);
+  const byState = {};
+  for (const [place, count] of Object.entries(summary.unmatchedCities)) {
+    const state = place.split(", ").at(-1) ?? "";
+    byState[state] = (byState[state] ?? 0) + count;
+  }
+  console.log(
+    JSON.stringify(
+      {
+        ...summary,
+        unmatchedCities: Object.fromEntries(unmatchedTop),
+        unmatchedByState: Object.fromEntries(
+          Object.entries(byState).sort((a, b) => b[1] - a[1]),
+        ),
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 main().catch((err) => {

@@ -55,6 +55,9 @@ const KNOWN_MARKETS = new Set([
   "des-moines",
   "seattle",
   "chicago",
+  "cincinnati",
+  "tulsa",
+  "detroit",
 ]);
 const BATCH_SIZE = 50;
 
