@@ -98,6 +98,8 @@ export const DEFAULT_TRADE_PACK = {
     "Photorealistic photo of a local home-service contractor talking with a homeowner on a suburban porch, Pacific Northwest, daylight, no text, no logo",
 } as const;
 
+export const TRADE_PACK_CDN = "https://media.stokeleads.com/spokanelist";
+
 export function tradePackId(niche: string): string {
   const n = niche.toLowerCase();
   const pack = TRADE_PACKS.find((item) => item.match.test(n));
@@ -105,5 +107,7 @@ export function tradePackId(niche: string): string {
 }
 
 export function nicheHeroPhoto(niche: string): string {
-  return `/company-site/${tradePackId(niche)}.jpg`;
+  const id = tradePackId(niche);
+  const file = id === DEFAULT_TRADE_PACK.id ? "handyman" : id;
+  return `${TRADE_PACK_CDN}/${file}.avif`;
 }
