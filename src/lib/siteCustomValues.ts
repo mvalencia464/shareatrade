@@ -1,34 +1,11 @@
 import { formatPhone, phoneTelHref } from "./phone";
-
-const GREATER_SPOKANE_CITIES = new Set(
-  [
-    "spokane",
-    "spokane valley",
-    "liberty lake",
-    "airway heights",
-    "cheney",
-    "medical lake",
-    "deer park",
-    "millwood",
-    "mead",
-    "otis orchards",
-    "greenacres",
-    "veradale",
-    "nine mile falls",
-    "colbert",
-    "chattaroy",
-    "fairchild afb",
-    "spangle",
-    "marshall",
-    "town and country",
-    "country homes",
-  ].map((c) => c.replace(/\s+/g, " ").trim()),
-);
+import { getMarket, marketCoreCities, type Market } from "./markets";
 
 export type ContractorSiteSource = {
   slug: string;
   name: string;
   category: string;
+  marketSlug?: string;
   city?: string;
   state?: string;
   phone?: string;
@@ -74,30 +51,40 @@ function normalizeCity(city: string): string {
   return city.replace(/\s+/g, " ").trim().toLowerCase();
 }
 
-function isGreaterSpokaneCity(city: string | undefined): boolean {
-  if (!city) return false;
+function isMarketCity(city: string | undefined, market: Market | undefined): boolean {
+  if (!city || !market) return false;
   const key = normalizeCity(city);
-  if (GREATER_SPOKANE_CITIES.has(key)) return true;
-  return key.includes("spokane");
+  const aliases = marketCoreCities(market.slug);
+  if (aliases.has(key)) return true;
+  return key === market.name.toLowerCase();
 }
 
-export function deriveServiceArea(city?: string, state?: string): string {
+export function deriveServiceArea(
+  city?: string,
+  state?: string,
+  marketSlug?: string,
+): string {
   const cityLabel = city?.trim();
   const stateLabel = state?.trim();
   const place = [cityLabel, stateLabel].filter(Boolean).join(", ");
+  const market = marketSlug ? getMarket(marketSlug) : undefined;
 
-  if (cityLabel && isGreaterSpokaneCity(cityLabel)) {
-    return place
-      ? `${place} and the greater Spokane area`
-      : "the greater Spokane area";
+  if (cityLabel && isMarketCity(cityLabel, market)) {
+    const area = market ? `the greater ${market.name} area` : "the local area";
+    return place ? `${place} and ${area}` : area;
   }
 
   if (place) return place;
-  return "the Inland Northwest";
+  if (market) return `the ${market.name} area`;
+  return "the local area";
 }
 
 export function siteCustomValues(source: ContractorSiteSource): SiteCustomValues {
-  const service_area = deriveServiceArea(source.city, source.state);
+  const service_area = deriveServiceArea(
+    source.city,
+    source.state,
+    source.marketSlug,
+  );
   const niche = source.category.trim();
   const business_name = source.name.trim();
 
@@ -177,22 +164,16 @@ export function siteChannels(values: SiteCustomValues): SiteChannel[] {
   return channels;
 }
 
-const METRO_CHIPS = [
-  "South Hill",
-  "Spokane Valley",
-  "Liberty Lake",
-  "Mead",
-  "Nine Mile Falls",
-];
-
-export function serviceAreaChips(city?: string): string[] {
+export function serviceAreaChips(city?: string, marketSlug?: string): string[] {
+  const market = marketSlug ? getMarket(marketSlug) : undefined;
+  const chips = [...(market?.cityAliases ?? [])].slice(0, 6);
   const hometown = city?.trim();
-  if (!hometown) return METRO_CHIPS;
-  const already = METRO_CHIPS.some(
+  if (!hometown || chips.length === 0) return chips;
+  const already = chips.some(
     (chip) => chip.toLowerCase() === hometown.toLowerCase(),
   );
-  if (already || hometown.toLowerCase() === "spokane") return METRO_CHIPS;
-  return [hometown, ...METRO_CHIPS];
+  if (already) return chips;
+  return [hometown, ...chips.filter((chip) => chip.toLowerCase() !== hometown.toLowerCase())].slice(0, 6);
 }
 
 export function formatReviewCount(count: number): string {

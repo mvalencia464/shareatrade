@@ -1,10 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE_NAME } from "../lib/site";
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    <title>Hiring help | Share a Trade</title>
+    <title>Hiring help | {SITE_NAME}</title>
     <meta
       name="description"
       content="Practical notes for Spokane-area homeowners hiring a contractor—especially after a fire or storm. Not legal or insurance advice."

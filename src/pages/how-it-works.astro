@@ -1,11 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { ShareGroupMockup } from "../components/ShareGroupMockup";
+import { SITE_NAME } from "../lib/site";
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    <title>How it works | Share a Trade</title>
+    <title>How it works | {SITE_NAME}</title>
     <meta
       name="description"
       content="One tap, no sign-up. Find a contractor and share a complete name in a neighborhood chat."

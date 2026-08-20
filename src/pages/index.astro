@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { SITE_NAME, directoryPath } from "../lib/site";
-import { MARKETS } from "../lib/markets";
+import { liveMarkets } from "../lib/markets";
 ---
 
 <BaseLayout>
@@ -21,7 +21,7 @@ import { MARKETS } from "../lib/markets";
       into a group thread.
     </p>
     <ul class="market-grid">
-      {MARKETS.map((market) => (
+      {liveMarkets().map((market) => (
         <li>
           <a class="market-card" href={directoryPath(market.slug)}>
             <span class="market-card-name">{market.name}</span>

@@ -5,6 +5,24 @@ export const MARKETS = {
     dataforseoLocation: "Spokane,Washington,United States",
     licenseEnrichment: "wa" as const,
   },
+  boise: {
+    slug: "boise",
+    name: "Boise",
+    dataforseoLocation: "Boise,Idaho,United States",
+    licenseEnrichment: false as const,
+  },
+  raleigh: {
+    slug: "raleigh",
+    name: "Raleigh",
+    dataforseoLocation: "Raleigh,North Carolina,United States",
+    licenseEnrichment: false as const,
+  },
+  portland: {
+    slug: "portland",
+    name: "Portland",
+    dataforseoLocation: "Portland,Oregon,United States",
+    licenseEnrichment: false as const,
+  },
 } as const;
 
 export type MarketSlug = keyof typeof MARKETS;

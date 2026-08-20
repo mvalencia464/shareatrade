@@ -6,6 +6,7 @@ export const MARKETS = [
     tagline: "Valley, Liberty Lake, Cheney, and nearby towns",
     dataforseoLocation: "Spokane,Washington,United States",
     licenseEnrichment: "wa" as const,
+    live: true,
     cityAliases: [
       "Spokane",
       "Spokane Valley",
@@ -28,6 +29,63 @@ export const MARKETS = [
       "Town and Country",
       "Country Homes",
       "South Hill",
+      "Coeur d'Alene",
+      "Post Falls",
+    ],
+  },
+  {
+    slug: "boise",
+    name: "Boise",
+    state: "ID",
+    tagline: "Meridian, Eagle, Nampa, and the Treasure Valley",
+    dataforseoLocation: "Boise,Idaho,United States",
+    licenseEnrichment: false as const,
+    live: false,
+    cityAliases: [
+      "Boise",
+      "Meridian",
+      "Eagle",
+      "Nampa",
+      "Garden City",
+      "Kuna",
+      "Star",
+    ],
+  },
+  {
+    slug: "raleigh",
+    name: "Raleigh",
+    state: "NC",
+    tagline: "Cary, Durham, Apex, and Wake County towns",
+    dataforseoLocation: "Raleigh,North Carolina,United States",
+    licenseEnrichment: false as const,
+    live: false,
+    cityAliases: [
+      "Raleigh",
+      "Cary",
+      "Apex",
+      "Fuquay-Varina",
+      "Garner",
+      "Wake Forest",
+      "Holly Springs",
+      "Durham",
+    ],
+  },
+  {
+    slug: "portland",
+    name: "Portland",
+    state: "OR",
+    tagline: "Beaverton, Hillsboro, Gresham, and Vancouver WA",
+    dataforseoLocation: "Portland,Oregon,United States",
+    licenseEnrichment: false as const,
+    live: false,
+    cityAliases: [
+      "Portland",
+      "Beaverton",
+      "Hillsboro",
+      "Tigard",
+      "Lake Oswego",
+      "Gresham",
+      "Vancouver",
     ],
   },
 ] as const;
@@ -36,6 +94,8 @@ export type Market = (typeof MARKETS)[number];
 export type MarketSlug = Market["slug"];
 
 export const DEFAULT_MARKET_SLUG: MarketSlug = "spokane";
+
+export const DIRECTORY_MARKET_SLUGS = MARKETS.map((market) => market.slug);
 
 export function isMarketSlug(value: string): value is MarketSlug {
   return MARKETS.some((market) => market.slug === value);
@@ -51,4 +111,15 @@ export function requireMarket(slug: string): Market {
     throw new Error(`Unknown market: ${slug}`);
   }
   return market;
+}
+
+export function liveMarkets(): Market[] {
+  return MARKETS.filter((market) => market.live);
+}
+
+export function marketCoreCities(slug: string): Set<string> {
+  const market = getMarket(slug);
+  return new Set(
+    (market?.cityAliases ?? []).map((city) => city.replace(/\s+/g, " ").trim().toLowerCase()),
+  );
 }

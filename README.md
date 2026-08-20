@@ -22,12 +22,38 @@ That command must create a **new** Convex project. Copy `CONVEX_URL` into `PUBLI
 
 ## Import listings
 
+Spokane live data is the existing CSV (and NICC) import until a real Spokane LocalProspects campaign exists. Do **not** upsert `src/resources/directory-samples.json` — those rows are Boise/national fixtures for the mapper.
+
 ```bash
 npm run import:contractors:dry
 npm run import:contractors
 ```
 
 CSV import stamps `marketSlug: "spokane"` and keeps contractor-like categories only (WA/ID + blank state).
+
+When they have a Spokane campaign, they export then we import **only** that file:
+
+```bash
+# other repo
+npx tsx src/cli.ts export-directory <campaignId> --market spokane
+# writes exports/directory-spokane.json
+
+# this repo
+npm run import:directory:dry -- --file exports/directory-spokane.json --market spokane
+npm run import:directory -- --file exports/directory-spokane.json --market spokane
+```
+
+`--market` is required and must be `spokane`, `boise`, `raleigh`, or `portland`. It skips any row not stamped with that slug. Dry-run the sample pack only to test the mapper (never upsert it):
+
+```bash
+npm run import:directory:dry -- --file src/resources/directory-samples.json --market boise
+```
+
+P1 markets (`boise`, `raleigh`, `portland`) are in `MARKETS` but `live: false` until a real `exports/directory-{slug}.json` is imported. Homepage only lists `live` markets. Flip `live: true` after a successful import. Do not add P2+ slugs yet.
+
+```bash
+npm run import:directory -- --file exports/directory-boise.json --market boise
+```
 
 ## Enrich WA licenses
 

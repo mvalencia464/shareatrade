@@ -1,11 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE_NAME } from "../lib/site";
 import { ShareGroupMockup } from "../components/ShareGroupMockup";
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    <title>Why this directory exists | Share a Trade</title>
+    <title>Why this directory exists | {SITE_NAME}</title>
     <meta
       name="description"
       content="Find a recommended trade. Share their name in one click—no account, no sign-up."

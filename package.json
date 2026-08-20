@@ -13,6 +13,8 @@
     "astro": "astro",
     "import:contractors": "node scripts/import-contractors.mjs",
     "import:contractors:dry": "node scripts/import-contractors.mjs --dry-run",
+    "import:directory": "node scripts/import-directory.mjs",
+    "import:directory:dry": "node scripts/import-directory.mjs --dry-run",
     "import:nicc": "node scripts/import-nicc.mjs",
     "import:nicc:dry": "node scripts/import-nicc.mjs --dry-run",
     "enrich:licenses": "node scripts/enrich-licenses.mjs",
@@ -25,6 +27,7 @@
     "import:localprospects:dry": "node scripts/import-localprospects.mjs --dry-run",
     "search:localprospects": "node scripts/search-localprospects.mjs",
     "search:localprospects:dry": "node scripts/search-localprospects.mjs --dry-run",
+    "export:lp-directory": "node scripts/export-lp-directory.mjs",
     "export:highlevel": "node scripts/export-highlevel.mjs",
     "export:highlevel:dry": "node scripts/export-highlevel.mjs --dry-run"
   },

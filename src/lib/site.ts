@@ -1,4 +1,4 @@
-export const SITE_NAME = "Share a Trade";
+export const SITE_NAME = "shareatrade";
 export const SITE_ORIGIN = "https://shareatrade.com";
 export const CONTACT_NAME = "Mauricio Valencia";
 export const CONTACT_EMAIL = "hello@shareatrade.com";
@@ -50,7 +50,7 @@ export function listingUrl(
 export function contractorHelpMailto() {
   const subject = encodeURIComponent("Help with my listing");
   const body = encodeURIComponent(
-    "Hi — I have a listing on Share a Trade and may want a hand with Google reviews, my Business Profile, or a simple website.\n\nBusiness name:\nCity:\n",
+    "Hi — I have a listing on shareatrade and may want a hand with Google reviews, my Business Profile, or a simple website.\n\nBusiness name:\nCity:\n",
   );
   return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }

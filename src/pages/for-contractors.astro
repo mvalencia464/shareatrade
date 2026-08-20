@@ -2,11 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { ContactPerson } from "../components/ContactPerson";
 import { ShareGroupMockup } from "../components/ShareGroupMockup";
+import { SITE_NAME } from "../lib/site";
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    <title>For contractors | Share a Trade</title>
+    <title>For contractors | {SITE_NAME}</title>
     <meta
       name="description"
       content="Your neighbor dropped your name. Let’s make sure they drop your number, too. Free listing—no account, no lead fee."

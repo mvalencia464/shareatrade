@@ -1,0 +1,288 @@
+{
+  "note": "Directory-only samples. googleCid is a digit string (unsafe as JSON number). No emails, owners, or page text. Stamp marketSlug on export; never infer metro from city aliases. Do not import a row into spokane unless marketSlug is spokane.",
+  "coverage": [
+    "complete contractor (Boise metro) + socials",
+    "complete contractor, same market, different city (Boise)",
+    "thin: CID + ratings; city/website omitted (missing keys, not empty strings)",
+    "Liberty St in address; still marketSlug=boise (do not infer from street)",
+    "same brand, different city/CID — Everett is not spokane",
+    "same name, two CIDs (Potomac MD) — one company, two listings",
+    "same name, two CIDs (thin second location, city omitted)",
+    "non-trade sneak-in: realtor (stamp campaign market; do not dump into spokane)",
+    "non-trade sneak-in: GBP category Dentist on an HVAC search",
+    "Raleigh-area realtor — marketSlug=raleigh",
+    "complete Boise roofer with socials",
+    "geography trap: city Seattle, street named Spokane — marketSlug=seattle"
+  ],
+  "listings": [
+    {
+      "marketSlug": "boise",
+      "googleCid": "2208712156619574491",
+      "name": "Beacon Plumbing, Heating, Air-Conditioning, and Electrical, Inc",
+      "category": "Plumber",
+      "city": "Meridian",
+      "state": "Idaho",
+      "phone": "1208-693-2761",
+      "website": "https://www.beaconplumbing.com",
+      "gbpUrl": "https://www.google.com/maps?cid=2208712156619574491",
+      "rating": 5,
+      "reviewCount": 359,
+      "claimed": true,
+      "logoUrl": "https://www.beaconplumbing.com/logo.png",
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm5V5xQlTQwMD_ZUvNNnMuVF3Dgpz4W7GvJcyrxWAF2OWuyySJFGq-HRnA3Win27sfhyapRu-zCOyB_ei6GtcL4QJ4LgS5gDynKuFu92JstjpwO2ghLVJwCRcZ2GGbgXoCBCa9lJg=w408-h272-k-no",
+      "socials": [
+        {
+          "platform": "yelp",
+          "url": "https://www.yelp.com/biz/beacon-plumbing-boise-3"
+        },
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/BeaconPlumbingandHeatingBoise/"
+        },
+        {
+          "platform": "instagram",
+          "url": "https://www.instagram.com/beaconplumbingboise/"
+        }
+      ],
+      "googleMapsRank": 6
+    },
+    {
+      "marketSlug": "boise",
+      "googleCid": "11321816433761883560",
+      "name": "Goodson Plumbing Services",
+      "category": "Plumber",
+      "city": "Boise",
+      "state": "Idaho",
+      "phone": "1208-629-4278",
+      "website": "https://www.robgoodsonplumbing.com",
+      "gbpUrl": "https://www.google.com/maps?cid=11321816433761883560",
+      "rating": 4.9,
+      "reviewCount": 617,
+      "claimed": true,
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnHufF1BlyYliCrYdG6xE7XS9MYYYkpgfP668N8uxWdLi4UzCVI8EXrXpb6a9jtbTTHRAzChpFKhAuqIS3-A92npmvUQPpl3AGSzLcbqnicjMxO506UAEhbRWHFd4giBDEfFa7bXA=w408-h306-k-no",
+      "googleMapsRank": 36
+    },
+    {
+      "marketSlug": "boise",
+      "googleCid": "11672126797522631325",
+      "name": "Cassidy Plumbing",
+      "category": "Plumber",
+      "phone": "1208-917-2345",
+      "gbpUrl": "https://www.google.com/maps?cid=11672126797522631325",
+      "rating": 5,
+      "reviewCount": 16,
+      "claimed": true,
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlD24nIrq8ZHoHepBrj9vAMLUXOSvwUQQxG0R_b23uSgO0vXZQRb1BmrJooEiqZfkqTttHtd1cVdxxHvkJF622PyLIacEj9gn4Z0V9VkAGujwBsZ4I7TcoaxRHfnqGJEuSr8Vnsrw=w408-h306-k-no",
+      "googleMapsRank": 41
+    },
+    {
+      "marketSlug": "boise",
+      "googleCid": "13811343340855800687",
+      "name": "Precision Plumbing & Leak Detection",
+      "category": "Plumber",
+      "city": "Boise",
+      "state": "Idaho",
+      "phone": "1208-999-8198",
+      "website": "http://precisionplumbingandleakdetection.com",
+      "gbpUrl": "https://www.google.com/maps?cid=13811343340855800687",
+      "rating": 5,
+      "reviewCount": 53,
+      "claimed": true,
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkmZwwErW1hHm-qEFWN4BsA19OPxWS2CRkg64ofr9kZ4nLEDCduWHVtIHaxX4BTpcBoSs9KT9JLPtDxiCmzmSWFMkgYP2sfrWp9Ae3QQLCFXvC7oixH8ydYXnzWdpqIjVZx66o0sA=w408-h307-k-no",
+      "googleMapsRank": 59
+    },
+    {
+      "marketSlug": "seattle",
+      "googleCid": "1930959251699350115",
+      "name": "Beacon Plumbing - Everett",
+      "category": "Plumber",
+      "phone": "1425-374-4970",
+      "website": "http://www.beaconplumbing.net",
+      "gbpUrl": "https://www.google.com/maps?cid=1930959251699350115",
+      "rating": 4.2,
+      "reviewCount": 264,
+      "claimed": true,
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmgjNqcFlyLFlwNvyQAzAQ1sDSr2Utv2zO4l0_DGKZfZK2yncs7s7x8B4Zqe5LvCNkuXjDsJAQTJXvMrnhrziFT6247DBdSWfmKJ9PsQkiSvIiQLU3jHJcm-mIWRojE0NL9fDmf6bNYATWJ=w408-h306-k-no",
+      "googleMapsRank": 49
+    },
+    {
+      "marketSlug": "dc",
+      "googleCid": "13766296627136108879",
+      "name": "Certified Electrical Technologies",
+      "category": "Electrician",
+      "city": "Potomac",
+      "state": "Maryland",
+      "phone": "1301-948-5252",
+      "website": "https://certifiedelec.com",
+      "gbpUrl": "https://www.google.com/maps?cid=13766296627136108879",
+      "rating": 2,
+      "reviewCount": 4,
+      "claimed": true,
+      "logoUrl": "https://certifiedelec.com/wp-content/uploads/2019/04/certifiedeleclogo.jpg",
+      "mainImageUrl": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=NLEvK73AewratnthrH-imQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=220.67366&pitch=0&thumbfov=100",
+      "socials": [
+        {
+          "platform": "yelp",
+          "url": "https://www.yelp.com/biz/certified-electrical-technologies-inc-gaithersburg-2?osq=Certified+Electrical+Technologies"
+        },
+        {
+          "platform": "twitter",
+          "url": "https://twitter.com/certifiedelec/"
+        },
+        {
+          "platform": "youtube",
+          "url": "https://www.youtube.com/channel/UCLuL6J5E-5inMRPErwtKFkA"
+        },
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/certifiedelectricaltech"
+        },
+        {
+          "platform": "linkedin",
+          "url": "https://www.linkedin.com/company/certified-electrical-technologies/?trk=top_nav_home"
+        }
+      ],
+      "googleMapsRank": 74
+    },
+    {
+      "marketSlug": "dc",
+      "googleCid": "11672553259648417462",
+      "name": "Certified Electrical Technologies",
+      "category": "Electrician",
+      "phone": "1703-777-5651",
+      "website": "https://certifiedelec.com",
+      "gbpUrl": "https://www.google.com/maps?cid=11672553259648417462",
+      "rating": 1,
+      "reviewCount": 1,
+      "claimed": true,
+      "logoUrl": "https://certifiedelec.com/wp-content/uploads/2019/04/certifiedeleclogo.jpg",
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmrJTbA4D-BbHxYHgwmrjCe8pL_0bxtqpBm2RJVuIeWih1WEZnbSkDnSzu5H-4pchGakGZxPOol-xsNJ4EoljWqJnCE4q7PRIr6Kvval5g4vK44hr0_gtopKBuVD5A7a2zUbAs_=w408-h273-k-no",
+      "socials": [
+        {
+          "platform": "yelp",
+          "url": "https://www.yelp.com/biz/certified-electrical-technologies-inc-gaithersburg-2?osq=Certified+Electrical+Technologies"
+        },
+        {
+          "platform": "twitter",
+          "url": "https://twitter.com/certifiedelec/"
+        },
+        {
+          "platform": "youtube",
+          "url": "https://www.youtube.com/channel/UCLuL6J5E-5inMRPErwtKFkA"
+        },
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/certifiedelectricaltech"
+        },
+        {
+          "platform": "linkedin",
+          "url": "https://www.linkedin.com/company/certified-electrical-technologies/?trk=top_nav_home"
+        }
+      ],
+      "googleMapsRank": 88
+    },
+    {
+      "marketSlug": "greenville",
+      "googleCid": "12609264967309079405",
+      "name": "Weichert, Realtors - Shaun & Shari Group",
+      "category": "Real estate agency",
+      "city": "Simpsonville",
+      "state": "South Carolina",
+      "phone": "1864-626-0789",
+      "website": "http://shaunandshari.com",
+      "gbpUrl": "https://www.google.com/maps?cid=12609264967309079405",
+      "rating": 5,
+      "reviewCount": 208,
+      "claimed": true,
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk8_ghinUpB96GpUuh5jEZ4SkaNckRW_ZnPHaCW3z5zBIbtgPGQtAE45khsTJ4VOuyZs8CZiAcAwrcDtXtl2r72WytoOUiEMKQPCGhUpdnLxzawxiqaeASWjXaZ8yBR86Q2CK2xjA=w408-h272-k-no",
+      "googleMapsRank": 76
+    },
+    {
+      "marketSlug": "columbus",
+      "googleCid": "4931463831973380480",
+      "name": "BEST SERVICE HVAC, LLC",
+      "category": "Dentist",
+      "city": "Westerville",
+      "state": "Ohio",
+      "website": "https://bluepeakhvac.site",
+      "gbpUrl": "https://www.google.com/maps?cid=4931463831973380480",
+      "claimed": false,
+      "mainImageUrl": "https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=k992w4pNZm1JippbOaQMuA&cb_client=search.gws-prod.gps&w=408&h=240&yaw=88.14303&pitch=0&thumbfov=100",
+      "googleMapsRank": 46
+    },
+    {
+      "marketSlug": "raleigh",
+      "googleCid": "8046272232808240487",
+      "name": "Abshure Realty Group",
+      "category": "Real estate agency",
+      "city": "Fuquay-Varina",
+      "state": "North Carolina",
+      "phone": "1919-355-7653",
+      "website": "http://www.theabshurerealtygroup.com",
+      "gbpUrl": "https://www.google.com/maps?cid=8046272232808240487",
+      "rating": 4.9,
+      "reviewCount": 68,
+      "claimed": true,
+      "logoUrl": "https://reappdata.global.ssl.fastly.net/site_data/theabshurerealtygroup/layouts/veteran/images/logo-wht.png",
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnupbu5QUISbN5e8CZWQK2n_RcDVtIv7eVJ0tXEiyewsKKlvaIDEYmfRUgeS6GmQ54y3-8X26rkY5elq0xyoAYOllzi8UfrOhdF3YQZ0QyJaheOZmgnq8JvTLcyXXr7mgEV-LJ4=w408-h306-k-no",
+      "socials": [
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/AbshureRealtyGroup"
+        }
+      ],
+      "googleMapsRank": 53
+    },
+    {
+      "marketSlug": "boise",
+      "googleCid": "8831843327552267164",
+      "name": "Tru Armor Roofing Idaho, LLC",
+      "category": "Roofing contractor",
+      "city": "Eagle",
+      "state": "Idaho",
+      "phone": "1208-550-9387",
+      "website": "https://www.truarmoridaho.com",
+      "gbpUrl": "https://www.google.com/maps?cid=8831843327552267164",
+      "rating": 5,
+      "reviewCount": 12,
+      "claimed": true,
+      "logoUrl": "https://truarmoridaho.com/assets/img/logo-color.png",
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnP2P7CZjDVo088FBZxa5osp5QN5UgLBY3KA8tDampUXE9zvKoDGJPJ8thi_YDFnIBjqboxBWOibBCnKGPVH9XWG3HIscUSuipXerwoBuFyuHmrN418tbB5BPMT_ffeP6Xy87ZpbGMqxkZP=w408-h306-k-no",
+      "socials": [
+        {
+          "platform": "tiktok",
+          "url": "https://www.tiktok.com/@truarmorroofingidaho"
+        },
+        {
+          "platform": "youtube",
+          "url": "https://www.youtube.com/@truarmorroofingidaho"
+        },
+        {
+          "platform": "facebook",
+          "url": "https://www.facebook.com/truarmorroofing"
+        },
+        {
+          "platform": "instagram",
+          "url": "https://www.instagram.com/truarmorroofing"
+        }
+      ],
+      "googleMapsRank": 31
+    },
+    {
+      "marketSlug": "seattle",
+      "googleCid": "6022378364517280839",
+      "name": "Eco Electric, Plumbing, Heating and Air",
+      "category": "Plumber",
+      "city": "Seattle",
+      "state": "Washington",
+      "phone": "1206-548-4353",
+      "website": "https://www.ecoserviceswa.com",
+      "gbpUrl": "https://www.google.com/maps?cid=6022378364517280839",
+      "rating": 4.9,
+      "reviewCount": 2379,
+      "claimed": true,
+      "mainImageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmvPlnVHWSnVWLOUDMzr1A0BYmJxssHSjYaJAzkQqipIx62GxZORopx0_8jlQ1NX_DCJpxbLW4vVkTAHnUEY9-xxOfuIKQcBev1fTOqh4qdLVoPO-sjfGrMRaQB5Ay9dFUrStU6kvb47mY=w408-h518-k-no",
+      "googleMapsRank": 50
+    }
+  ]
+}

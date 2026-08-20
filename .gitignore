@@ -20,10 +20,12 @@ pnpm-debug.log*
 
 # import audit output
 import-report.json
+directory-import-report.json
 nicc-import-report.json
 license-enrichment-report.json
 localprospects-last.json
 localprospects-search-cache/
+exports/
 
 # macOS-specific files
 .DS_Store

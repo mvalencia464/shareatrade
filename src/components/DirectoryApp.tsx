@@ -6,6 +6,7 @@ import { useFavorites } from "../hooks/useFavorites";
 import { isPopularGbpCategory, sortCategoriesPopularFirst } from "../lib/gbpCategories";
 import { formatPhone, phoneTelHref } from "../lib/phone";
 import { listingPath } from "../lib/site";
+import { marketCoreCities } from "../lib/markets";
 import { ConvexProvider } from "./ConvexProvider";
 import { FavoriteButton } from "./FavoriteButton";
 import { LicenseBadge } from "./LicenseBadge";
@@ -42,30 +43,23 @@ type ListView = "all" | "saved";
 
 const PAGE_SIZE = 100;
 
-const CORE_CITIES = new Set([
-  "spokane",
-  "spokane valley",
-  "liberty lake",
-  "airway heights",
-  "cheney",
-  "medical lake",
-  "deer park",
-  "millwood",
-]);
-
-function locationRank(city?: string): number {
+function locationRank(city: string | undefined, marketSlug: string): number {
   if (!city) return 2;
-  return CORE_CITIES.has(city.trim().toLowerCase()) ? 0 : 1;
+  return marketCoreCities(marketSlug).has(city.trim().toLowerCase()) ? 0 : 1;
 }
 
-function sortContractors(list: ContractorCard[], sort: SortKey): ContractorCard[] {
+function sortContractors(
+  list: ContractorCard[],
+  sort: SortKey,
+  marketSlug: string,
+): ContractorCard[] {
   const items = [...list];
   switch (sort) {
     case "reviews":
       return items.sort((a, b) => {
         const diff = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
         if (diff !== 0) return diff;
-        const local = locationRank(a.city) - locationRank(b.city);
+        const local = locationRank(a.city, marketSlug) - locationRank(b.city, marketSlug);
         if (local !== 0) return local;
         return a.name.localeCompare(b.name);
       });
@@ -78,7 +72,7 @@ function sortContractors(list: ContractorCard[], sort: SortKey): ContractorCard[
       return items.sort((a, b) => {
         const diff = (b.rating ?? 0) - (a.rating ?? 0);
         if (diff !== 0) return diff;
-        const local = locationRank(a.city) - locationRank(b.city);
+        const local = locationRank(a.city, marketSlug) - locationRank(b.city, marketSlug);
         if (local !== 0) return local;
         const reviews = (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
         if (reviews !== 0) return reviews;
@@ -190,7 +184,7 @@ function DirectoryInner({ marketSlug }: { marketSlug: string }) {
       return haystack.includes(q);
     });
 
-    return sortContractors(matched, sort);
+    return sortContractors(matched, sort, marketSlug);
   }, [
     contractors,
     deferredSearch,
@@ -200,6 +194,7 @@ function DirectoryInner({ marketSlug }: { marketSlug: string }) {
     sort,
     view,
     favorites,
+    marketSlug,
   ]);
 
   useEffect(() => {

@@ -18,8 +18,8 @@ import {
   demoAbout,
   nicheHeroPhoto,
 } from "../../../lib/companySiteDemo";
-import { MARKETS, isMarketSlug } from "../../../lib/markets";
-import { SITE_NAME, uniqueBySlug } from "../../../lib/site";
+import { MARKETS, getMarket, isMarketSlug } from "../../../lib/markets";
+import { uniqueBySlug } from "../../../lib/site";
 import CompanySiteStars from "../../../components/CompanySiteStars.astro";
 import { CompanySiteChannels } from "../../../components/CompanySiteChannels";
 import { CompanySiteCallCta } from "../../../components/CompanySiteCallCta";
@@ -73,9 +73,9 @@ const reviewsLabel =
     ? `${formatReviewCount(values.reviews)} Google review${values.reviews === 1 ? "" : "s"}`
     : undefined;
 const about = values ? demoAbout(values) : null;
-const cityLabel = values?.city ?? "Spokane";
+const cityLabel = values?.city ?? getMarket(marketSlug)?.name ?? "this area";
 const coverSrc = values?.cover_url || (values ? nicheHeroPhoto(values.niche) : DEMO_PROJECTS[0]?.src);
-const areaChips = values ? serviceAreaChips(values.city) : [];
+const areaChips = values ? serviceAreaChips(values.city, marketSlug) : [];
 const channels = values ? siteChannels(values) : [];
 const previewReviews = DEMO_REVIEWS.slice(0, 3);
 const extraReviews = DEMO_REVIEWS.slice(3);
@@ -332,7 +332,7 @@ const extraReviews = DEMO_REVIEWS.slice(3);
           ) : null}
 
           <p class="cs-powered">
-            <a href="/">{SITE_NAME}</a>
+            <a href="/">share<span class="brand-a">a</span>trade</a>
           </p>
         </main>
           {values.phone_tel && values.phone ? (
