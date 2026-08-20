@@ -8,8 +8,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const clientDir = join(root, "dist", "client");
-const serverDir = join(root, "dist", "server");
+const distDir = join(root, "dist");
+const clientDir = join(distDir, "client");
+const serverDir = join(distDir, "server");
 
 function debugLog(hypothesisId, message, data) {
   // #region agent log
@@ -70,11 +71,18 @@ await cp(
   join(clientDir, "virtual_astro_middleware.mjs"),
 );
 
-debugLog("D", "prepared pages output", {
+const clientEntries = await readdir(clientDir);
+for (const name of clientEntries) {
+  await cp(join(clientDir, name), join(distDir, name), { recursive: true });
+}
+await writeFile(join(distDir, ".assetsignore"), "server\nclient\n");
+
+debugLog("G", "flattened client to dist root for Pages output=dist", {
   prerenderDirs,
   hasBoise: prerenderDirs.includes("boise"),
   hasWhy: prerenderDirs.includes("why"),
   include: routes.include,
   excludeCount: exclude.length,
   workerCopied: true,
+  flattened: clientEntries.length,
 });
