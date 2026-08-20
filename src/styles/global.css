@@ -797,12 +797,12 @@ select {
   position: relative;
   display: inline-grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid transparent;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--pine-soft);
-  color: var(--pine-deep);
+  background: var(--surface-solid);
+  color: var(--ink);
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -810,20 +810,32 @@ select {
     transform 0.15s ease;
 }
 
-.share-button svg {
-  width: 15px;
-  height: 15px;
+.share-button-mark {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.25s ease;
 }
 
 .share-button:hover {
-  background: var(--surface-solid);
+  background: var(--pine-soft);
   border-color: rgba(3, 39, 70, 0.28);
   transform: translateY(-1px);
 }
 
+.share-button:hover .share-button-mark,
+.share-button:focus-visible .share-button-mark {
+  transform: rotate(180deg);
+}
+
 .share-button.is-done {
-  background: var(--pine);
-  color: #f5f8fb;
+  background: var(--pine-soft);
+  border-color: rgba(3, 39, 70, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-button-mark {
+    transition: none;
+  }
 }
 
 .share-button::after {
@@ -864,6 +876,7 @@ select {
 }
 
 .contractor-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1.1rem 1.1rem;
@@ -1087,7 +1100,11 @@ a.contact-line:hover {
   border-radius: 10px;
 }
 
-.contractor-toolbar .share-button svg,
+.contractor-toolbar .share-button-mark {
+  width: 16px;
+  height: 16px;
+}
+
 .contractor-toolbar .favorite-button svg {
   width: 15px;
   height: 15px;
@@ -1689,7 +1706,7 @@ a.contact-line:hover {
   content: "";
   position: absolute;
   top: -6px;
-  right: 52px;
+  right: 14px;
   width: 12px;
   height: 12px;
   background: var(--surface-solid);
@@ -1725,8 +1742,7 @@ a.contact-line:hover {
 }
 
 .contractor-toolbar:has(.share-hint) .share-button {
-  border-color: rgba(3, 39, 70, 0.35);
-  box-shadow: 0 0 0 3px rgba(3, 39, 70, 0.16);
+  box-shadow: 0 0 0 3px rgba(3, 39, 70, 0.22);
 }
 
 .contractor-card:has(.share-hint) {
@@ -2025,13 +2041,11 @@ a.contact-line:hover {
   width: 46px;
   height: 46px;
   border-radius: 13px;
-  border-color: var(--line);
-  background: var(--surface-solid);
 }
 
-.detail-actions .share-button svg {
-  width: 18px;
-  height: 18px;
+.detail-actions .share-button-mark {
+  width: 22px;
+  height: 22px;
 }
 
 .detail-cover {
@@ -2252,7 +2266,7 @@ a.contact-line:hover {
     border: 0;
     border-radius: 0;
     background: var(--surface-solid);
-    color: var(--pine-deep);
+    color: var(--ink);
     font-weight: 700;
     font-size: 1rem;
   }
@@ -2265,12 +2279,12 @@ a.contact-line:hover {
 
   .listing-bar .share-button.is-done {
     background: var(--pine-soft);
-    color: var(--pine-deep);
+    color: var(--ink);
   }
 
-  .listing-bar .share-button svg {
-    width: 18px;
-    height: 18px;
+  .listing-bar .share-button-mark {
+    width: 22px;
+    height: 22px;
   }
 
   .listing-bar .share-button::after {
@@ -2505,7 +2519,7 @@ a.contact-line:hover {
   }
 
   .share-hint::before {
-    right: 44px;
+    right: 14px;
   }
 
   .quick-links {

@@ -308,13 +308,13 @@ function DetailInner({
                 Call {formatPhone(contractor.phone)}
               </a>
             ) : null}
-            <ShareButton contractor={shareContractor} />
             <FavoriteButton
               slug={contractor.slug}
               saved={isFavorite(contractor.slug)}
               onToggle={toggleFavorite}
               size="lg"
             />
+            <ShareButton contractor={shareContractor} />
           </div>
 
           <QuickLinks

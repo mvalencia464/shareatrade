@@ -478,6 +478,11 @@ function DirectoryInner({ marketSlug }: { marketSlug: string }) {
                       gbpUrl={c.gbpUrl}
                       socials={c.socials}
                     />
+                    <FavoriteButton
+                      slug={c.slug}
+                      saved={saved}
+                      onToggle={toggleFavorite}
+                    />
                     <ShareButton
                       contractor={{
                         slug: c.slug,
@@ -493,11 +498,6 @@ function DirectoryInner({ marketSlug }: { marketSlug: string }) {
                     {index === 0 && currentPage === 1 && view === "all" ? (
                       <ShareHintOverlay />
                     ) : null}
-                    <FavoriteButton
-                      slug={c.slug}
-                      saved={saved}
-                      onToggle={toggleFavorite}
-                    />
                   </div>
                 </div>
               </li>

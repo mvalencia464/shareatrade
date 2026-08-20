@@ -4,23 +4,6 @@ import {
   type ShareContractor,
 } from "../lib/shareListing";
 
-function IconShare() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="18" cy="5" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="6" cy="12" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="18" cy="19" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.6" />
-      <path
-        d="M8.2 10.8 15.7 6.4M8.2 13.2l7.5 4.4"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 export function ShareButton({
   contractor,
   variant = "icon",
@@ -76,7 +59,14 @@ export function ShareButton({
       data-tooltip={status === "copied" ? "Copied!" : status === "shared" ? "Shared" : "Share"}
       onClick={onShare}
     >
-      <IconShare />
+      <img
+        className="share-button-mark"
+        src="/favicon.svg"
+        alt=""
+        width={20}
+        height={20}
+        aria-hidden="true"
+      />
       {variant === "bar" ? <span>{label}</span> : null}
     </button>
   );
