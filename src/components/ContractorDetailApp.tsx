@@ -274,12 +274,14 @@ function DetailInner({
           </p>
 
           <div className="detail-actions">
-            <a
-              className="button button-primary"
-              href={companySitePath(marketSlug, contractor.slug)}
-            >
-              Live site
-            </a>
+            {contractor.phone ? (
+              <a
+                className="button button-primary"
+                href={phoneTelHref(contractor.phone) ?? `tel:${contractor.phone}`}
+              >
+                Call {formatPhone(contractor.phone)}
+              </a>
+            ) : null}
             {contractor.website ? (
               <a
                 className="button button-secondary"
@@ -298,14 +300,6 @@ function DetailInner({
                 rel="noreferrer"
               >
                 Google Business
-              </a>
-            ) : null}
-            {contractor.phone ? (
-              <a
-                className="button button-secondary"
-                href={phoneTelHref(contractor.phone) ?? `tel:${contractor.phone}`}
-              >
-                Call {formatPhone(contractor.phone)}
               </a>
             ) : null}
             <FavoriteButton

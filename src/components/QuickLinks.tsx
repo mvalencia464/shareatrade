@@ -159,8 +159,13 @@ export function QuickLinks({
   socials = [],
   email,
 }: QuickLinksProps) {
-  const links: Array<{ key: string; href: string; label: string; icon: ReactNode }> =
-    [];
+  const links: Array<{
+    key: string;
+    href: string;
+    label: string;
+    icon: ReactNode;
+    hidden?: boolean;
+  }> = [];
 
   if (liveSiteHref) {
     links.push({
@@ -168,6 +173,7 @@ export function QuickLinks({
       href: liveSiteHref,
       label: "Live site",
       icon: <IconGlobe />,
+      hidden: true,
     });
   }
   if (website) {
@@ -205,12 +211,14 @@ export function QuickLinks({
       {links.map((link) => (
         <a
           key={link.key}
-          className="quick-link"
+          className={link.hidden ? "quick-link quick-link-dev" : "quick-link"}
           href={link.href}
           target={link.href.startsWith("mailto:") ? undefined : "_blank"}
           rel={link.href.startsWith("mailto:") ? undefined : "noreferrer"}
-          aria-label={link.label}
-          data-tooltip={link.label}
+          aria-hidden={link.hidden ? true : undefined}
+          tabIndex={link.hidden ? -1 : undefined}
+          aria-label={link.hidden ? undefined : link.label}
+          data-tooltip={link.hidden ? undefined : link.label}
           onClick={(e) => e.stopPropagation()}
         >
           {link.icon}

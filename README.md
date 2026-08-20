@@ -32,7 +32,7 @@ That command must use **this** Convex project (`clean-clownfish-658` in current 
 - `/` — pick a market (`live: true` only)
 - `/{market}` — directory
 - `/{market}/{slug}` — listing
-- `/go/{market}/{slug}` — unlisted company preview (noindex). Listing pages link this as **Live site**.
+- `/go/{market}/{slug}` — unlisted company preview (noindex). Open it from a listing by clicking the invisible first icon in the toolbar (left of Website / GBP).
 
 ## Cloudflare vs local
 

@@ -1299,6 +1299,22 @@ a.contact-line:hover {
   transform: translateX(-50%) translateY(0);
 }
 
+.quick-link-dev {
+  opacity: 0;
+}
+
+.quick-link-dev:hover,
+.quick-link-dev:focus-visible {
+  opacity: 0;
+  background: transparent;
+  border-color: transparent;
+  transform: none;
+}
+
+.quick-link-dev::after {
+  content: none;
+}
+
 .button {
   display: inline-flex;
   align-items: center;
