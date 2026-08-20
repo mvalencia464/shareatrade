@@ -581,8 +581,14 @@ select {
   }
 }
 
+.market-grid li {
+  display: flex;
+}
+
 .market-card {
   display: grid;
+  align-content: start;
+  flex: 1;
   gap: 0.25rem;
   padding: 1rem 1.1rem;
   border: 1px solid var(--line);
@@ -603,12 +609,21 @@ select {
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--pine-deep);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .market-card-meta {
   color: var(--ink-soft);
   font-size: 0.92rem;
   line-height: 1.4;
+  min-height: calc(0.92rem * 1.4 * 2);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .view-switch {
