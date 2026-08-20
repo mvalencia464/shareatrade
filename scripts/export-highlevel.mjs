@@ -200,7 +200,7 @@ function mapContact(row, locationId, customIds) {
     locationId,
     firstName,
     companyName: row.name,
-    source: "Spokane List",
+    source: "Share a Trade",
     timezone: TIMEZONE,
     country: "US",
     tags: [TAG],

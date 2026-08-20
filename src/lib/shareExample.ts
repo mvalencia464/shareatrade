@@ -1,8 +1,10 @@
+import { SITE_ORIGIN } from "./site";
 import { buildShareLines } from "./shareListing";
 
 export const SHARE_HINT_STORAGE_KEY = "sc-share-hint-v1";
 
 export const SHARE_EXAMPLE = {
+  marketSlug: "spokane",
   slug: "valley-ridge-electric",
   name: "Valley Ridge Electric",
   category: "Electrician",
@@ -13,7 +15,7 @@ export const SHARE_EXAMPLE = {
   reviewCount: 128,
 };
 
-export function shareExampleLines(origin = "https://spokanelist.com") {
+export function shareExampleLines(origin = SITE_ORIGIN) {
   return buildShareLines(SHARE_EXAMPLE, origin);
 }
 

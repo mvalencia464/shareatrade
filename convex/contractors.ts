@@ -23,6 +23,7 @@ const licenseFields = {
 
 const contractorCardValidator = v.object({
   _id: v.id("contractors"),
+  marketSlug: v.string(),
   slug: v.string(),
   name: v.string(),
   category: v.string(),
@@ -45,6 +46,7 @@ const contractorCardValidator = v.object({
 const contractorDetailValidator = v.object({
   _id: v.id("contractors"),
   _creationTime: v.number(),
+  marketSlug: v.string(),
   slug: v.string(),
   name: v.string(),
   googleCid: v.string(),
@@ -69,6 +71,7 @@ const contractorDetailValidator = v.object({
 });
 
 const contractorInputValidator = v.object({
+  marketSlug: v.string(),
   slug: v.string(),
   name: v.string(),
   googleCid: v.string(),
@@ -100,6 +103,14 @@ async function loadAllContractors(ctx: QueryCtx) {
   return await ctx.db.query("contractors").collect();
 }
 
+async function loadContractorsByMarket(ctx: QueryCtx, marketSlug: string) {
+  // One-metro collect is intentional: directory search/filters run on the client.
+  return await ctx.db
+    .query("contractors")
+    .withIndex("by_market", (q) => q.eq("marketSlug", marketSlug))
+    .collect();
+}
+
 function sortByRatingThenName<T extends { rating?: number; name: string }>(
   items: T[],
 ): T[] {
@@ -128,14 +139,15 @@ function pickPreferredContractor<
   })[0]!;
 }
 
-export const list = query({
-  args: {},
+export const listByMarket = query({
+  args: { marketSlug: v.string() },
   returns: v.array(contractorCardValidator),
-  handler: async (ctx) => {
-    const contractors = await loadAllContractors(ctx);
+  handler: async (ctx, args) => {
+    const contractors = await loadContractorsByMarket(ctx, args.marketSlug);
     return sortByRatingThenName(
       contractors.map((c) => ({
         _id: c._id,
+        marketSlug: c.marketSlug,
         slug: c.slug,
         name: c.name,
         category: c.category,
@@ -159,16 +171,16 @@ export const list = query({
 });
 
 /** Slim ordered index for detail prev/next (~70KB vs full list ~776KB). */
-export const listNav = query({
-  args: {},
+export const listNavByMarket = query({
+  args: { marketSlug: v.string() },
   returns: v.array(
     v.object({
       slug: v.string(),
       name: v.string(),
     }),
   ),
-  handler: async (ctx) => {
-    const contractors = await loadAllContractors(ctx);
+  handler: async (ctx, args) => {
+    const contractors = await loadContractorsByMarket(ctx, args.marketSlug);
     return sortByRatingThenName(
       contractors.map((c) => ({
         slug: c.slug,
@@ -179,23 +191,26 @@ export const listNav = query({
   },
 });
 
-export const getBySlug = query({
-  args: { slug: v.string() },
+export const getByMarketAndSlug = query({
+  args: { marketSlug: v.string(), slug: v.string() },
   returns: v.union(contractorDetailValidator, v.null()),
   handler: async (ctx, args) => {
     const matches = await ctx.db
       .query("contractors")
-      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .withIndex("by_market_and_slug", (q) =>
+        q.eq("marketSlug", args.marketSlug).eq("slug", args.slug),
+      )
       .collect();
     return pickPreferredContractor(matches);
   },
 });
 
 export const listForEnrichment = internalQuery({
-  args: {},
+  args: { marketSlug: v.optional(v.string()) },
   returns: v.array(
     v.object({
       _id: v.id("contractors"),
+      marketSlug: v.string(),
       slug: v.string(),
       name: v.string(),
       phone: v.optional(v.string()),
@@ -206,10 +221,13 @@ export const listForEnrichment = internalQuery({
       source: v.optional(v.string()),
     }),
   ),
-  handler: async (ctx) => {
-    const contractors = await loadAllContractors(ctx);
+  handler: async (ctx, args) => {
+    const contractors = args.marketSlug
+      ? await loadContractorsByMarket(ctx, args.marketSlug)
+      : await loadAllContractors(ctx);
     return contractors.map((c) => ({
       _id: c._id,
+      marketSlug: c.marketSlug,
       slug: c.slug,
       name: c.name,
       phone: c.phone,
@@ -274,15 +292,21 @@ export const upsertBatch = internalMutation({
     for (const contractor of args.contractors) {
       const existingByCid = await ctx.db
         .query("contractors")
-        .withIndex("by_google_cid", (q) =>
-          q.eq("googleCid", contractor.googleCid),
+        .withIndex("by_market_and_google_cid", (q) =>
+          q
+            .eq("marketSlug", contractor.marketSlug)
+            .eq("googleCid", contractor.googleCid),
         )
         .first();
       const existingBySlug = existingByCid
         ? null
         : await ctx.db
             .query("contractors")
-            .withIndex("by_slug", (q) => q.eq("slug", contractor.slug))
+            .withIndex("by_market_and_slug", (q) =>
+              q
+                .eq("marketSlug", contractor.marketSlug)
+                .eq("slug", contractor.slug),
+            )
             .first();
       const existing = existingByCid ?? existingBySlug;
 

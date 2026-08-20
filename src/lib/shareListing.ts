@@ -2,6 +2,7 @@ import { formatPhone } from "./phone";
 import { listingUrl } from "./site";
 
 export type ShareContractor = {
+  marketSlug: string;
   slug: string;
   name: string;
   category: string;
@@ -39,7 +40,9 @@ export function buildShareLines(
   if (contractor.website) {
     lines.push(`🌐 ${contractor.website}`);
   }
-  lines.push(`🔗 Details & Portfolio: ${listingUrl(contractor.slug, origin)}`);
+  lines.push(
+    `🔗 Details & Portfolio: ${listingUrl(contractor.marketSlug, contractor.slug, origin)}`,
+  );
   return lines;
 }
 

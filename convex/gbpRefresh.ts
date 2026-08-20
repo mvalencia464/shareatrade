@@ -3,7 +3,6 @@ import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import {
-  dataforseoLocationName,
   dataforseoRequest,
   firstBusinessItem,
   isGoogleCid,
@@ -12,6 +11,7 @@ import {
   snapshotFromItem,
   taskTag,
 } from "./lib/dataforseo";
+import { dataforseoLocationForMarket } from "./lib/markets";
 
 const POST_BATCH = 100;
 const PATCH_BATCH = 50;
@@ -57,7 +57,6 @@ export const postTasks = internalAction({
       };
     }
 
-    const locationName = dataforseoLocationName();
     let posted = 0;
     let cost = 0;
 
@@ -65,7 +64,7 @@ export const postTasks = internalAction({
       const batch = limited.slice(i, i + POST_BATCH);
       const payload = batch.map((c) => ({
         language_code: "en",
-        location_name: locationName,
+        location_name: dataforseoLocationForMarket(c.marketSlug),
         keyword: keywordForCid(c.googleCid),
         tag: c._id,
       }));

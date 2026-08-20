@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalAction } from "./_generated/server";
 import { matchLicenses, type LiRecord } from "./lib/liMatch";
+import { WA_LICENSE_MARKET_SLUG } from "./lib/markets";
 
 const DATASET = "https://data.wa.gov/resource/m8qx-ubtq.json";
 const PAGE_SIZE = 1000;
@@ -64,7 +65,7 @@ export const enrichWa = internalAction({
   handler: async (ctx, args) => {
     const contractors = await ctx.runQuery(
       internal.contractors.listForEnrichment,
-      {},
+      { marketSlug: WA_LICENSE_MARKET_SLUG },
     );
     const phoneRecords = await fetchAll(PHONE_WHERE);
     const cityRecords = await fetchAll(CITY_WHERE);

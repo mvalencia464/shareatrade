@@ -1,23 +1,36 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { DirectoryApp } from "../components/DirectoryApp";
-
-const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
+import { SITE_NAME, directoryPath } from "../lib/site";
+import { MARKETS } from "../lib/markets";
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    <title>Spokane Contractors | Local trade directory</title>
+    <title>{SITE_NAME} | Find a trade. Share a name.</title>
     <meta
       name="description"
-      content="Find Spokane-area contractors by trade, city, and rating for your next home project."
+      content="A free contractor directory you can paste into a neighborhood chat. Pick a market to browse trades by city and rating."
     />
   </Fragment>
-  {convexUrl ? (
-    <DirectoryApp client:load convexUrl={convexUrl} />
-  ) : (
-    <p class="env-warning">
-      Set PUBLIC_CONVEX_URL in .env.local after running npx convex dev.
+
+  <section class="hero market-home">
+    <p class="hero-eyebrow">Choose a market</p>
+    <h1>Find a recommended trade. Share their name in one click.</h1>
+    <p class="hero-why">
+      No accounts. No sign-ups. Start with a city, then paste a complete listing
+      into a group thread.
     </p>
-  )}
+    <ul class="market-grid">
+      {MARKETS.map((market) => (
+        <li>
+          <a class="market-card" href={directoryPath(market.slug)}>
+            <span class="market-card-name">{market.name}</span>
+            <span class="market-card-meta">
+              {market.state} · {market.tagline}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
 </BaseLayout>

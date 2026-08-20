@@ -240,6 +240,7 @@ function toContractor(listing, usedSlugs) {
   const licenseNumber = parseLicense(listing.licenseRaw);
 
   return {
+    marketSlug: "spokane",
     slug,
     name: listing.name,
     googleCid: `nicc:${listing.uuid}`,

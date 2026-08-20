@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
 import { formatPhone, phoneTelHref } from "../lib/phone";
-import { listingPath } from "../lib/site";
+import { directoryPath, listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
 import { CoverImage } from "./CoverImage";
 import { ContractorHelpNote } from "./ContractorHelpNote";
@@ -20,7 +20,7 @@ type Neighbor = {
   name: string;
 };
 
-const NAV_CACHE_KEY = "spokane-contractors-listNav-v1";
+const NAV_CACHE_KEY = "shareatrade-listNav-v1";
 
 function readNavCache(currentSlug: string): Neighbor[] | null {
   try {
@@ -44,9 +44,11 @@ function writeNavCache(neighbors: Neighbor[]) {
 }
 
 function ContractorPager({
+  marketSlug,
   currentSlug,
   neighbors,
 }: {
+  marketSlug: string;
   currentSlug: string;
   neighbors: Neighbor[] | undefined;
 }) {
@@ -84,16 +86,16 @@ function ContractorPager({
 
       if (event.key === "ArrowLeft" && prev) {
         event.preventDefault();
-        window.location.assign(listingPath(prev.slug));
+        window.location.assign(listingPath(marketSlug, prev.slug));
       } else if (event.key === "ArrowRight" && next) {
         event.preventDefault();
-        window.location.assign(listingPath(next.slug));
+        window.location.assign(listingPath(marketSlug, next.slug));
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [prev, next]);
+  }, [prev, next, marketSlug]);
 
   if (!neighbors) {
     return <div className="pager pager-loading" aria-hidden />;
@@ -104,7 +106,7 @@ function ContractorPager({
       {prev ? (
         <a
           className="pager-link pager-prev"
-          href={listingPath(prev.slug)}
+          href={listingPath(marketSlug, prev.slug)}
           title={`${prev.name} (←)`}
         >
           <span className="pager-arrow" aria-hidden>
@@ -140,7 +142,7 @@ function ContractorPager({
       {next ? (
         <a
           className="pager-link pager-next"
-          href={listingPath(next.slug)}
+          href={listingPath(marketSlug, next.slug)}
           title={`${next.name} (→)`}
         >
           <span className="pager-copy">
@@ -166,8 +168,17 @@ function ContractorPager({
   );
 }
 
-function DetailInner({ slug }: { slug: string }) {
-  const contractor = useQuery(api.contractors.getBySlug, { slug });
+function DetailInner({
+  marketSlug,
+  slug,
+}: {
+  marketSlug: string;
+  slug: string;
+}) {
+  const contractor = useQuery(api.contractors.getByMarketAndSlug, {
+    marketSlug,
+    slug,
+  });
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const [cachedNav] = useState(() =>
@@ -180,8 +191,8 @@ function DetailInner({ slug }: { slug: string }) {
   }, [cachedNav, slug]);
 
   const liveNav = useQuery(
-    api.contractors.listNav,
-    cachedForSlug ? "skip" : {},
+    api.contractors.listNavByMarket,
+    cachedForSlug ? "skip" : { marketSlug },
   );
 
   useEffect(() => {
@@ -199,7 +210,7 @@ function DetailInner({ slug }: { slug: string }) {
       <div className="not-found">
         <h1>Contractor not found</h1>
         <p>
-          <a className="button button-primary" href="/">
+          <a className="button button-primary" href={directoryPath(marketSlug)}>
             Back to directory
           </a>
         </p>
@@ -208,6 +219,7 @@ function DetailInner({ slug }: { slug: string }) {
   }
 
   const shareContractor = {
+    marketSlug,
     slug: contractor.slug,
     name: contractor.name,
     category: contractor.category,
@@ -222,7 +234,7 @@ function DetailInner({ slug }: { slug: string }) {
     <>
     <article className="detail">
       <div className="detail-topbar">
-        <a className="back-link" href="/">
+        <a className="back-link" href={directoryPath(marketSlug)}>
           ← All contractors
         </a>
       </div>
@@ -258,7 +270,7 @@ function DetailInner({ slug }: { slug: string }) {
           <p className="detail-summary">
             {contractor.city
               ? `Serving ${contractor.city}${contractor.state ? `, ${contractor.state}` : ""}.`
-              : "Spokane-area contractor listing."}
+              : "Local contractor listing."}
           </p>
 
           <div className="detail-actions">
@@ -432,7 +444,11 @@ function DetailInner({ slug }: { slug: string }) {
 
       <ContractorHelpNote />
 
-      <ContractorPager currentSlug={slug} neighbors={neighbors} />
+      <ContractorPager
+        marketSlug={marketSlug}
+        currentSlug={slug}
+        neighbors={neighbors}
+      />
     </article>
       <div className="listing-bar">
         <ShareButton contractor={shareContractor} variant="bar" />
@@ -453,14 +469,16 @@ function DetailInner({ slug }: { slug: string }) {
 
 export function ContractorDetailApp({
   convexUrl,
+  marketSlug,
   slug,
 }: {
   convexUrl: string;
+  marketSlug: string;
   slug: string;
 }) {
   return (
     <ConvexProvider url={convexUrl}>
-      <DetailInner slug={slug} />
+      <DetailInner marketSlug={marketSlug} slug={slug} />
     </ConvexProvider>
   );
 }

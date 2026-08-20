@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { DirectoryApp } from "../../components/DirectoryApp";
+import { MARKETS, getMarket } from "../../lib/markets";
+import { SITE_NAME } from "../../lib/site";
+
+export function getStaticPaths() {
+  return MARKETS.map((market) => ({
+    params: { market: market.slug },
+  }));
+}
+
+const marketSlug = Astro.params.market ?? "";
+const market = getMarket(marketSlug);
+const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>
+      {market ? `${market.name} contractors` : "Contractors"} | {SITE_NAME}
+    </title>
+    <meta
+      name="description"
+      content={
+        market
+          ? `Find ${market.name}-area contractors by trade, city, and rating.`
+          : "Find local contractors by trade, city, and rating."
+      }
+    />
+  </Fragment>
+  {convexUrl && market ? (
+    <DirectoryApp client:load convexUrl={convexUrl} marketSlug={market.slug} />
+  ) : (
+    <p class="env-warning">
+      Set PUBLIC_CONVEX_URL in .env.local after running npx convex dev.
+    </p>
+  )}
+</BaseLayout>

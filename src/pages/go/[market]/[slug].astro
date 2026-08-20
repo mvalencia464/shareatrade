@@ -1,15 +1,15 @@
 ---
-import CompanySiteLayout from "../../layouts/CompanySiteLayout.astro";
-import CompanySiteReviews from "../../components/CompanySiteReviews.astro";
+import CompanySiteLayout from "../../../layouts/CompanySiteLayout.astro";
+import CompanySiteReviews from "../../../components/CompanySiteReviews.astro";
 import { ConvexHttpClient } from "convex/browser";
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import {
   formatReviewCount,
   serviceAreaChips,
   siteChannels,
   siteCustomValues,
   type SiteCustomValues,
-} from "../../lib/siteCustomValues";
+} from "../../../lib/siteCustomValues";
 import {
   DEMO_CREW_PHOTO,
   DEMO_PROJECTS,
@@ -17,11 +17,12 @@ import {
   DEMO_TEAM,
   demoAbout,
   nicheHeroPhoto,
-} from "../../lib/companySiteDemo";
-import { SITE_NAME, uniqueBySlug } from "../../lib/site";
-import CompanySiteStars from "../../components/CompanySiteStars.astro";
-import { CompanySiteChannels } from "../../components/CompanySiteChannels";
-import { CompanySiteCallCta } from "../../components/CompanySiteCallCta";
+} from "../../../lib/companySiteDemo";
+import { MARKETS, isMarketSlug } from "../../../lib/markets";
+import { SITE_NAME, uniqueBySlug } from "../../../lib/site";
+import CompanySiteStars from "../../../components/CompanySiteStars.astro";
+import { CompanySiteChannels } from "../../../components/CompanySiteChannels";
+import { CompanySiteCallCta } from "../../../components/CompanySiteCallCta";
 
 export async function getStaticPaths() {
   const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
@@ -29,19 +30,33 @@ export async function getStaticPaths() {
     return [];
   }
   const client = new ConvexHttpClient(convexUrl);
-  const contractors = uniqueBySlug(await client.query(api.contractors.list, {}));
-  return contractors.map((contractor) => ({
-    params: { slug: contractor.slug },
-  }));
+  const paths: Array<{ params: { market: string; slug: string } }> = [];
+  for (const market of MARKETS) {
+    const contractors = uniqueBySlug(
+      await client.query(api.contractors.listByMarket, {
+        marketSlug: market.slug,
+      }),
+    );
+    for (const contractor of contractors) {
+      paths.push({
+        params: { market: market.slug, slug: contractor.slug },
+      });
+    }
+  }
+  return paths;
 }
 
+const marketSlug = Astro.params.market ?? "";
 const { slug } = Astro.params;
 const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
 
 let values: SiteCustomValues | null = null;
-if (convexUrl && slug) {
+if (convexUrl && slug && isMarketSlug(marketSlug)) {
   const client = new ConvexHttpClient(convexUrl);
-  const contractor = await client.query(api.contractors.getBySlug, { slug });
+  const contractor = await client.query(api.contractors.getByMarketAndSlug, {
+    marketSlug,
+    slug,
+  });
   if (contractor) {
     values = siteCustomValues(contractor);
   }

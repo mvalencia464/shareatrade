@@ -7,6 +7,6 @@ import react from '@astrojs/react';
 export default defineConfig({
   integrations: [react()],
   redirects: {
-    "/contractors/[slug]": "/[slug]",
+    "/contractors/[slug]": "/spokane/[slug]",
   },
 });

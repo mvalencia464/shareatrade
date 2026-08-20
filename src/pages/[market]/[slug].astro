@@ -1,0 +1,65 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { ContractorDetailApp } from "../../components/ContractorDetailApp";
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../../../convex/_generated/api";
+import { MARKETS, isMarketSlug } from "../../lib/markets";
+import { SITE_NAME, uniqueBySlug } from "../../lib/site";
+
+export async function getStaticPaths() {
+  const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
+  if (!convexUrl) {
+    return [];
+  }
+  const client = new ConvexHttpClient(convexUrl);
+  const paths: Array<{
+    params: { market: string; slug: string };
+    props: { name: string; category: string; city?: string };
+  }> = [];
+  for (const market of MARKETS) {
+    const contractors = uniqueBySlug(
+      await client.query(api.contractors.listByMarket, {
+        marketSlug: market.slug,
+      }),
+    );
+    for (const contractor of contractors) {
+      paths.push({
+        params: { market: market.slug, slug: contractor.slug },
+        props: {
+          name: contractor.name,
+          category: contractor.category,
+          city: contractor.city,
+        },
+      });
+    }
+  }
+  return paths;
+}
+
+const marketSlug = Astro.params.market ?? "";
+const { slug } = Astro.params;
+const { name, category, city } = Astro.props;
+const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
+
+const title = name ?? "Contractor";
+const description = `${category ?? "Contractor"}${city ? ` in ${city}` : ""} — ${SITE_NAME} directory.`;
+---
+
+<BaseLayout>
+  <Fragment slot="head">
+    <title>{title} | {SITE_NAME}</title>
+    <meta name="description" content={description} />
+  </Fragment>
+  {
+    convexUrl && slug && isMarketSlug(marketSlug) ? (
+      <ContractorDetailApp
+        client:load
+        convexUrl={convexUrl}
+        marketSlug={marketSlug}
+        slug={slug}
+      />
+    ) : (
+      <p class="env-warning">Missing contractor slug or PUBLIC_CONVEX_URL.</p>
+    )
+  }
+</BaseLayout>

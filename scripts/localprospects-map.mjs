@@ -127,6 +127,7 @@ export function mapBusiness(raw, domain) {
     stateRaw: contact.state_code || contact.state,
     cityRaw: contact.city,
     contractor: {
+      marketSlug: "spokane",
       slug: slugify(name) || slugify(host) || "contractor",
       name,
       googleCid,

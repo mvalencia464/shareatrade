@@ -1,6 +1,7 @@
-export const SITE_NAME = "Spokane List";
+export const SITE_NAME = "Share a Trade";
+export const SITE_ORIGIN = "https://shareatrade.com";
 export const CONTACT_NAME = "Mauricio Valencia";
-export const CONTACT_EMAIL = "hello@spokanelist.com";
+export const CONTACT_EMAIL = "hello@shareatrade.com";
 export const CONTACT_PHOTO = "/mauricio.webp";
 
 export const RESERVED_LISTING_SLUGS = [
@@ -14,12 +15,16 @@ export const RESERVED_LISTING_SLUGS = [
   "go",
 ] as const;
 
-export function listingPath(slug: string) {
-  return `/${slug}`;
+export function directoryPath(marketSlug: string) {
+  return `/${marketSlug}`;
 }
 
-export function companySitePath(slug: string) {
-  return `/go/${slug}`;
+export function listingPath(marketSlug: string, slug: string) {
+  return `/${marketSlug}/${slug}`;
+}
+
+export function companySitePath(marketSlug: string, slug: string) {
+  return `/go/${marketSlug}/${slug}`;
 }
 
 export function uniqueBySlug<T extends { slug: string }>(items: T[]): T[] {
@@ -31,8 +36,12 @@ export function uniqueBySlug<T extends { slug: string }>(items: T[]): T[] {
   });
 }
 
-export function listingUrl(slug: string, origin?: string) {
-  const path = listingPath(slug);
+export function listingUrl(
+  marketSlug: string,
+  slug: string,
+  origin?: string,
+) {
+  const path = listingPath(marketSlug, slug);
   if (origin) return `${origin}${path}`;
   if (typeof window !== "undefined") return `${window.location.origin}${path}`;
   return path;
@@ -41,7 +50,7 @@ export function listingUrl(slug: string, origin?: string) {
 export function contractorHelpMailto() {
   const subject = encodeURIComponent("Help with my listing");
   const body = encodeURIComponent(
-    "Hi — I have a listing on Spokane List and may want a hand with Google reviews, my Business Profile, or a simple website.\n\nBusiness name:\nCity:\n",
+    "Hi — I have a listing on Share a Trade and may want a hand with Google reviews, my Business Profile, or a simple website.\n\nBusiness name:\nCity:\n",
   );
   return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 }

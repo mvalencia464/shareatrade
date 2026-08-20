@@ -8,6 +8,7 @@ const socialLink = v.object({
 
 export default defineSchema({
   contractors: defineTable({
+    marketSlug: v.string(),
     slug: v.string(),
     name: v.string(),
     googleCid: v.string(),
@@ -36,11 +37,13 @@ export default defineSchema({
     licenseMatchedBy: v.optional(v.string()),
     licenseUpdatedAt: v.optional(v.number()),
   })
-    .index("by_slug", ["slug"])
+    .index("by_market", ["marketSlug"])
+    .index("by_market_and_slug", ["marketSlug", "slug"])
+    .index("by_market_and_category", ["marketSlug", "category"])
+    .index("by_market_and_google_cid", ["marketSlug", "googleCid"])
     .index("by_category", ["category"])
     .index("by_city", ["city"])
     .index("by_category_and_city", ["category", "city"])
-    .index("by_google_cid", ["googleCid"])
     .index("by_rating", ["rating"]),
 
   listingRequests: defineTable({

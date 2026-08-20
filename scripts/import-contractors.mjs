@@ -77,6 +77,7 @@ function mapRow(row, slug, location) {
   const rank = parseNumber(row["Google Maps Rank"]) ?? 0;
 
   return {
+    marketSlug: "spokane",
     slug,
     name: row.Name.trim(),
     googleCid: String(row.google_cid).trim(),

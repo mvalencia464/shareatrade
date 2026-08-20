@@ -13,6 +13,7 @@ import type * as crons from "../crons.js";
 import type * as gbpRefresh from "../gbpRefresh.js";
 import type * as lib_dataforseo from "../lib/dataforseo.js";
 import type * as lib_liMatch from "../lib/liMatch.js";
+import type * as lib_markets from "../lib/markets.js";
 import type * as licenses from "../licenses.js";
 import type * as listingRequests from "../listingRequests.js";
 
@@ -28,6 +29,7 @@ declare const fullApi: ApiFromModules<{
   gbpRefresh: typeof gbpRefresh;
   "lib/dataforseo": typeof lib_dataforseo;
   "lib/liMatch": typeof lib_liMatch;
+  "lib/markets": typeof lib_markets;
   licenses: typeof licenses;
   listingRequests: typeof listingRequests;
 }>;

@@ -116,8 +116,8 @@ function readViewFromLocation(): ListView {
     : "all";
 }
 
-function DirectoryInner() {
-  const contractors = useQuery(api.contractors.list);
+function DirectoryInner({ marketSlug }: { marketSlug: string }) {
+  const contractors = useQuery(api.contractors.listByMarket, { marketSlug });
   const { favorites, favoriteCount, isFavorite, toggleFavorite, ready } =
     useFavorites();
 
@@ -223,7 +223,7 @@ function DirectoryInner() {
   }
 
   if (contractors === undefined) {
-    return <p className="loading">Loading Spokane contractors…</p>;
+    return <p className="loading">Loading contractors…</p>;
   }
 
   const hasFilters = Boolean(search || category || city || minRating);
@@ -410,7 +410,7 @@ function DirectoryInner() {
                 <div className="contractor-main">
                   <a
                     className="contractor-identity"
-                    href={listingPath(c.slug)}
+                    href={listingPath(marketSlug, c.slug)}
                   >
                     <LogoMark name={c.name} logoUrl={c.logoUrl} />
                     <div className="contractor-copy">
@@ -439,7 +439,7 @@ function DirectoryInner() {
                   <div className="contractor-cta-row">
                     <a
                       className="button button-secondary button-card-cta"
-                      href={listingPath(c.slug)}
+                      href={listingPath(marketSlug, c.slug)}
                     >
                       View profile
                     </a>
@@ -537,10 +537,16 @@ function DirectoryInner() {
   );
 }
 
-export function DirectoryApp({ convexUrl }: { convexUrl: string }) {
+export function DirectoryApp({
+  convexUrl,
+  marketSlug,
+}: {
+  convexUrl: string;
+  marketSlug: string;
+}) {
   return (
     <ConvexProvider url={convexUrl}>
-      <DirectoryInner />
+      <DirectoryInner marketSlug={marketSlug} />
     </ConvexProvider>
   );
 }

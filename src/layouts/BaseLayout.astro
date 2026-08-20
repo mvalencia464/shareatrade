@@ -1,13 +1,21 @@
 ---
 import "../styles/global.css";
+import { SITE_NAME, directoryPath } from "../lib/site";
+import { isMarketSlug, DEFAULT_MARKET_SLUG } from "../lib/markets";
 
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
-const isSaved = path === "/" && Astro.url.searchParams.get("view") === "saved";
-const isDirectory = path === "/" && !isSaved;
+const firstSegment = path.split("/").filter(Boolean)[0];
+const marketSlug = firstSegment && isMarketSlug(firstSegment)
+  ? firstSegment
+  : DEFAULT_MARKET_SLUG;
+const directoryHref = directoryPath(marketSlug);
+const isSaved =
+  path === directoryHref && Astro.url.searchParams.get("view") === "saved";
+const isDirectory = path === directoryHref && !isSaved;
 
 function current(hrefPath: string, saved = false) {
   if (saved) return isSaved ? "page" : undefined;
-  if (hrefPath === "/") return isDirectory ? "page" : undefined;
+  if (hrefPath === directoryHref) return isDirectory ? "page" : undefined;
   return path === hrefPath ? "page" : undefined;
 }
 ---
@@ -38,7 +46,7 @@ function current(hrefPath: string, saved = false) {
           <a class="brand" href="/">
             <img class="brand-logo" src="/logo.svg" alt="" width="42" height="56" />
             <span class="brand-text">
-              <span class="brand-name">Spokane Contractors</span>
+              <span class="brand-name">{SITE_NAME}</span>
               <span class="brand-tag">Find a trade. Share a name.</span>
             </span>
           </a>
@@ -51,11 +59,11 @@ function current(hrefPath: string, saved = false) {
             <details class="nav-menu">
               <summary>Homeowners</summary>
               <div class="nav-panel">
-                <a href="/" aria-current={current("/")}>
+                <a href={directoryHref} aria-current={current(directoryHref)}>
                   <span class="nav-link-title">Directory</span>
                   <span class="nav-link-sub">Browse by trade, city, and rating</span>
                 </a>
-                <a href="/?view=saved" aria-current={current("/", true)}>
+                <a href={`${directoryHref}?view=saved`} aria-current={current(directoryHref, true)}>
                   <span class="nav-link-title">Saved</span>
                   <span class="nav-link-sub">Names you’ve kept on this device</span>
                 </a>
@@ -94,8 +102,8 @@ function current(hrefPath: string, saved = false) {
       </main>
       <footer class="site-footer">
         <p>
-          Free Spokane-area contractor directory—no sign-in required. Verify
-          licensing and insurance before hiring.{" "}
+          Free contractor directory—no sign-in required. Starting with Spokane.
+          Verify licensing and insurance before hiring.{" "}
           <a href="/how-it-works">How it works</a>
           {" · "}
           <a href="/why">Why this exists</a>

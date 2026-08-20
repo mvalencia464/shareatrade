@@ -132,8 +132,8 @@ function ListingRequestFormInner() {
         </p>
       ) : (
         <p className="request-callout">
-          We primarily list Spokane-area contractors from public Google Business
-          Profile data. Having an accurate GBP listing makes it much easier to
+          We primarily list contractors from public Google Business
+          Profile data, starting with the Spokane market. Having an accurate GBP listing makes it much easier to
           include you.
         </p>
       )}
