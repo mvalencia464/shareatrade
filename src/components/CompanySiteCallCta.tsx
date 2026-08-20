@@ -12,10 +12,7 @@ export function CompanySiteCallCta({ href, label, phone, variant }: Props) {
     return (
       <a className="cs-call" href={href}>
         <Phone size={26} weight="duotone" aria-hidden />
-        <span className="cs-call-copy">
-          <span className="cs-call-label">{label}</span>
-          {phone ? <span className="cs-call-phone">Call {phone}</span> : null}
-        </span>
+        <span className="cs-call-label">Call{phone ? ` ${phone}` : ""}</span>
       </a>
     );
   }
