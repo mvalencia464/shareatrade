@@ -149,6 +149,12 @@ export const MARKETS = {
     dataforseoLocation: "Seattle,Washington,United States",
     licenseEnrichment: false as const,
   },
+  chicago: {
+    slug: "chicago",
+    name: "Chicago",
+    dataforseoLocation: "Chicago,Illinois,United States",
+    licenseEnrichment: false as const,
+  },
 } as const;
 
 export type MarketSlug = keyof typeof MARKETS;

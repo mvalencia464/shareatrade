@@ -157,6 +157,7 @@ export const MARKETS = [
       "Matthews",
       "Huntersville",
       "Rock Hill",
+      "Waxhaw",
     ],
   },
   {
@@ -175,6 +176,8 @@ export const MARKETS = [
       "Draper",
       "Lehi",
       "Midvale",
+      "Provo",
+      "Orem",
     ],
   },
   {
@@ -228,6 +231,7 @@ export const MARKETS = [
       "Peoria",
       "Surprise",
       "Queen Creek",
+      "Buckeye",
     ],
   },
   {
@@ -246,6 +250,7 @@ export const MARKETS = [
       "Woodstock",
       "Kennesaw",
       "Lawrenceville",
+      "Peachtree City",
     ],
   },
   {
@@ -407,6 +412,21 @@ export const MARKETS = [
       "Lake Stevens",
       "Marysville",
       "Kirkland",
+    ],
+  },
+  {
+    slug: "chicago",
+    name: "Chicago",
+    state: "IL",
+    tagline: "Naperville, Schaumburg, and nearby suburbs",
+    dataforseoLocation: "Chicago,Illinois,United States",
+    licenseEnrichment: false as const,
+    live: true,
+    cityAliases: [
+      "Chicago",
+      "Naperville",
+      "Schaumburg",
+      "Hoffman Estates",
     ],
   },
 ] as const;

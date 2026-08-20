@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Pull already-enriched campaign leads (GET only) and write stamped
- * directory JSON for P1–P4 metros. Does not start campaigns or POST /search.
+ * directory JSON for P1–P5 metros. Does not start campaigns or POST /search.
  *
  * Usage:
  *   node scripts/export-lp-directory.mjs
@@ -89,6 +89,7 @@ const RING_PLACES = [
     "cornelius",
     "matthews",
     "huntersville",
+    "waxhaw",
   ]),
   ...places("charlotte", ["sc", "south carolina"], ["rock hill"]),
   ...places("salt-lake", ["ut", "utah"], [
@@ -99,6 +100,8 @@ const RING_PLACES = [
     "draper",
     "lehi",
     "midvale",
+    "provo",
+    "orem",
   ]),
   ...places("columbus", ["oh", "ohio"], [
     "columbus",
@@ -125,6 +128,7 @@ const RING_PLACES = [
     "peoria",
     "surprise",
     "queen creek",
+    "buckeye",
   ]),
   ...places("atlanta", ["ga", "georgia"], [
     "atlanta",
@@ -134,6 +138,7 @@ const RING_PLACES = [
     "woodstock",
     "kennesaw",
     "lawrenceville",
+    "peachtree city",
   ]),
   ...places("northern-virginia", ["va", "virginia"], [
     "sterling",
@@ -189,6 +194,12 @@ const RING_PLACES = [
     "lake stevens",
     "marysville",
     "kirkland",
+  ]),
+  ...places("chicago", ["il", "illinois"], [
+    "chicago",
+    "naperville",
+    "schaumburg",
+    "hoffman estates",
   ]),
 ];
 
