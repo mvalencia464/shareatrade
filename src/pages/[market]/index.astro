@@ -4,6 +4,8 @@ import { DirectoryApp } from "../../components/DirectoryApp";
 import { MARKETS, getMarket } from "../../lib/markets";
 import { SITE_NAME } from "../../lib/site";
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return MARKETS.map((market) => ({
     params: { market: market.slug },

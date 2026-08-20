@@ -1,0 +1,5 @@
+{
+  "name": "shareatrade",
+  "compatibility_date": "2026-08-20",
+  "compatibility_flags": ["nodejs_compat"]
+}

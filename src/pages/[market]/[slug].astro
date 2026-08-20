@@ -3,46 +3,44 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { ContractorDetailApp } from "../../components/ContractorDetailApp";
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../convex/_generated/api";
-import { MARKETS, isMarketSlug } from "../../lib/markets";
-import { SITE_NAME, uniqueBySlug } from "../../lib/site";
+import { isMarketSlug } from "../../lib/markets";
+import { SITE_NAME } from "../../lib/site";
 
-export async function getStaticPaths() {
-  const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
-  if (!convexUrl) {
-    return [];
-  }
-  const client = new ConvexHttpClient(convexUrl);
-  const paths: Array<{
-    params: { market: string; slug: string };
-    props: { name: string; category: string; city?: string };
-  }> = [];
-  for (const market of MARKETS) {
-    const contractors = uniqueBySlug(
-      await client.query(api.contractors.listByMarket, {
-        marketSlug: market.slug,
-      }),
-    );
-    for (const contractor of contractors) {
-      paths.push({
-        params: { market: market.slug, slug: contractor.slug },
-        props: {
-          name: contractor.name,
-          category: contractor.category,
-          city: contractor.city,
-        },
-      });
-    }
-  }
-  return paths;
-}
+export const prerender = false;
 
 const marketSlug = Astro.params.market ?? "";
-const { slug } = Astro.params;
-const { name, category, city } = Astro.props;
+const slug = Astro.params.slug ?? "";
 const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
 
-const title = name ?? "Contractor";
-const description = `${category ?? "Contractor"}${city ? ` in ${city}` : ""} — ${SITE_NAME} directory.`;
+let name = "Contractor";
+let category = "Contractor";
+let city: string | undefined;
+let found = false;
+
+if (convexUrl && slug && isMarketSlug(marketSlug)) {
+  const client = new ConvexHttpClient(convexUrl);
+  const contractor = await client.query(api.contractors.getByMarketAndSlug, {
+    marketSlug,
+    slug,
+  });
+  if (contractor) {
+    found = true;
+    name = contractor.name;
+    category = contractor.category;
+    city = contractor.city;
+    Astro.response.headers.set(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate=86400",
+    );
+  } else {
+    Astro.response.status = 404;
+  }
+} else {
+  Astro.response.status = 404;
+}
+
+const title = name;
+const description = `${category}${city ? ` in ${city}` : ""} — ${SITE_NAME} directory.`;
 ---
 
 <BaseLayout>
@@ -51,7 +49,7 @@ const description = `${category ?? "Contractor"}${city ? ` in ${city}` : ""} —
     <meta name="description" content={description} />
   </Fragment>
   {
-    convexUrl && slug && isMarketSlug(marketSlug) ? (
+    found ? (
       <ContractorDetailApp
         client:load
         convexUrl={convexUrl}
@@ -59,7 +57,7 @@ const description = `${category ?? "Contractor"}${city ? ` in ${city}` : ""} —
         slug={slug}
       />
     ) : (
-      <p class="env-warning">Missing contractor slug or PUBLIC_CONVEX_URL.</p>
+      <p class="env-warning">This listing was not found.</p>
     )
   }
 </BaseLayout>

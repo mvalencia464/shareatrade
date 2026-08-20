@@ -18,6 +18,9 @@ pnpm-debug.log*
 .env.production
 .env.local
 
+# wrangler local state
+.wrangler/
+
 # import audit output
 import-report.json
 directory-import-report.json

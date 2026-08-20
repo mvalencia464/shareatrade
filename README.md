@@ -13,7 +13,9 @@ npx convex dev
 
 That command must create a **new** Convex project. Copy `CONVEX_URL` into `PUBLIC_CONVEX_URL` in `.env.local`.
 
-`astro build` (including Cloudflare Pages) inlines `PUBLIC_CONVEX_URL`. Local files stay gitignored, so production uses the default in `astro.config.mjs` unless the Pages project sets the same variable.
+`astro build` (including Cloudflare) inlines `PUBLIC_CONVEX_URL`. Local files stay gitignored, so production uses the default in `astro.config.mjs` unless the project sets the same variable.
+
+Listing and `/go` pages render on demand (Cloudflare Worker) so the build no longer prerenders thousands of HTML files. Keep the homepage and market hubs static. Cloudflare should deploy with Wrangler / Workers (`npx wrangler deploy` after `npm run build`), not as a static `dist` upload. The adapter may provision a `SESSION` KV namespace; we do not use sessions in app code.
 
 ## URLs
 

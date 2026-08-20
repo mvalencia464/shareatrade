@@ -18,36 +18,15 @@ import {
   demoAbout,
   nicheHeroPhoto,
 } from "../../../lib/companySiteDemo";
-import { MARKETS, getMarket, isMarketSlug } from "../../../lib/markets";
-import { uniqueBySlug } from "../../../lib/site";
+import { getMarket, isMarketSlug } from "../../../lib/markets";
 import CompanySiteStars from "../../../components/CompanySiteStars.astro";
 import { CompanySiteChannels } from "../../../components/CompanySiteChannels";
 import { CompanySiteCallCta } from "../../../components/CompanySiteCallCta";
 
-export async function getStaticPaths() {
-  const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
-  if (!convexUrl) {
-    return [];
-  }
-  const client = new ConvexHttpClient(convexUrl);
-  const paths: Array<{ params: { market: string; slug: string } }> = [];
-  for (const market of MARKETS) {
-    const contractors = uniqueBySlug(
-      await client.query(api.contractors.listByMarket, {
-        marketSlug: market.slug,
-      }),
-    );
-    for (const contractor of contractors) {
-      paths.push({
-        params: { market: market.slug, slug: contractor.slug },
-      });
-    }
-  }
-  return paths;
-}
+export const prerender = false;
 
 const marketSlug = Astro.params.market ?? "";
-const { slug } = Astro.params;
+const slug = Astro.params.slug ?? "";
 const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
 
 let values: SiteCustomValues | null = null;
@@ -59,7 +38,15 @@ if (convexUrl && slug && isMarketSlug(marketSlug)) {
   });
   if (contractor) {
     values = siteCustomValues(contractor);
+    Astro.response.headers.set(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate=86400",
+    );
+  } else {
+    Astro.response.status = 404;
   }
+} else {
+  Astro.response.status = 404;
 }
 
 const title = values ? values.business_name : "Company";
