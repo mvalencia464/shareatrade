@@ -30,3 +30,6 @@ localprospects-search-cache/
 
 # jetbrains setting folder
 .idea/
+
+# Affinity Designer lock files
+*.af~lock~
