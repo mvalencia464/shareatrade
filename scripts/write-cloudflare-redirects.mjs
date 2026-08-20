@@ -12,27 +12,6 @@ const distDir = join(root, "dist");
 const clientDir = join(distDir, "client");
 const serverDir = join(distDir, "server");
 
-function debugLog(hypothesisId, message, data) {
-  // #region agent log
-  fetch("http://127.0.0.1:7590/ingest/c829cf03-ac4c-4454-87c8-a8439c4ca158", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "574066",
-    },
-    body: JSON.stringify({
-      sessionId: "574066",
-      runId: "postbuild",
-      hypothesisId,
-      location: "scripts/write-cloudflare-redirects.mjs",
-      message,
-      data,
-      timestamp: Date.now(),
-    }),
-  }).catch(() => {});
-  // #endregion
-}
-
 await mkdir(clientDir, { recursive: true });
 await writeFile(
   join(clientDir, "_redirects"),
@@ -76,13 +55,3 @@ for (const name of clientEntries) {
   await cp(join(clientDir, name), join(distDir, name), { recursive: true });
 }
 await writeFile(join(distDir, ".assetsignore"), "server\nclient\n");
-
-debugLog("G", "flattened client to dist root for Pages output=dist", {
-  prerenderDirs,
-  hasBoise: prerenderDirs.includes("boise"),
-  hasWhy: prerenderDirs.includes("why"),
-  include: routes.include,
-  excludeCount: exclude.length,
-  workerCopied: true,
-  flattened: clientEntries.length,
-});
