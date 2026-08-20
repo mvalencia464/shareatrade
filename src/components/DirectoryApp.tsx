@@ -5,7 +5,7 @@ import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
 import { isPopularGbpCategory, sortCategoriesPopularFirst } from "../lib/gbpCategories";
 import { formatPhone, phoneTelHref } from "../lib/phone";
-import { listingPath } from "../lib/site";
+import { companySitePath, listingPath } from "../lib/site";
 import { marketCoreCities } from "../lib/markets";
 import { ConvexProvider } from "./ConvexProvider";
 import { FavoriteButton } from "./FavoriteButton";
@@ -473,6 +473,7 @@ function DirectoryInner({ marketSlug }: { marketSlug: string }) {
 
                   <div className="contractor-toolbar">
                     <QuickLinks
+                      liveSiteHref={companySitePath(marketSlug, c.slug)}
                       website={c.website}
                       gbpUrl={c.gbpUrl}
                       socials={c.socials}

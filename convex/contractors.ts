@@ -1,10 +1,12 @@
 import { v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
 import {
   internalMutation,
   internalQuery,
   query,
   type QueryCtx,
 } from "./_generated/server";
+import type { Doc } from "./_generated/dataModel";
 
 const socialLinkValidator = v.object({
   platform: v.string(),
@@ -240,40 +242,65 @@ export const listForEnrichment = internalQuery({
   },
 });
 
+const crmContractorValidator = v.object({
+  name: v.string(),
+  phone: v.optional(v.string()),
+  email: v.optional(v.string()),
+  website: v.optional(v.string()),
+  gbpUrl: v.optional(v.string()),
+  category: v.string(),
+  city: v.optional(v.string()),
+  state: v.optional(v.string()),
+  address: v.optional(v.string()),
+  rating: v.optional(v.number()),
+  reviewCount: v.optional(v.number()),
+  claimed: v.boolean(),
+  marketSlug: v.string(),
+  slug: v.string(),
+});
+
+function toCrmRow(c: Doc<"contractors">) {
+  return {
+    name: c.name,
+    phone: c.phone,
+    email: c.email,
+    website: c.website,
+    gbpUrl: c.gbpUrl,
+    category: c.category,
+    city: c.city,
+    state: c.state,
+    address: c.address,
+    rating: c.rating,
+    reviewCount: c.reviewCount,
+    claimed: c.claimed,
+    marketSlug: c.marketSlug,
+    slug: c.slug,
+  };
+}
+
+export const listForCrmByMarket = internalQuery({
+  args: { marketSlug: v.string() },
+  returns: v.array(crmContractorValidator),
+  handler: async (ctx, args) => {
+    const contractors = await loadContractorsByMarket(ctx, args.marketSlug);
+    return contractors.map(toCrmRow);
+  },
+});
+
 export const listForCrm = internalQuery({
-  args: {},
-  returns: v.array(
-    v.object({
-      name: v.string(),
-      phone: v.optional(v.string()),
-      email: v.optional(v.string()),
-      website: v.optional(v.string()),
-      gbpUrl: v.optional(v.string()),
-      category: v.string(),
-      city: v.optional(v.string()),
-      state: v.optional(v.string()),
-      address: v.optional(v.string()),
-      rating: v.optional(v.number()),
-      reviewCount: v.optional(v.number()),
-      claimed: v.boolean(),
-    }),
-  ),
-  handler: async (ctx) => {
-    const contractors = await loadAllContractors(ctx);
-    return contractors.map((c) => ({
-      name: c.name,
-      phone: c.phone,
-      email: c.email,
-      website: c.website,
-      gbpUrl: c.gbpUrl,
-      category: c.category,
-      city: c.city,
-      state: c.state,
-      address: c.address,
-      rating: c.rating,
-      reviewCount: c.reviewCount,
-      claimed: c.claimed,
-    }));
+  args: { paginationOpts: paginationOptsValidator },
+  returns: v.object({
+    page: v.array(crmContractorValidator),
+    continueCursor: v.string(),
+    isDone: v.boolean(),
+  }),
+  handler: async (ctx, args) => {
+    const result = await ctx.db.query("contractors").paginate(args.paginationOpts);
+    return {
+      page: result.page.map(toCrmRow),
+      continueCursor: result.continueCursor,
+      isDone: result.isDone,
+    };
   },
 });
 

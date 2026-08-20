@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import { useFavorites } from "../hooks/useFavorites";
 import { formatPhone, phoneTelHref } from "../lib/phone";
-import { directoryPath, listingPath } from "../lib/site";
+import { companySitePath, directoryPath, listingPath } from "../lib/site";
 import { ConvexProvider } from "./ConvexProvider";
 import { CoverImage } from "./CoverImage";
 import { ContractorHelpNote } from "./ContractorHelpNote";
@@ -274,9 +274,15 @@ function DetailInner({
           </p>
 
           <div className="detail-actions">
+            <a
+              className="button button-primary"
+              href={companySitePath(marketSlug, contractor.slug)}
+            >
+              Live site
+            </a>
             {contractor.website ? (
               <a
-                className="button button-primary"
+                className="button button-secondary"
                 href={contractor.website}
                 target="_blank"
                 rel="noreferrer"
@@ -312,6 +318,7 @@ function DetailInner({
           </div>
 
           <QuickLinks
+            liveSiteHref={companySitePath(marketSlug, contractor.slug)}
             website={contractor.website}
             gbpUrl={contractor.gbpUrl}
             socials={contractor.socials}

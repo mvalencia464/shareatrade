@@ -16,14 +16,48 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const API_BASE = "https://services.leadconnectorhq.com";
 const API_VERSION = "2021-07-28";
-const TAG = "spokane-list";
+const LIST_TAG = "shareatrade-list";
+const CRM_MARKETS = [
+  "spokane",
+  "boise",
+  "raleigh",
+  "portland",
+  "indianapolis",
+  "kansas-city",
+  "nashville",
+  "charlotte",
+  "salt-lake",
+  "columbus",
+  "denver",
+  "phoenix",
+  "atlanta",
+  "northern-virginia",
+  "minneapolis",
+  "milwaukee",
+  "huntsville",
+  "richmond",
+  "charleston",
+  "omaha",
+  "oklahoma-city",
+  "birmingham",
+  "greenville",
+  "des-moines",
+  "seattle",
+  "chicago",
+  "cincinnati",
+  "tulsa",
+  "detroit",
+];
 const TIMEZONE = "America/Los_Angeles";
+const SITE_ORIGIN = "https://shareatrade.com";
 const CUSTOM_FIELD_NAMES = [
   "reviews",
   "gbp url",
   "niche",
   "claimed",
   "rating",
+  "shareatrade_url",
+  "shareatrade_site",
 ];
 
 const dryRun = process.argv.includes("--dry-run");
@@ -129,10 +163,26 @@ async function hlFetch(token, locationId, pathname, options = {}) {
   return { ok: response.ok, status: response.status, body };
 }
 
-function fieldName(field) {
-  return String(field.name ?? field.fieldKey ?? field.key ?? "")
-    .trim()
-    .toLowerCase();
+function fieldKeys(field) {
+  const raw = [
+    field.name,
+    field.fieldKey,
+    field.key,
+    String(field.fieldKey ?? "").split(".").at(-1),
+  ];
+  return new Set(
+    raw
+      .map((value) => String(value ?? "").trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+function shareatradeUrl(marketSlug, slug) {
+  return `${SITE_ORIGIN}/${marketSlug}/${slug}`;
+}
+
+function shareatradeSite(marketSlug, slug) {
+  return `${SITE_ORIGIN}/go/${marketSlug}/${slug}`;
 }
 
 async function loadCustomFieldMap(token, locationId) {
@@ -147,16 +197,13 @@ async function loadCustomFieldMap(token, locationId) {
     );
   }
   const fields = body.customFields ?? body.fields ?? body.data ?? [];
-  const byName = new Map();
-  for (const field of fields) {
-    const name = fieldName(field);
-    if (name && field.id) byName.set(name, field.id);
-  }
   const mapped = {};
   const missing = [];
   for (const name of CUSTOM_FIELD_NAMES) {
-    const id = byName.get(name);
-    if (id) mapped[name] = id;
+    const match = fields.find(
+      (field) => field.id && fieldKeys(field).has(name),
+    );
+    if (match) mapped[name] = match.id;
     else missing.push(name);
   }
   if (missing.length) {
@@ -195,6 +242,26 @@ function mapContact(row, locationId, customIds) {
       value: row.claimed ? "Yes" : "No",
     });
   }
+  if (
+    customIds.shareatrade_url &&
+    row.marketSlug &&
+    row.slug
+  ) {
+    customFields.push({
+      id: customIds.shareatrade_url,
+      value: shareatradeUrl(row.marketSlug, row.slug),
+    });
+  }
+  if (
+    customIds.shareatrade_site &&
+    row.marketSlug &&
+    row.slug
+  ) {
+    customFields.push({
+      id: customIds.shareatrade_site,
+      value: shareatradeSite(row.marketSlug, row.slug),
+    });
+  }
 
   const payload = {
     locationId,
@@ -203,7 +270,7 @@ function mapContact(row, locationId, customIds) {
     source: "Share a Trade",
     timezone: TIMEZONE,
     country: "US",
-    tags: [TAG],
+    tags: [LIST_TAG, row.marketSlug].filter(Boolean),
   };
   if (lastName) payload.lastName = lastName;
   if (phone) payload.phone = phone;
@@ -239,6 +306,22 @@ async function upsertContact(token, locationId, payload) {
   return { ok: false, status: 429, message: "Rate limited after retries" };
 }
 
+function loadCrmRows(maxRows) {
+  const rows = [];
+  for (const marketSlug of CRM_MARKETS) {
+    console.log(`Loading ${marketSlug}…`);
+    const page = runConvex("internal.contractors.listForCrmByMarket", {
+      marketSlug,
+    });
+    if (!Array.isArray(page)) {
+      throw new Error(`listForCrmByMarket did not return an array for ${marketSlug}`);
+    }
+    rows.push(...page);
+    if (maxRows && rows.length >= maxRows) return rows.slice(0, maxRows);
+  }
+  return rows;
+}
+
 async function main() {
   loadEnvLocal();
   const token = process.env.HIGHLEVEL_TOKEN;
@@ -250,7 +333,7 @@ async function main() {
   }
 
   console.log("Loading contractors from Convex…");
-  let rows = runConvex("internal.contractors.listForCrm", {});
+  let rows = loadCrmRows(limit);
   if (!Array.isArray(rows)) {
     throw new Error("listForCrm did not return an array");
   }
@@ -279,7 +362,9 @@ async function main() {
       );
     }
   }
-  const payloads = rows.map((row) => mapContact(row, locationId, customIds));
+  const payloads = rows
+    .map((row) => mapContact(row, locationId, customIds))
+    .filter(Boolean);
 
   console.log(
     JSON.stringify(
@@ -293,9 +378,16 @@ async function main() {
           lastName: p.lastName,
           companyName: p.companyName,
           city: p.city,
+          tags: p.tags,
           hasPhone: Boolean(p.phone),
           hasEmail: Boolean(p.email),
           customFieldCount: p.customFields?.length ?? 0,
+          shareatradeUrl: p.customFields?.find(
+            (field) => field.id === customIds.shareatrade_url,
+          )?.value,
+          shareatradeSite: p.customFields?.find(
+            (field) => field.id === customIds.shareatrade_site,
+          )?.value,
         })),
       },
       null,

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 type SocialLink = { platform: string; url: string };
 
 type QuickLinksProps = {
+  liveSiteHref?: string;
   website?: string;
   gbpUrl?: string;
   socials?: SocialLink[];
@@ -151,10 +152,24 @@ function socialLabel(platform: string) {
   return p ? p.charAt(0).toUpperCase() + p.slice(1) : "Social";
 }
 
-export function QuickLinks({ website, gbpUrl, socials = [], email }: QuickLinksProps) {
+export function QuickLinks({
+  liveSiteHref,
+  website,
+  gbpUrl,
+  socials = [],
+  email,
+}: QuickLinksProps) {
   const links: Array<{ key: string; href: string; label: string; icon: ReactNode }> =
     [];
 
+  if (liveSiteHref) {
+    links.push({
+      key: "live-site",
+      href: liveSiteHref,
+      label: "Live site",
+      icon: <IconGlobe />,
+    });
+  }
   if (website) {
     links.push({ key: "website", href: website, label: "Website", icon: <IconGlobe /> });
   }
