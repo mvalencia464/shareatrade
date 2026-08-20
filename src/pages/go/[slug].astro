@@ -11,10 +11,11 @@ import {
   type SiteCustomValues,
 } from "../../lib/siteCustomValues";
 import {
+  DEMO_CREW_PHOTO,
   DEMO_PROJECTS,
   DEMO_REVIEWS,
+  DEMO_TEAM,
   demoAbout,
-  demoCrew,
   nicheHeroPhoto,
 } from "../../lib/companySiteDemo";
 import { SITE_NAME, uniqueBySlug } from "../../lib/site";
@@ -57,7 +58,6 @@ const reviewsLabel =
     ? `${formatReviewCount(values.reviews)} Google review${values.reviews === 1 ? "" : "s"}`
     : undefined;
 const about = values ? demoAbout(values) : null;
-const crew = values ? demoCrew(values.niche) : null;
 const cityLabel = values?.city ?? "Spokane";
 const coverSrc = values?.cover_url || (values ? nicheHeroPhoto(values.niche) : DEMO_PROJECTS[0]?.src);
 const areaChips = values ? serviceAreaChips(values.city) : [];
@@ -127,7 +127,7 @@ const extraReviews = DEMO_REVIEWS.slice(3);
               <h2 id="cs-about-title" class="cs-h2">
                 A small local company — not a marketing machine
               </h2>
-              <p class="cs-demo-flag">Stock photo for this trade (Unsplash) — not this company</p>
+              <p class="cs-demo-flag">AI sample photo for this trade — not this company</p>
               <img class="cs-about-photo" src={about.photo} alt="" />
               <blockquote class="cs-quote">“{about.quote}”</blockquote>
               <div class="cs-owner">
@@ -243,24 +243,20 @@ const extraReviews = DEMO_REVIEWS.slice(3);
             <h2 id="cs-crew-title" class="cs-h2">
               {about?.crewLine ?? `Meet the folks who show up in ${cityLabel}`}
             </h2>
-            <p class="cs-demo-flag">Stock photos for this trade (Unsplash) — not this company</p>
-            {crew ? (
-              <>
-                <img class="cs-crew-photo" src={crew.group} alt="" />
-                <div class="cs-team">
-                  {crew.members.map((member) => (
-                    <article class="cs-team-card">
-                      <img src={member.photo} alt="" />
-                      <div>
-                        <p class="cs-team-name">{member.name}</p>
-                        <p class="cs-team-role">{member.role}</p>
-                        <p class="cs-team-blurb">{member.blurb}</p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </>
-            ) : null}
+            <p class="cs-demo-flag">Placeholder photos — The Summit Squad</p>
+            <img class="cs-crew-photo" src={DEMO_CREW_PHOTO} alt="" />
+            <div class="cs-team">
+              {DEMO_TEAM.map((member) => (
+                <article class="cs-team-card">
+                  <img src={member.photo} alt="" />
+                  <div>
+                    <p class="cs-team-name">{member.name}</p>
+                    <p class="cs-team-role">{member.role}</p>
+                    <p class="cs-team-blurb">{member.blurb}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </section>
 
           <section class="cs-section" aria-labelledby="cs-reviews-title">

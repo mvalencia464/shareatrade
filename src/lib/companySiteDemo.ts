@@ -1,4 +1,7 @@
 import type { SiteCustomValues } from "./siteCustomValues";
+import { nicheHeroPhoto } from "./tradePacks";
+
+export { nicheHeroPhoto } from "./tradePacks";
 
 const MEDIA = "https://media.stokeleads.com/spokanesummit";
 const AVATAR = "https://randomuser.me/api/portraits";
@@ -15,6 +18,7 @@ export type DemoReview = {
 export type DemoTeamMember = {
   name: string;
   role: string;
+  photo: string;
   blurb: string;
 };
 
@@ -326,226 +330,6 @@ export function demoAbout(values: SiteCustomValues) {
   };
 }
 
-const U = "https://images.unsplash.com";
-
-/** Shared stock hero per trade — labeled as stock on the page. */
-export function nicheHeroPhoto(niche: string): string {
-  const n = niche.toLowerCase();
-  const shot = (id: string) =>
-    `${U}/${id}?auto=format&fit=crop&w=1200&h=720&q=75`;
-
-  if (/hvac|air cond|heating|furnace|heat pump|cooling/.test(n)) {
-    return shot("photo-1621905251189-08b45d6a269e");
-  }
-  if (/roof/.test(n)) {
-    return shot("photo-1560518883-ce09059eeffa");
-  }
-  if (/pest|termite|rodent/.test(n)) {
-    return shot("photo-1584622781564-1d987f4950aa");
-  }
-  if (/plumb/.test(n)) {
-    return shot("photo-1607472586893-ed4d7287bbed");
-  }
-  if (/electr/.test(n)) {
-    return shot("photo-1473341304170-971dccb5ac1e");
-  }
-  if (/garage/.test(n)) {
-    return shot("photo-1486262715619-67b85e0b08d3");
-  }
-  if (/landscap|lawn/.test(n)) {
-    return shot("photo-1558904541-efa843a96f01");
-  }
-  if (/paint/.test(n)) {
-    return shot("photo-1562259949-e8e7440dd3e5");
-  }
-  if (/tree/.test(n)) {
-    return shot("photo-1502082553048-f009c37129b9");
-  }
-  if (/fence/.test(n)) {
-    return shot("photo-1570129477492-45c003edd2be");
-  }
-  if (/concrete|mason/.test(n)) {
-    return shot("photo-1517581178692-6c44790d4d11");
-  }
-  if (/clean|pressure wash|carpet clean|junk/.test(n)) {
-    return shot("photo-1581578731548-c64695cc6952");
-  }
-  if (/gutter/.test(n)) {
-    return shot("photo-1560518883-ce09059eeffa");
-  }
-  if (/sid(e|ing)|window/.test(n)) {
-    return shot("photo-1600585154340-be6161a56a0c");
-  }
-  if (/handyman|general contractor|remodel|builder/.test(n)) {
-    return shot("photo-1504148458007-edf7283d0d0d");
-  }
-  return shot("photo-1504307651254-35680f356dfd");
-}
-
-function crewPack(group: string, portraits: string[]) {
-  const shot = (id: string, square = false) =>
-    square
-      ? `${U}/${id}?auto=format&fit=crop&w=800&h=800&q=75`
-      : `${U}/${id}?auto=format&fit=crop&w=1200&h=720&q=75`;
-  return {
-    group: shot(group),
-    portraits: portraits.map((id) => shot(id, true)),
-  };
-}
-
-/** Stock crew photos per trade — same people names, niche-matching Unsplash shots. */
-export function nicheCrewMedia(niche: string): {
-  group: string;
-  portraits: string[];
-} {
-  const n = niche.toLowerCase();
-
-  if (/hvac|air cond|heating|furnace|heat pump|cooling/.test(n)) {
-    return crewPack("photo-1621905251189-08b45d6a269e", [
-      "photo-1581094794329-cce594b0c165",
-      "photo-1581092160562-40aa08e78837",
-      "photo-1504328345606-18bbc8c9d7d1",
-      "photo-1572981779307-38b8cabb53db",
-      "photo-1581092918056-0c4c3acd3789",
-    ]);
-  }
-  if (/roof|gutter/.test(n)) {
-    return crewPack("photo-1504307651254-35680f356dfd", [
-      "photo-1560518883-ce09059eeffa",
-      "photo-1590496793929-36417d3117de",
-      "photo-1600585154340-be6161a56a0c",
-      "photo-1541888946425-d81bb19240f5",
-      "photo-1503387762-592deb58ef4e",
-    ]);
-  }
-  if (/pest|termite|rodent/.test(n)) {
-    return crewPack("photo-1584622781564-1d987f4950aa", [
-      "photo-1581578731548-c64695cc6952",
-      "photo-1584622650111-993a426fbf0a",
-      "photo-1563453392212-326f5e854473",
-      "photo-1615876234886-fd9a39fda97f",
-      "photo-1582719471384-894fbb16e074",
-    ]);
-  }
-  if (/plumb/.test(n)) {
-    return crewPack("photo-1607472586893-ed4d7287bbed", [
-      "photo-1585704032915-c3400ca199e7",
-      "photo-1558618666-fcd25c85cd64",
-      "photo-1504148458007-edf7283d0d0d",
-      "photo-1581092160562-40aa08e78837",
-      "photo-1607472586893-ed4d7287bbed",
-    ]);
-  }
-  if (/electr/.test(n)) {
-    return crewPack("photo-1473341304170-971dccb5ac1e", [
-      "photo-1621905252507-b35492cc74b4",
-      "photo-1558618666-fcd25c85cd64",
-      "photo-1581092918056-0c4c3acd3789",
-      "photo-1504328345606-18bbc8c9d7d1",
-      "photo-1581094794329-cce594b0c165",
-    ]);
-  }
-  if (/garage/.test(n)) {
-    return crewPack("photo-1486262715619-67b85e0b08d3", [
-      "photo-1487754180451-c456f9551c0c",
-      "photo-1492144534655-ae79c964c9d7",
-      "photo-1486262715619-67b85e0b08d3",
-      "photo-1503376780353-7e6692767b70",
-      "photo-1542362567-b07e54358753",
-    ]);
-  }
-  if (/landscap|lawn/.test(n)) {
-    return crewPack("photo-1558904541-efa843a96f01", [
-      "photo-1416879595882-3373a0480b5b",
-      "photo-1466692476866-aef1dfb1e735",
-      "photo-1585320806297-9794b3e4eeae",
-      "photo-1441974231531-c6227db76b6e",
-      "photo-1470071459604-3b5ec3a7fe05",
-    ]);
-  }
-  if (/paint/.test(n)) {
-    return crewPack("photo-1562259949-e8e7440dd3e5", [
-      "photo-1589939705384-5185137a7f0f",
-      "photo-1562259949-e8e7440dd3e5",
-      "photo-1504148458007-edf7283d0d0d",
-      "photo-1595814433015-e6f5d246d049",
-      "photo-1560185007-cde436f6a4d0",
-    ]);
-  }
-  if (/tree/.test(n)) {
-    return crewPack("photo-1502082553048-f009c37129b9", [
-      "photo-1542273917363-3b1817f69a2d",
-      "photo-1441974231531-c6227db76b6e",
-      "photo-1502082553048-f009c37129b9",
-      "photo-1473448912268-2022ce9509d8",
-      "photo-1513836279014-a89f7a76ae86",
-    ]);
-  }
-  if (/fence/.test(n)) {
-    return crewPack("photo-1570129477492-45c003edd2be", [
-      "photo-1564013799919-ab600027ffc6",
-      "photo-1570129477492-45c003edd2be",
-      "photo-1600585154340-be6161a56a0c",
-      "photo-1560184897-ae75f418493e",
-      "photo-1600047509807-ba8b95fda8c2",
-    ]);
-  }
-  if (/concrete|mason/.test(n)) {
-    return crewPack("photo-1517581178692-6c44790d4d11", [
-      "photo-1504307651254-35680f356dfd",
-      "photo-1581094794329-cce594b0c165",
-      "photo-1503387762-592deb58ef4e",
-      "photo-1517581178692-6c44790d4d11",
-      "photo-1541888946425-d81bb19240f5",
-    ]);
-  }
-  if (/clean|pressure wash|carpet clean|junk/.test(n)) {
-    return crewPack("photo-1581578731548-c64695cc6952", [
-      "photo-1584622650111-993a426fbf0a",
-      "photo-1563453392212-326f5e854473",
-      "photo-1581578731548-c64695cc6952",
-      "photo-1527515637462-cff94eecc1ac",
-      "photo-1556912173-3bb406ef7e77",
-    ]);
-  }
-  if (/sid(e|ing)|window/.test(n)) {
-    return crewPack("photo-1600585154340-be6161a56a0c", [
-      "photo-1560518883-ce09059eeffa",
-      "photo-1600047509358-9dc8ab45457b",
-      "photo-1600585154526-990dced4db0d",
-      "photo-1600566753190-17f0baa2a6c3",
-      "photo-1600210492486-724fe5c67fb0",
-    ]);
-  }
-  if (/handyman|general contractor|remodel|builder/.test(n)) {
-    return crewPack("photo-1504148458007-edf7283d0d0d", [
-      "photo-1504307651254-35680f356dfd",
-      "photo-1581092160562-40aa08e78837",
-      "photo-1504148458007-edf7283d0d0d",
-      "photo-1581094794329-cce594b0c165",
-      "photo-1503387762-592deb58ef4e",
-    ]);
-  }
-
-  return crewPack("photo-1504307651254-35680f356dfd", [
-    "photo-1507003211169-0a1dd7228f2d",
-    "photo-1494790108377-be9c29b29330",
-    "photo-1472099645785-5658abf4ff4e",
-    "photo-1438761681033-6461ffad8d80",
-    "photo-1500648767791-00dcc994a43e",
-  ]);
-}
-
-export function demoCrew(niche: string) {
-  const media = nicheCrewMedia(niche);
-  return {
-    group: media.group,
-    members: DEMO_TEAM.map((member, index) => ({
-      ...member,
-      photo: media.portraits[index] ?? media.group,
-    })),
-  };
-}
 
 export const DEMO_REVIEWS: DemoReview[] = [
   {
@@ -650,26 +434,31 @@ export const DEMO_TEAM: DemoTeamMember[] = [
   {
     name: "Jordan Hale",
     role: "Crew lead",
+    photo: `${MEDIA}/jordan.avif`,
     blurb: "Clear path, no shortcuts, nobody left guessing.",
   },
   {
     name: "Maya Chen",
     role: "Finish & detail",
+    photo: `${MEDIA}/maya.avif`,
     blurb: "Catches the stuff you'd notice from the driveway.",
   },
   {
     name: "Chris Brooks",
     role: "Diagnostics",
+    photo: `${MEDIA}/chris.avif`,
     blurb: "Finds the real problem before it finds your weekend.",
   },
   {
     name: "Elena Vale",
     role: "Estimating",
+    photo: `${MEDIA}/elena.avif`,
     blurb: "Quotes you can actually understand. No mystery fees.",
   },
   {
     name: "Claire Quinn",
     role: "Field tech",
+    photo: `${MEDIA}/claire.avif`,
     blurb: "Shows up ready, leaves the place better than she found it.",
   },
 ];
@@ -682,3 +471,5 @@ export const DEMO_PROJECTS: DemoProject[] = [
   { src: `${MEDIA}/roofing-14.avif`, place: "Cheney", label: "Recent work" },
   { src: `${MEDIA}/metal2.avif`, place: "Nine Mile Falls", label: "Recent work" },
 ];
+
+export const DEMO_CREW_PHOTO = `${MEDIA}/crew.avif`;
