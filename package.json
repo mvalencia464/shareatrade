@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "dev:backend": "convex dev",
     "build": "astro build && node scripts/write-cloudflare-redirects.mjs",
+    "deploy": "wrangler deploy --config dist/server/wrangler.json",
     "preview": "astro preview",
     "astro": "astro",
     "import:contractors": "node scripts/import-contractors.mjs",
@@ -43,5 +44,8 @@
     "csv-parse": "^7.0.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "wrangler": "^4.125.0"
   }
 }

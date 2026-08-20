@@ -1,23 +1,20 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { DirectoryApp } from "../../components/DirectoryApp";
-import { getMarket } from "../../lib/markets";
+import { MARKETS, getMarket } from "../../lib/markets";
 import { SITE_NAME } from "../../lib/site";
 
-export const prerender = false;
+export const prerender = true;
+
+export function getStaticPaths() {
+  return MARKETS.filter((market) => market.live).map((market) => ({
+    params: { market: market.slug },
+  }));
+}
 
 const marketSlug = Astro.params.market ?? "";
 const market = getMarket(marketSlug);
 const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
-
-if (!market) {
-  Astro.response.status = 404;
-} else {
-  Astro.response.headers.set(
-    "Cache-Control",
-    "public, s-maxage=3600, stale-while-revalidate=86400",
-  );
-}
 ---
 
 <BaseLayout>
@@ -37,12 +34,10 @@ if (!market) {
   {
     convexUrl && market ? (
       <DirectoryApp client:load convexUrl={convexUrl} marketSlug={market.slug} />
-    ) : market ? (
+    ) : (
       <p class="env-warning">
         Set PUBLIC_CONVEX_URL in .env.local after running npx convex dev.
       </p>
-    ) : (
-      <p class="env-warning">This market was not found.</p>
     )
   }
 </BaseLayout>
