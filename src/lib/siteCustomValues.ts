@@ -43,6 +43,7 @@ export type ContractorSiteSource = {
   licenseNumber?: string;
   licenseStatus?: string;
   licenseType?: string;
+  socials?: Array<{ platform: string; url: string }>;
 };
 
 export type SiteCustomValues = {
@@ -64,6 +65,7 @@ export type SiteCustomValues = {
   license_number: string | undefined;
   license_status: string | undefined;
   license_type: string | undefined;
+  socials: Array<{ platform: string; url: string }>;
   service_area: string;
   proof_line: string;
 };
@@ -118,9 +120,79 @@ export function siteCustomValues(source: ContractorSiteSource): SiteCustomValues
     license_number: source.licenseNumber?.trim() || undefined,
     license_status: source.licenseStatus?.trim() || undefined,
     license_type: source.licenseType?.trim() || undefined,
+    socials: source.socials ?? [],
     service_area,
     proof_line: `${business_name} is a local ${niche.toLowerCase()} serving ${service_area}.`,
   };
+}
+
+export type SiteChannel = {
+  key: string;
+  href: string;
+  label: string;
+  kind: string;
+};
+
+function socialLabel(platform: string) {
+  const p = platform.trim();
+  return p ? p.charAt(0).toUpperCase() + p.slice(1) : "Social";
+}
+
+export function siteChannels(values: SiteCustomValues): SiteChannel[] {
+  const channels: SiteChannel[] = [];
+  if (values.website) {
+    channels.push({
+      key: "website",
+      href: values.website,
+      label: "Website",
+      kind: "website",
+    });
+  }
+  if (values.gbp_url) {
+    channels.push({
+      key: "gbp",
+      href: values.gbp_url,
+      label: "Google",
+      kind: "gbp",
+    });
+  }
+  if (values.email) {
+    channels.push({
+      key: "email",
+      href: `mailto:${values.email}`,
+      label: "Email",
+      kind: "email",
+    });
+  }
+  for (const social of values.socials) {
+    const url = social.url?.trim();
+    if (!url) continue;
+    channels.push({
+      key: `${social.platform}-${url}`,
+      href: url,
+      label: socialLabel(social.platform),
+      kind: social.platform,
+    });
+  }
+  return channels;
+}
+
+const METRO_CHIPS = [
+  "South Hill",
+  "Spokane Valley",
+  "Liberty Lake",
+  "Mead",
+  "Nine Mile Falls",
+];
+
+export function serviceAreaChips(city?: string): string[] {
+  const hometown = city?.trim();
+  if (!hometown) return METRO_CHIPS;
+  const already = METRO_CHIPS.some(
+    (chip) => chip.toLowerCase() === hometown.toLowerCase(),
+  );
+  if (already || hometown.toLowerCase() === "spokane") return METRO_CHIPS;
+  return [hometown, ...METRO_CHIPS];
 }
 
 export function formatReviewCount(count: number): string {

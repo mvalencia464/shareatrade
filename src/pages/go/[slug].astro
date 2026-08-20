@@ -5,18 +5,22 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../convex/_generated/api";
 import {
   formatReviewCount,
+  serviceAreaChips,
+  siteChannels,
   siteCustomValues,
   type SiteCustomValues,
 } from "../../lib/siteCustomValues";
 import {
-  DEMO_CREW_PHOTO,
   DEMO_PROJECTS,
   DEMO_REVIEWS,
-  DEMO_TEAM,
   demoAbout,
+  demoCrew,
+  nicheHeroPhoto,
 } from "../../lib/companySiteDemo";
 import { SITE_NAME, uniqueBySlug } from "../../lib/site";
 import CompanySiteStars from "../../components/CompanySiteStars.astro";
+import { CompanySiteChannels } from "../../components/CompanySiteChannels";
+import { CompanySiteCallCta } from "../../components/CompanySiteCallCta";
 
 export async function getStaticPaths() {
   const convexUrl = import.meta.env.PUBLIC_CONVEX_URL;
@@ -53,8 +57,13 @@ const reviewsLabel =
     ? `${formatReviewCount(values.reviews)} Google review${values.reviews === 1 ? "" : "s"}`
     : undefined;
 const about = values ? demoAbout(values) : null;
+const crew = values ? demoCrew(values.niche) : null;
 const cityLabel = values?.city ?? "Spokane";
-const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
+const coverSrc = values?.cover_url || (values ? nicheHeroPhoto(values.niche) : DEMO_PROJECTS[0]?.src);
+const areaChips = values ? serviceAreaChips(values.city) : [];
+const channels = values ? siteChannels(values) : [];
+const previewReviews = DEMO_REVIEWS.slice(0, 3);
+const extraReviews = DEMO_REVIEWS.slice(3);
 ---
 
 <CompanySiteLayout title={title} description={description}>
@@ -77,10 +86,12 @@ const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
         <main class="cs-main">
           <div class="cs-meta">
             {values.niche ? <span class="cs-chip">{values.niche}</span> : null}
-            {values.service_area ? (
-              <span class="cs-chip">{values.service_area}</span>
-            ) : null}
+            {areaChips.map((chip) => (
+              <span class="cs-chip cs-chip-area">{chip}</span>
+            ))}
           </div>
+
+          <CompanySiteChannels client:load channels={channels} />
 
           {values.rating != null || values.reviews != null ? (
             <CompanySiteReviews
@@ -116,6 +127,7 @@ const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
               <h2 id="cs-about-title" class="cs-h2">
                 A small local company — not a marketing machine
               </h2>
+              <p class="cs-demo-flag">Stock photo for this trade (Unsplash) — not this company</p>
               <img class="cs-about-photo" src={about.photo} alt="" />
               <blockquote class="cs-quote">“{about.quote}”</blockquote>
               <div class="cs-owner">
@@ -124,83 +136,48 @@ const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
               </div>
               <p class="cs-copy">{about.intro}</p>
               <p class="cs-copy">{about.body}</p>
-              {values.phone_tel ? (
-                <a class="cs-inline-cta" href={values.phone_tel}>
-                  {about.cta}
+              <div class="cs-actions">
+                {values.phone_tel ? (
+                  <CompanySiteCallCta
+                    client:load
+                    variant="inline"
+                    href={values.phone_tel}
+                    label={about.callCta}
+                    phone={values.phone}
+                  />
+                ) : null}
+                <a class="cs-inline-cta cs-inline-cta-ghost" href="#cs-quote">
+                  Get a quote instead
                 </a>
-              ) : null}
+              </div>
             </section>
           ) : null}
 
-          <section class="cs-section" aria-labelledby="cs-work-title">
-            <p class="cs-kicker">Recent work</p>
-            <h2 id="cs-work-title" class="cs-h2">
-              Jobs around {cityLabel}
-            </h2>
-            <div class="cs-projects">
-              {DEMO_PROJECTS.map((project) => (
-                <figure class="cs-project">
-                  <img src={project.src} alt="" />
-                  <figcaption>
-                    <span>{project.place}</span>
-                    {project.label}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </section>
+          {about?.services?.length ? (
+            <section class="cs-section" aria-labelledby="cs-services-title">
+              <p class="cs-kicker">Sample services</p>
+              <h2 id="cs-services-title" class="cs-h2">
+                What this kind of {values.niche.toLowerCase()} usually offers
+              </h2>
+              <p class="cs-demo-flag">Example menu for this trade — not a live catalog</p>
+              <div class="cs-services">
+                {about.services.map((service) => (
+                  <article class="cs-service">
+                    <p class="cs-service-name">{service.name}</p>
+                    <p class="cs-service-blurb">{service.blurb}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-          <section class="cs-section" aria-labelledby="cs-crew-title">
-            <p class="cs-kicker">The Summit Squad</p>
-            <h2 id="cs-crew-title" class="cs-h2">
-              Meet the folks who keep {cityLabel} dry
-            </h2>
-            <img class="cs-crew-photo" src={DEMO_CREW_PHOTO} alt="" />
-            <div class="cs-team">
-              {DEMO_TEAM.map((member) => (
-                <article class="cs-team-card">
-                  <img src={member.photo} alt="" />
-                  <div>
-                    <p class="cs-team-name">{member.name}</p>
-                    <p class="cs-team-role">{member.role}</p>
-                    <p class="cs-team-blurb">{member.blurb}</p>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section class="cs-section" aria-labelledby="cs-reviews-title">
-            <p class="cs-kicker">What neighbors say</p>
-            <h2 id="cs-reviews-title" class="cs-h2">
-              {DEMO_REVIEWS.length} recent reviews
-            </h2>
-            <div class="cs-review-list">
-              {DEMO_REVIEWS.map((review) => (
-                <article class="cs-review-card">
-                  <header class="cs-review-head">
-                    <img class="cs-avatar" src={review.avatar} alt="" />
-                    <div class="cs-review-meta">
-                      <strong>{review.name}</strong>
-                      <span>
-                        {review.city} · {review.date}
-                      </span>
-                    </div>
-                    <CompanySiteStars rating={review.rating} />
-                  </header>
-                  <p>{review.text}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section class="cs-section" aria-labelledby="cs-quote-title">
+          <section class="cs-section" id="cs-quote" aria-labelledby="cs-quote-title">
             <p class="cs-kicker">Free quote</p>
             <h2 id="cs-quote-title" class="cs-h2">
               Tell us what you need in {cityLabel}
             </h2>
             <p class="cs-copy">
-              Takes about a minute. We’ll text or call you back — no pressure.
+              Preview only — this form does not send. Call if you want to reach them.
             </p>
             <form class="cs-form" id="cs-quote-form" action="#" method="post" novalidate>
               <label class="cs-field">
@@ -229,15 +206,112 @@ const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
                 <textarea
                   name="details"
                   rows="4"
-                  placeholder={`A little about the ${values.niche.toLowerCase()} job`}
+                  placeholder={about?.formPrompt}
                 ></textarea>
               </label>
-              <button class="cs-form-submit" type="submit">Get my free quote</button>
-              <p class="cs-form-note">Demo form — nothing is sent.</p>
+              <button class="cs-form-submit" type="submit">
+                {about?.formCta ?? "Get my free quote"}
+              </button>
+              <p class="cs-form-note">Nothing is sent from this preview.</p>
             </form>
             <p class="cs-form-thanks" id="cs-quote-thanks" hidden>
-              Thanks — this demo doesn’t send yet. Use the call button if you want to reach the listing.
+              Still a preview — nothing was sent. Use Call if you want the real listing.
             </p>
+          </section>
+
+          <section class="cs-section" aria-labelledby="cs-work-title">
+            <p class="cs-kicker">Sample photos</p>
+            <h2 id="cs-work-title" class="cs-h2">
+              Layout example — not this company’s jobs
+            </h2>
+            <p class="cs-demo-flag">Roofing photos from a demo gallery</p>
+            <div class="cs-projects">
+              {DEMO_PROJECTS.map((project) => (
+                <figure class="cs-project">
+                  <img src={project.src} alt="" />
+                  <figcaption>
+                    <span>{project.place}</span>
+                    {project.label}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </section>
+
+          <section class="cs-section" aria-labelledby="cs-crew-title">
+            <p class="cs-kicker">Sample crew</p>
+            <h2 id="cs-crew-title" class="cs-h2">
+              {about?.crewLine ?? `Meet the folks who show up in ${cityLabel}`}
+            </h2>
+            <p class="cs-demo-flag">Stock photos for this trade (Unsplash) — not this company</p>
+            {crew ? (
+              <>
+                <img class="cs-crew-photo" src={crew.group} alt="" />
+                <div class="cs-team">
+                  {crew.members.map((member) => (
+                    <article class="cs-team-card">
+                      <img src={member.photo} alt="" />
+                      <div>
+                        <p class="cs-team-name">{member.name}</p>
+                        <p class="cs-team-role">{member.role}</p>
+                        <p class="cs-team-blurb">{member.blurb}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </section>
+
+          <section class="cs-section" aria-labelledby="cs-reviews-title">
+            <p class="cs-kicker">Sample reviews</p>
+            <h2 id="cs-reviews-title" class="cs-h2">
+              How review cards could look
+            </h2>
+            <p class="cs-demo-flag">
+              Made-up quotes for layout — real Google count is above
+            </p>
+            <div class="cs-review-list">
+              {previewReviews.map((review) => (
+                <article class="cs-review-card">
+                  <header class="cs-review-head">
+                    <img class="cs-avatar" src={review.avatar} alt="" />
+                    <div class="cs-review-meta">
+                      <strong>{review.name}</strong>
+                      <span>
+                        {review.city} · {review.date}
+                      </span>
+                    </div>
+                    <CompanySiteStars rating={review.rating} />
+                  </header>
+                  <p>{review.text}</p>
+                </article>
+              ))}
+            </div>
+            {extraReviews.length > 0 ? (
+              <details class="cs-more-reviews">
+                <summary>
+                  See {extraReviews.length} more sample reviews
+                </summary>
+                <div class="cs-review-list">
+                  {extraReviews.map((review) => (
+                    <article class="cs-review-card">
+                      <header class="cs-review-head">
+                        <img class="cs-avatar" src={review.avatar} alt="" />
+                        <div class="cs-review-meta">
+                          <strong>{review.name}</strong>
+                          <span>
+                            {review.city} · {review.date}
+                          </span>
+                        </div>
+                        <CompanySiteStars rating={review.rating} />
+                      </header>
+                      <p>{review.text}</p>
+                    </article>
+                  ))}
+                </div>
+              </details>
+            ) : null}
           </section>
 
           {values.website ? (
@@ -250,11 +324,15 @@ const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
             <a href="/">{SITE_NAME}</a>
           </p>
         </main>
-        {values.phone_tel && values.phone ? (
-          <a class="cs-call" href={values.phone_tel}>
-            Call {values.phone}
-          </a>
-        ) : null}
+          {values.phone_tel && values.phone ? (
+            <CompanySiteCallCta
+              client:load
+              variant="bar"
+              href={values.phone_tel}
+              label={about?.callCta ?? "Call now"}
+              phone={values.phone}
+            />
+          ) : null}
       </>
     ) : (
       <p class="cs-missing">This company page is not available.</p>
@@ -267,7 +345,6 @@ const coverSrc = values?.cover_url || DEMO_PROJECTS[0]?.src;
   const thanks = document.getElementById("cs-quote-thanks");
   form?.addEventListener("submit", (event) => {
     event.preventDefault();
-    form.setAttribute("hidden", "");
     thanks?.removeAttribute("hidden");
   });
 </script>

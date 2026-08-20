@@ -90,15 +90,92 @@
   gap: 0.4rem;
 }
 
-.cs-chip {
+.cs-chip-area {
+  background: transparent;
+  border: 1px solid rgba(3, 39, 70, 0.14);
+  font-weight: 500;
+}
+
+.cs-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cs-social {
   display: inline-flex;
   align-items: center;
-  padding: 0.28rem 0.7rem;
+  gap: 0.35rem;
+  padding: 0.38rem 0.7rem;
   border-radius: 999px;
-  background: rgba(3, 39, 70, 0.07);
-  font-size: 0.82rem;
+  background: #fff;
+  border: 1px solid rgba(3, 39, 70, 0.1);
+  font-size: 0.8rem;
   font-weight: 600;
+  text-decoration: none;
   color: var(--ink);
+}
+
+.cs-social-icon {
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+}
+
+.cs-social-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.cs-demo-flag {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.cs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cs-services {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.cs-service {
+  padding: 0.9rem 0.95rem;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid rgba(3, 39, 70, 0.08);
+}
+
+.cs-service-name {
+  margin: 0 0 0.22rem;
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.cs-service-blurb {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.cs-inline-cta-ghost {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px rgba(3, 39, 70, 0.2);
+}
+
+#cs-quote {
+  scroll-margin-top: 1rem;
+  padding-bottom: 4.5rem;
 }
 
 .cs-card {
@@ -206,18 +283,51 @@
   bottom: 0;
   width: min(430px, 100%);
   transform: translateX(-50%);
-  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
   margin: 0;
-  padding: 0.95rem 1.25rem calc(0.95rem + env(safe-area-inset-bottom));
+  padding: 0.72rem 1.25rem calc(0.72rem + env(safe-area-inset-bottom));
   background: var(--amber);
   color: var(--pine-deep);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.12rem;
-  letter-spacing: -0.02em;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
   box-shadow: 0 -8px 24px rgba(3, 39, 70, 0.12);
+}
+
+.cs-call-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+}
+
+.cs-phone-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  flex-shrink: 0;
+}
+
+.cs-phone-icon-lg {
+  width: 1.55rem;
+  height: 1.55rem;
+}
+
+.cs-call-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.cs-call-phone {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  opacity: 0.78;
 }
 
 .cs-call:active {
@@ -288,7 +398,9 @@
 
 .cs-inline-cta {
   display: inline-flex;
+  align-items: center;
   align-self: flex-start;
+  gap: 0.4rem;
   margin-top: 0.2rem;
   padding: 0.7rem 1rem;
   border-radius: 999px;
@@ -333,15 +445,20 @@
 
 .cs-team {
   display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.7rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin: 0 -1.35rem;
+  padding: 0.1rem 1.35rem 0.55rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .cs-team-card {
-  display: grid;
-  grid-template-columns: 72px 1fr;
-  gap: 0.75rem;
-  align-items: start;
+  flex: 0 0 78%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
   padding: 0.7rem;
   border-radius: 16px;
   background: #fff;
@@ -349,8 +466,8 @@
 }
 
 .cs-team-card img {
-  width: 72px;
-  height: 72px;
+  width: 100%;
+  height: 148px;
   object-fit: cover;
   border-radius: 14px;
 }
@@ -427,6 +544,26 @@
 
 .cs-review-head .cs-stars {
   justify-self: end;
+}
+
+.cs-more-reviews {
+  margin: 0;
+}
+
+.cs-more-reviews summary {
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
+  list-style: none;
+}
+
+.cs-more-reviews summary::-webkit-details-marker {
+  display: none;
+}
+
+.cs-more-reviews .cs-review-list {
+  margin-top: 0.65rem;
 }
 
 .cs-form {
