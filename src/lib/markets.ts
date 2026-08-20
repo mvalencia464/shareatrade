@@ -546,7 +546,9 @@ export function requireMarket(slug: string): Market {
 }
 
 export function liveMarkets(): Market[] {
-  return MARKETS.filter((market) => market.live);
+  return MARKETS.filter((market) => market.live).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 }
 
 export function marketCoreCities(slug: string): Set<string> {
