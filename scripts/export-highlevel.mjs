@@ -11,6 +11,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { MARKET_GEO } from "./hl-markets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -48,7 +49,6 @@ const CRM_MARKETS = [
   "tulsa",
   "detroit",
 ];
-const TIMEZONE = "America/Los_Angeles";
 const SITE_ORIGIN = "https://shareatrade.com";
 const CUSTOM_FIELD_NAMES = [
   "reviews",
@@ -270,12 +270,16 @@ function mapContact(row, locationId, customIds) {
     });
   }
 
+  const geo = MARKET_GEO[row.marketSlug];
+  const city = String(row.city ?? "").trim() || geo?.city;
+  const state = String(row.state ?? "").trim() || geo?.state;
+  const timezone = geo?.timezone ?? "America/Los_Angeles";
   const payload = {
     locationId,
     firstName,
     companyName: row.name,
     source: "Share a Trade",
-    timezone: TIMEZONE,
+    timezone,
     country: "US",
     tags: [LIST_TAG, row.marketSlug].filter(Boolean),
   };
@@ -283,8 +287,8 @@ function mapContact(row, locationId, customIds) {
   if (phone) payload.phone = phone;
   if (email) payload.email = email;
   if (row.website) payload.website = row.website;
-  if (row.city) payload.city = row.city;
-  if (row.state) payload.state = row.state;
+  if (city) payload.city = city;
+  if (state) payload.state = state;
   if (row.address) payload.address1 = row.address;
   if (customFields.length) payload.customFields = customFields;
   return payload;
