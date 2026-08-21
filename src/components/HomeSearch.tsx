@@ -52,10 +52,6 @@ function HomeSearchInner() {
         onChange={(event) => setSearch(event.target.value)}
         autoComplete="off"
       />
-      <p className="home-search-hint">
-        Same name in two cities? Each result shows the city so you pick the
-        right one.
-      </p>
       {q ? (
         <div className="home-search-panel" id={listId} role="listbox">
           {waiting ? (
