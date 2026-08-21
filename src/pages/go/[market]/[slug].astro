@@ -68,8 +68,6 @@ const coverSrc = values?.cover_url || (values ? nicheHeroPhoto(values.niche) : d
 const crewSrc = values ? nicheCrewPhoto(values.niche) : DEMO_CREW_PHOTO;
 const areaChips = values ? serviceAreaChips(values.city, marketSlug) : [];
 const channels = values ? siteChannels(values) : [];
-const previewReviews = demoReviews.slice(0, 3);
-const extraReviews = demoReviews.slice(3);
 ---
 
 <CompanySiteLayout title={title} description={description}>
@@ -274,7 +272,7 @@ const extraReviews = demoReviews.slice(3);
               Made-up quotes for layout — real Google count is above
             </p>
             <div class="cs-review-list">
-              {previewReviews.map((review) => (
+              {demoReviews.map((review) => (
                 <article class="cs-review-card">
                   <header class="cs-review-head">
                     <img class="cs-avatar" src={review.avatar} alt="" />
@@ -290,30 +288,6 @@ const extraReviews = demoReviews.slice(3);
                 </article>
               ))}
             </div>
-            {extraReviews.length > 0 ? (
-              <details class="cs-more-reviews">
-                <summary>
-                  See {extraReviews.length} more sample reviews
-                </summary>
-                <div class="cs-review-list">
-                  {extraReviews.map((review) => (
-                    <article class="cs-review-card">
-                      <header class="cs-review-head">
-                        <img class="cs-avatar" src={review.avatar} alt="" />
-                        <div class="cs-review-meta">
-                          <strong>{review.name}</strong>
-                          <span>
-                            {review.city} · {review.date}
-                          </span>
-                        </div>
-                        <CompanySiteStars rating={review.rating} />
-                      </header>
-                      <p>{review.text}</p>
-                    </article>
-                  ))}
-                </div>
-              </details>
-            ) : null}
           </section>
 
           {values.website ? (

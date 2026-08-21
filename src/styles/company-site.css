@@ -532,26 +532,6 @@
   justify-self: end;
 }
 
-.cs-more-reviews {
-  margin: 0;
-}
-
-.cs-more-reviews summary {
-  cursor: pointer;
-  font-size: 0.92rem;
-  font-weight: 700;
-  color: var(--ink);
-  list-style: none;
-}
-
-.cs-more-reviews summary::-webkit-details-marker {
-  display: none;
-}
-
-.cs-more-reviews .cs-review-list {
-  margin-top: 0.65rem;
-}
-
 .cs-form {
   display: flex;
   flex-direction: column;
