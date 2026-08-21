@@ -11,7 +11,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { MARKET_GEO } from "./hl-markets.mjs";
+import { MARKET_GEO, tzTagForTimezone } from "./hl-markets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -281,7 +281,7 @@ function mapContact(row, locationId, customIds) {
     source: "Share a Trade",
     timezone,
     country: "US",
-    tags: [LIST_TAG, row.marketSlug].filter(Boolean),
+    tags: [LIST_TAG, row.marketSlug, tzTagForTimezone(timezone)].filter(Boolean),
   };
   if (lastName) payload.lastName = lastName;
   if (phone) payload.phone = phone;

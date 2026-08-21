@@ -47,11 +47,34 @@ export const MARKET_GEO = {
   detroit: { city: "Detroit", state: "MI", timezone: "America/Detroit" },
 };
 
+export const IANA_TO_TZ_TAG = {
+  "America/Los_Angeles": "PDT",
+  "America/New_York": "EDT",
+  "America/Chicago": "CDT",
+  "America/Denver": "MDT",
+  "America/Phoenix": "MST",
+  "America/Boise": "MDT",
+  "America/Detroit": "EDT",
+  "America/Indiana/Indianapolis": "EDT",
+};
+
+export const TZ_TAG_NAMES = ["PDT", "EDT", "CDT", "MDT", "MST"];
+
+export function tzTagForTimezone(timezone) {
+  return IANA_TO_TZ_TAG[timezone] ?? null;
+}
+
 export function geoFromTags(tags) {
   const list = Array.isArray(tags) ? tags : [];
   for (const tag of list) {
     const geo = MARKET_GEO[tag];
-    if (geo) return { slug: tag, ...geo };
+    if (geo) {
+      return {
+        slug: tag,
+        ...geo,
+        tzTag: tzTagForTimezone(geo.timezone),
+      };
+    }
   }
   return null;
 }

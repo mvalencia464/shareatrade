@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 /**
- * Fill missing HighLevel city/state from the metro tag, and set IANA timezone.
+ * Fill missing HighLevel city/state from the metro tag, set IANA timezone,
+ * or add simplified timezone tags (EDT, PDT, CDT, MDT, MST).
  *
  * Usage:
  *   node scripts/patch-highlevel-geo.mjs --dry-run
  *   node scripts/patch-highlevel-geo.mjs --limit=20
- *   node scripts/patch-highlevel-geo.mjs
+ *   node scripts/patch-highlevel-geo.mjs --timezones
+ *   node scripts/patch-highlevel-geo.mjs --tz-tags --dry-run
+ *   node scripts/patch-highlevel-geo.mjs --tz-tags
  */
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { MARKET_GEO, geoFromTags } from "./hl-markets.mjs";
+import { MARKET_GEO, TZ_TAG_NAMES, geoFromTags, tzTagForTimezone } from "./hl-markets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -20,6 +23,7 @@ const LIST_TAG = "shareatrade-list";
 
 const dryRun = process.argv.includes("--dry-run");
 const timezoneOnly = process.argv.includes("--timezones");
+const tzTagsOnly = process.argv.includes("--tz-tags");
 const PACIFIC = "America/Los_Angeles";
 const limitArg = process.argv
   .find((arg) => arg.startsWith("--limit="))
@@ -225,6 +229,109 @@ async function patchTimezonesByMarket(token, locationId) {
   console.log(JSON.stringify({ dryRun, perMarket, patched, skipped, errors }, null, 2));
 }
 
+async function loadTaggedMarket(token, locationId, marketSlug) {
+  const byId = new Map();
+  for (let page = 1; page <= 80; page += 1) {
+    const result = await hlFetch(token, locationId, "/contacts/search", {
+      method: "POST",
+      body: JSON.stringify({
+        locationId,
+        page,
+        pageLimit: 100,
+        filters: [{ field: "tags", operator: "eq", value: marketSlug }],
+      }),
+    });
+    if (!result.ok) {
+      throw new Error(
+        `Search ${marketSlug} failed (${result.status}): ${JSON.stringify(result.body)}`,
+      );
+    }
+    const contacts = result.body.contacts ?? [];
+    for (const contact of contacts) {
+      if (contact.id) byId.set(contact.id, contact);
+    }
+    const total = result.body.total ?? byId.size;
+    if (!contacts.length || byId.size >= total || contacts.length < 100) break;
+    await sleep(80);
+  }
+  return [...byId.values()];
+}
+
+function currentTzTag(tags) {
+  const list = Array.isArray(tags) ? tags : [];
+  return list.find((tag) => TZ_TAG_NAMES.includes(tag)) ?? null;
+}
+
+async function addContactTags(token, locationId, contactId, tags) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const { ok, status, body } = await hlFetch(
+      token,
+      locationId,
+      `/contacts/${contactId}/tags`,
+      { method: "POST", body: JSON.stringify({ tags }) },
+    );
+    if (status === 0 || status === 429 || status === 502 || status === 503 || status === 524) {
+      await sleep(1000 * (attempt + 1));
+      continue;
+    }
+    if (!ok) {
+      const message = body?.message ?? body?.error ?? JSON.stringify(body ?? {});
+      return { ok: false, status, message: String(message).slice(0, 300) };
+    }
+    return { ok: true, status };
+  }
+  return { ok: false, status: 429, message: "Rate limited after retries" };
+}
+
+async function patchTzTagsByMarket(token, locationId) {
+  let added = 0;
+  let skipped = 0;
+  let errors = 0;
+  const perMarket = {};
+
+  for (const [slug, geo] of Object.entries(MARKET_GEO)) {
+    const tzTag = tzTagForTimezone(geo.timezone);
+    if (!tzTag) continue;
+    const contacts = (await loadTaggedMarket(token, locationId, slug)).filter(
+      (contact) => {
+        const tags = Array.isArray(contact.tags) ? contact.tags : [];
+        return tags.includes(LIST_TAG);
+      },
+    );
+    const needs = contacts.filter((contact) => currentTzTag(contact.tags) !== tzTag);
+    perMarket[slug] = { total: contacts.length, needsTag: needs.length, tzTag };
+    console.log(`${slug}: ${needs.length}/${contacts.length} need ${tzTag}`);
+    if (dryRun) continue;
+
+    for (const contact of needs) {
+      if (limit && added >= limit) break;
+      const existing = currentTzTag(contact.tags);
+      if (existing && existing !== tzTag) {
+        await hlFetch(token, locationId, `/contacts/${contact.id}/tags`, {
+          method: "DELETE",
+          body: JSON.stringify({ tags: [existing] }),
+        });
+      }
+      const result = await addContactTags(token, locationId, contact.id, [tzTag]);
+      if (!result.ok) {
+        errors += 1;
+        console.error(
+          `Error ${contact.companyName}: ${result.status} ${result.message}`,
+        );
+      } else {
+        added += 1;
+      }
+      if (added % 50 === 0) {
+        console.log(`Progress added=${added} skipped=${skipped} errors=${errors}`);
+      }
+      await sleep(80);
+    }
+    if (limit && added >= limit) break;
+  }
+
+  console.log(JSON.stringify({ dryRun, perMarket, added, skipped, errors }, null, 2));
+}
+
 async function patchContact(token, locationId, contactId, payload) {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const { ok, status, body } = await hlFetch(
@@ -254,6 +361,11 @@ async function main() {
   if (!locationId) throw new Error("Set HIGHLEVEL_LOCATION_ID in .env.local");
   if (limit !== null && (!Number.isFinite(limit) || limit < 1)) {
     throw new Error(`Invalid --limit=${limitArg}`);
+  }
+
+  if (tzTagsOnly) {
+    await patchTzTagsByMarket(token, locationId);
+    return;
   }
 
   if (timezoneOnly) {
