@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { HomeSearch } from "../components/HomeSearch";
 import { SITE_NAME, directoryPath } from "../lib/site";
 import { liveMarkets } from "../lib/markets";
 
 export const prerender = true;
+const convexUrl = import.meta.env.PUBLIC_CONVEX_URL ?? "";
 ---
 
 <BaseLayout>
@@ -19,9 +21,18 @@ export const prerender = true;
     <p class="hero-eyebrow">Choose a market</p>
     <h1>Find a recommended trade. Share their name in one click.</h1>
     <p class="hero-why">
-      No accounts. No sign-ups. Start with a city, then paste a complete listing
-      into a group thread.
+      No accounts. No sign-ups. Search a name across every market, or start
+      with a city and paste a complete listing into a group thread.
     </p>
+    {
+      convexUrl ? (
+        <HomeSearch client:load convexUrl={convexUrl} />
+      ) : (
+        <p class="env-warning">
+          Set PUBLIC_CONVEX_URL in .env.local after running npx convex dev.
+        </p>
+      )
+    }
     <ul class="market-grid">
       {liveMarkets().map((market) => (
         <li>

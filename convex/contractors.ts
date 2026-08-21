@@ -141,6 +141,74 @@ function pickPreferredContractor<
   })[0]!;
 }
 
+const nationwideSearchHitValidator = v.object({
+  _id: v.id("contractors"),
+  marketSlug: v.string(),
+  slug: v.string(),
+  name: v.string(),
+  category: v.string(),
+  city: v.optional(v.string()),
+  state: v.optional(v.string()),
+  rating: v.optional(v.number()),
+  reviewCount: v.optional(v.number()),
+  logoUrl: v.optional(v.string()),
+});
+
+function toNationwideHit(c: Doc<"contractors">) {
+  return {
+    _id: c._id,
+    marketSlug: c.marketSlug,
+    slug: c.slug,
+    name: c.name,
+    category: c.category,
+    city: c.city,
+    state: c.state,
+    rating: c.rating,
+    reviewCount: c.reviewCount,
+    logoUrl: c.logoUrl,
+  };
+}
+
+export const searchNationwide = query({
+  args: { q: v.string() },
+  returns: v.array(nationwideSearchHitValidator),
+  handler: async (ctx, args) => {
+    const q = args.q.trim();
+    if (q.length < 2) return [];
+
+    const [nameHits, categoryHits] = await Promise.all([
+      ctx.db
+        .query("contractors")
+        .withSearchIndex("search_name", (s) => s.search("name", q))
+        .take(20),
+      ctx.db
+        .query("contractors")
+        .withSearchIndex("search_category", (s) => s.search("category", q))
+        .take(12),
+    ]);
+
+    const seen = new Set<Doc<"contractors">["_id"]>();
+    const merged: Doc<"contractors">[] = [];
+    for (const row of [...nameHits, ...categoryHits]) {
+      if (seen.has(row._id)) continue;
+      seen.add(row._id);
+      merged.push(row);
+    }
+
+    const needle = q.toLowerCase();
+    merged.sort((a, b) => {
+      const aPrefix = a.name.toLowerCase().startsWith(needle) ? 1 : 0;
+      const bPrefix = b.name.toLowerCase().startsWith(needle) ? 1 : 0;
+      if (bPrefix !== aPrefix) return bPrefix - aPrefix;
+      const reviews = (b.reviewCount ?? -1) - (a.reviewCount ?? -1);
+      if (reviews !== 0) return reviews;
+      return a.name.localeCompare(b.name);
+    });
+
+    return merged.slice(0, 20).map(toNationwideHit);
+  },
+});
+
 export const listByMarket = query({
   args: { marketSlug: v.string() },
   returns: v.array(contractorCardValidator),

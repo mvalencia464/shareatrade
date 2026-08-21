@@ -44,7 +44,15 @@ export default defineSchema({
     .index("by_category", ["category"])
     .index("by_city", ["city"])
     .index("by_category_and_city", ["category", "city"])
-    .index("by_rating", ["rating"]),
+    .index("by_rating", ["rating"])
+    .searchIndex("search_name", {
+      searchField: "name",
+      filterFields: ["marketSlug"],
+    })
+    .searchIndex("search_category", {
+      searchField: "category",
+      filterFields: ["marketSlug"],
+    }),
 
   listingRequests: defineTable({
     kind: v.union(v.literal("add"), v.literal("update")),
