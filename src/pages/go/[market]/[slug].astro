@@ -12,10 +12,10 @@ import {
 } from "../../../lib/siteCustomValues";
 import {
   DEMO_CREW_PHOTO,
-  DEMO_PROJECTS,
-  DEMO_REVIEWS,
   DEMO_TEAM,
   demoAbout,
+  demoProjectsForMarket,
+  demoReviewsForMarket,
   nicheCrewPhoto,
   nicheHeroPhoto,
 } from "../../../lib/companySiteDemo";
@@ -60,14 +60,16 @@ const reviewsLabel =
   values?.reviews != null
     ? `${formatReviewCount(values.reviews)} Google review${values.reviews === 1 ? "" : "s"}`
     : undefined;
-const about = values ? demoAbout(values) : null;
+const about = values ? demoAbout(values, marketSlug) : null;
 const cityLabel = values?.city ?? getMarket(marketSlug)?.name ?? "this area";
-const coverSrc = values?.cover_url || (values ? nicheHeroPhoto(values.niche) : DEMO_PROJECTS[0]?.src);
+const demoProjects = demoProjectsForMarket(marketSlug);
+const demoReviews = demoReviewsForMarket(marketSlug);
+const coverSrc = values?.cover_url || (values ? nicheHeroPhoto(values.niche) : demoProjects[0]?.src);
 const crewSrc = values ? nicheCrewPhoto(values.niche) : DEMO_CREW_PHOTO;
 const areaChips = values ? serviceAreaChips(values.city, marketSlug) : [];
 const channels = values ? siteChannels(values) : [];
-const previewReviews = DEMO_REVIEWS.slice(0, 3);
-const extraReviews = DEMO_REVIEWS.slice(3);
+const previewReviews = demoReviews.slice(0, 3);
+const extraReviews = demoReviews.slice(3);
 ---
 
 <CompanySiteLayout title={title} description={description}>
@@ -230,7 +232,7 @@ const extraReviews = DEMO_REVIEWS.slice(3);
             </h2>
             <p class="cs-demo-flag">Roofing photos from a demo gallery</p>
             <div class="cs-projects">
-              {DEMO_PROJECTS.map((project) => (
+              {demoProjects.map((project) => (
                 <figure class="cs-project">
                   <img src={project.src} alt="" />
                   <figcaption>

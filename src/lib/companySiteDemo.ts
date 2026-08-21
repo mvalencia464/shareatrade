@@ -1,4 +1,5 @@
 import type { SiteCustomValues } from "./siteCustomValues";
+import { getMarket } from "./markets";
 import { nicheHeroPhoto } from "./tradePacks";
 
 export { nicheCrewPhoto, nicheHeroPhoto } from "./tradePacks";
@@ -43,8 +44,9 @@ export type NicheVoice = {
   services: NicheService[];
 };
 
-export function nicheVoice(niche: string): NicheVoice {
+export function nicheVoice(niche: string, city?: string): NicheVoice {
   const n = niche.toLowerCase();
+  const here = city?.trim() || "this area";
 
   if (/hvac|air cond|heating|furnace|heat pump|cooling/.test(n)) {
     return {
@@ -58,7 +60,7 @@ export function nicheVoice(niche: string): NicheVoice {
       services: [
         { name: "Same-day repair", blurb: "No cool air, no heat, weird noises — we diagnose and fix." },
         { name: "Seasonal tune-ups", blurb: "Spring AC and fall furnace checks before the rush." },
-        { name: "Full installs", blurb: "New systems sized for Spokane winters and summer heat." },
+        { name: "Full installs", blurb: `New systems sized for ${here} weather, not a catalog guess.` },
         { name: "Heat pumps", blurb: "Repair, swap, or a first-time install done clearly." },
       ],
     };
@@ -68,7 +70,7 @@ export function nicheVoice(niche: string): NicheVoice {
       quote: "We're not done until you stay dry.",
       problem:
         "When meltwater hits a stain on the ceiling — or the last crew disappeared after a patch —",
-      crewLine: "Meet the folks who keep Spokane dry",
+      crewLine: `Meet the folks who keep ${here} dry`,
       callCta: "Stop this leak",
       formCta: "Get a roof quote",
       formPrompt: "Leak, missing shingles, or a full replacement?",
@@ -254,7 +256,7 @@ export function nicheVoice(niche: string): NicheVoice {
       services: [
         { name: "Gutter cleaning", blurb: "Off the roof, out of the downspouts." },
         { name: "Repairs", blurb: "Seams, hangers, and the sag in the middle." },
-        { name: "New gutters", blurb: "Sized for Spokane rain and snowmelt." },
+        { name: "New gutters", blurb: `Sized for ${here} storms, not a one-size trough.` },
         { name: "Downspout drainage", blurb: "Water away from the foundation, not into it." },
       ],
     };
@@ -309,11 +311,45 @@ export function nicheVoice(niche: string): NicheVoice {
   };
 }
 
-export function demoAbout(values: SiteCustomValues) {
+function ringCities(marketSlug?: string): string[] {
+  const market = marketSlug ? getMarket(marketSlug) : undefined;
+  const aliases = market?.cityAliases ?? [];
+  if (aliases.length > 0) return [...aliases];
+  if (market?.name) return [market.name];
+  return ["this area"];
+}
+
+function cyclePlace(cities: string[], index: number): string {
+  const city = cities[index % cities.length];
+  return city ?? cities[0] ?? "this area";
+}
+
+export function demoProjectsForMarket(marketSlug?: string): DemoProject[] {
+  const cities = ringCities(marketSlug);
+  return DEMO_PROJECTS.map((project, index) => ({
+    ...project,
+    place: cyclePlace(cities, index),
+  }));
+}
+
+export function demoReviewsForMarket(marketSlug?: string): DemoReview[] {
+  const market = marketSlug ? getMarket(marketSlug) : undefined;
+  const cities = ringCities(marketSlug);
+  const state = market?.state;
+  return DEMO_REVIEWS.map((review, index) => {
+    const city = cyclePlace(cities, index);
+    return {
+      ...review,
+      city: state ? `${city}, ${state}` : city,
+    };
+  });
+}
+
+export function demoAbout(values: SiteCustomValues, marketSlug?: string) {
   const owner = "Alex Rivera";
-  const city = values.city ?? "Spokane";
+  const city = values.city ?? getMarket(marketSlug ?? "")?.name ?? "this area";
   const niche = values.niche.toLowerCase();
-  const voice = nicheVoice(values.niche);
+  const voice = nicheVoice(values.niche, city);
   return {
     kicker: "Our story",
     quote: voice.quote,
