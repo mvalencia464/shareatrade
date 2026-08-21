@@ -1237,6 +1237,7 @@ a.contact-line:hover {
 }
 
 .quick-links {
+  position: relative;
   display: inline-flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -1300,6 +1301,10 @@ a.contact-line:hover {
 }
 
 .quick-link-dev {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  margin-right: 0.35rem;
   opacity: 0;
 }
 
